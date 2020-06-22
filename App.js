@@ -1,6 +1,12 @@
 // UT Austin LASE Database interaction application
 // Designed to support web and native
 
+// Written with IPP Summer 2020 interns!
+// G. Michael Fitzgerald
+//
+//
+// 
+
 // Import the necessary components
 import React from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
