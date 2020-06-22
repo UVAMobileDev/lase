@@ -6,6 +6,7 @@
 // Sam Kim
 // Hien (Taylor) Truong
 //Julia Shea
+// manual merge for example
 
 // Import the necessary components
 import React from 'react';
