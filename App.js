@@ -4,8 +4,8 @@
 // Written with IPP Summer 2020 interns!
 // G. Michael Fitzgerald
 //
+// Sam Kim
 //
-// 
 
 // Import the necessary components
 import React from 'react';
