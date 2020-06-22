@@ -4,7 +4,7 @@
 // Written with IPP Summer 2020 interns!
 // G. Michael Fitzgerald
 //
-//
+// Hien (Taylor) Truong
 // 
 
 // Import the necessary components
