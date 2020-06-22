@@ -13,7 +13,7 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function Maintenance(props) {
     return (
-        <Tab.Navigator initialRouteName="Create">
+        <Tab.Navigator initialRouteName="Browse">
             <Tab.Screen name="Browse" component={Browse}/>
             <Tab.Screen name="Create" component={Insert}/>
         </Tab.Navigator>

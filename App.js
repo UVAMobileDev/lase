@@ -52,7 +52,7 @@ export default function App() {
     return (
         <NavigationContainer>
             {/* A NavigationContainer is required to wrap the top level navigator. */}
-            <Drawer.Navigator   initialRouteName="Maintenance"
+            <Drawer.Navigator   initialRouteName="Home"
                                 drawerType={Platform.OS === "web" ? "permanent" : "slide"}
                                 contentOptions={drawerOptions}
                                 drawerStyle={drawerStyle}>
