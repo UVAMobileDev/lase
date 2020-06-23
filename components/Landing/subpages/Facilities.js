@@ -314,10 +314,6 @@ export default function Facilities(props) {
 
           </View>
 
-
-
-
-
         </View>
 
     );
