@@ -5,7 +5,7 @@
 // G. Michael Fitzgerald
 // Sam Kim
 // Hien (Taylor) Truong
-//
+//Julia Shea
 
 // Import the necessary components
 import React from 'react';
