@@ -484,125 +484,510 @@ const Postdocs = [
   },
 ]
 
+//array of alumni master's Information
+const Masters = [
+    {
+        id: '0',
+        name: 'Sarah Muschinske (Massachusetts Institute of Technology)',
+        education: null,
+        bio: `Sarah recieved both her Bachelor's and her Master's degree in electrical engineering at UT Austin. Her projects included transfer process development for and transport studies on epitaxial Bi and Bi1-xSbx thin films. She began her PhD studies in electrical engineering at MIT in Fall 2018.`,
+        image: {
+          uri: 'https://lase.mer.utexas.edu/images/sarah.jpg',
+        },
+    },
+
+    {
+        id: '1',
+        name: 'Nathanial Sheehan (Skorpios Technologies)',
+        education: `B.S. in Electrical Engineering, University of California, Santa Barbara 2012 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2014`,
+        bio: `Nate studied low dimensional structures and compound semiconductor device fabrication.`,
+        image: {
+          uri: 'https://lase.mer.utexas.edu/images/sheehan.jpg',
+        },
+    },
+]
+
+//array of alumni teacher researchers' information
+const TeacherResearchers = [
+    {
+        id: '0',
+        name: 'Ashley Bachmayer',
+        bio: `Ashley is a high school science teacher in Killeen, TX. She spent Summer 2016 working with the LASE group as a NASCENT RET investigating wafer bonding of nanomembranes using indium for molecular beam epitaxy regrowth.`,
+        image: {
+          uri: 'https://lase.mer.utexas.edu/images/ashleyb.jpg',
+        },
+    },
+
+    {
+        id: '1',
+        name: 'Pedro Merced',
+        bio: `Pedro is a high school pre-calculus and calculus teacher in Manor, TX. Through the NSF Research Experience for Teachers (RET) program, he spent Summer 2014 with the group testing mid-infrared laser devices and investigating their operation.`,
+        image: {
+          uri: 'https://lase.mer.utexas.edu/images/PedroPicture.jpg',
+        },
+    },
+
+    {
+        id: '2',
+        name: 'Steve Trenfield',
+        bio: `Steve is a high school mathematics teacher in Austin, TX. He spent Summer 2015 working as a NASCENT RET investigating the effects of elevated temperature on mid-infrared LEDs.`,
+        image: {
+          uri: 'https://lase.mer.utexas.edu/images/SteveTrenfield.jpg',
+        },
+    }
+]
+
+//array of alumni undergrad researchers' information
+const UndergradResearchers = [
+    {
+        id: '0',
+        name: 'George Adams',
+        bio: `George was an ECE undergraduate at UT-Austin who graduated from UT-Austin with a BS in Electrical and Computer Engineering in 2015. He spent the Spring 2014 semester learning cleanroom fabrication processes and etching gallium antimonide. He is currently a Software Engineer at Cerner Corporation.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/george.jpg',
+        },
+    },
+
+    {
+        id: '1',
+        name: 'Brent Bouslog',
+        bio: `Brent is an undergraduate Electrical Engineering student at the University of Texas. He studied the optical properties of III-V semiconductors.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/BBouslog.jpg',
+        },
+    },
+
+    {
+        id: '2',
+        name: 'Gavin Campbell',
+        bio: `Gavin is currently a MatSE graduate student at Northwestern. He spent the summer of 2010 with the group as an NNIN REU studying the annealing stability of nanoparticle enhanced tunnel junctions.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/gavin.jpg',
+        },
+    },
+
+    {
+        id: '3',
+        name: 'Robert Chen',
+        bio: `Robert completed the M.S. and Ph.D. in Electrical Engineering at Stanford University and is now gainfully employed at Apple. He was an undergraduate researcher from Spring 2007 through Summer 2008, where he studied the optical properties of dilute-nitride materials. He co-developed the group's photoluminescence and photoreflectance measurement setups.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/RobertChen.jpg',
+        },
+    },
+
+    {
+        id: '4',
+        name: 'Harold Fu',
+        bio: `Harold was a Cornell University undergraduate who spent Summer 2015 in the group as an NNIN REU. He studied the optical characteristics of AlInAsSb digital alloys films using photoluminescence and Fourier transform infrared (FTIR) spectroscopy.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/HaroldFu.jpg',
+        },
+    },
+
+    {
+        id: '5',
+        name: 'Chris Gaytan',
+        bio: `Chris is an undergraduate at the University of Texas at El Paso. Chris was a 2012 Summer Research Academy student studying the optical properties of annealed highly mismatched alloys for photonic device applications.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/CGaytan.jpg',
+        },
+    },
+
+    {
+        id: '6',
+        name: 'Joel Guo',
+        bio: `Joel is an undergraduate ECE student at the University of Texas at Austin. He worked with the LASE group from the Spring 2015 semester through the Spring 2017 semester learning optical materials characterization tools and techniques.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/joel.jpg',
+        },
+    },
+
+    {
+        id: '7',
+        name: 'Abigail Johnson',
+        bio: `Abigail is an ECE undergraduate at UT-Austin, expecting to graduate with a BS in Computer Engineering in May 2017. She spent the Spring 2014 semester with the LASE group learning cleanroom fabrication processes and depositing silicon nitride. During Summer 2016, she worked as a Software Engineer at IBM.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/abigail.jpg',
+        },
+    },
+
+    {
+        id: '8',
+        name: 'Ze Lyu',
+        bio: `Ze is an ECE undergraduate at the University of Texas at Austin. He worked on test station hardware integration.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/zelyu.jpg',
+        },
+    },
+
+    {
+        id: '9',
+        name: 'Thien-An Nguyen',
+        bio: `In 2011, Thien-An was an NSF REU student studying scanned probe microscopy of ErAs/GaAs tunnel junctions, working jointly with Prof. Ed Yu. He is currently a graduate student at UT-Austin working with Prof. Zheng Wang.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/TNguyen.jpg',
+        },
+    },
+
+    {
+        id: '10',
+        name: 'Julio Novo',
+        bio: `Julio was an ECE and Physics undergraduate at UT-Austin who graduated from UT-Austin with a BS in Electrical Engineering and Physics in Fall 2015. He was with the Bank group from Spring 2014 to Spring 2015 and worked on developing cleanroom fabrication processes for III-V optoelectronic devices. In Summer 2015, he interned at Samsung. He was hired in early 2016 as a Process Engineer at Intel.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/julio.jpg',
+        },
+    },
+
+    {
+        id: '11',
+        name: 'Iram Olivares',
+        bio: `Iram is an undergraduate Electrical Engineering student at the University of Texas. In Fall 2018, he studied studying the optical properties of III-V semiconductors supported by the Texas Research Experience program,.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/Iram.jpg',
+        },
+    },
+
+    {
+        id: '12',
+        name: 'Alonzo Ramon',
+        bio: `Alonzo is an undergraduate Computer Engineering student at the University of Texas at San Antonio. He is working on the fabrication of materials for 3D optoelectronic devices.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/ARamon.jpg',
+        },
+    },
+
+    {
+        id: '13',
+        name: 'Sam Steakley',
+        bio: `Sam is an undergraduate Physics student at Williams College in Williamstown, MA. He spent the summer with the LASE group as a NNCI REU studying the effects of doping on optical absorbtion in III-V mixed alloys.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/sams.jpg',
+        },
+    },
+
+    {
+        id: '14',
+        name: 'Susan Tan',
+        bio: `Susan was an ECE undergraduate at the University of Texas at Austin. From 2016-2018, she worked on test station design and component integration, and laser device characterization. She later worked on the analysis of magnetotransport data from thin bismuth films grown by MBE. After graduation, she began her Ph.D. studies at Princeton in Fall 2018.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/susant.jpg',
+        },
+    },
+
+    {
+        id: '15',
+        name: 'Fernando Torres',
+        bio: `Fernando is an undergraduate at the University of Texas at El Paso expecting to graduate with a BS in Electrical Engineering in May 2017. He was a Summer 2015 REU student through the NASCENT program researching membrane liftoff and transfer. He had an internship at Texas Instruments in Summer 2016.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/FernandoTorres.jpg',
+        },
+    },
+
+    {
+        id: '16',
+        name: 'Nathaniel Wendt',
+        bio: `Nate was an undergraduate at Gonzaga University and a 2012 NNIN REU student studying optimum annealing conditions of highly mismatched alloys in order to maximize optical quality as determined by photoluminescence. He is currently a graduate student at UT-Austin.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/NWendt.jpg',
+        },
+    },
+
+    {
+        id: '17',
+        name: 'Evan Wineland',
+        bio: `Evan was a undergraduate at Carnegie Mellon University who spent Summer 2013 in the group working on software data collection development.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/EvanWineland.jpg',
+        },
+    },
+
+    {
+        id: '18',
+        name: 'Ben Xiang',
+        bio: `Ben is currently employed at Cisco. He was an undergraduate researcher in Summer 2008, where he co-developed the group's photoreflectance measurement setup.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/IMG_6715.jpg',
+        },
+    },
+
+    {
+        id: '19',
+        name: 'Alice Yau',
+        bio: 'Alice is an ECE undergraduate at the University of Texas at Austin. In 2017, she studied the effect of growth conditions on electrical properties in epitaxial bismuth thin films.',
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/alice.jpg',
+        },
+    },
+
+    {
+        id: '20',
+        name: 'Sagi Zisman',
+        bio: `Sagi was an undergraduate researcher building an automated electroluminescence test setup. He is currently a graduate student at UT-Austin, working with Prof. Mark Raizen in Physics.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/SagiPicture.jpg',
+        },
+    },
+]
+
+//array of young scholars information
+const YoungScholars = [
+    {
+        id: '0',
+        name: 'Enid Cruz',
+        bio: `Enid is a high school student in Manor, TX. She worked as a NASCENT Young Scholar during Summer 2019. She focused on measuring the effects of strain in thin GaInAsSb films on flexible substrates. .`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/ECruz.png',
+        },
+    },
+
+    {
+        id: '1',
+        name: `E'Maurai Glass`,
+        bio: `E'Maurai is a high school student in Austin, TX. He worked on wafer bonding of nanomembranes using indium through the NASCENT Young Scholars program during Summer 2017.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/glass.jpg',
+        },
+    },
+
+    {
+        id: '2',
+        name: 'Jocelyn Kim',
+        bio: `Jocelyn is a high school student in Austin, TX. She worked on further developing an indium bonding process in nanomembrane preparation during the Summer of 2017 as a part of the NASCENT Young Scholars program.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/jocelyn.jpg',
+        },
+    },
+
+    {
+        id: '3',
+        name: 'Claire Lungwitz',
+        bio: `Claire is a high school student in Austin, TX. She spent Summer 2016 working with the LASE group as a NASCENT Young Scholar working on citric acid etching of III-V semiconductors.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/clairel.jpg',
+        },
+    },
+
+    {
+        id: '4',
+        name: 'Clarence Marshall',
+        bio: `Clarence is a high school student in Manor, TX, in his second year with the Nascent Young Scholars program. In Summer 2016 he investigated citric acid etch rates for III-V semiconductor substrates.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/clarencem.jpg',
+        },
+    },
+
+    {
+        id: '5',
+        name: 'Daniela Rodriguez',
+        bio: `Daniela is a high school student in Manor, TX, in her second year with the Nascent Young Scholars program. She worked on etching of III-V semiconductor substrates using citric acid during Summer 2016.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/danielar.jpg',
+        },
+    },
+
+    {
+        id: '6',
+        name: 'Guillermo Rodriguez',
+        bio: `Guillermo is a high school student in Manor, Tx, in his second year with the Nascent Young Scholars Program. In the Summer of 2019 he focused efforts towards the one dimensional strain of thin films on flexible substrates.`,
+        image: {
+            uri: 'https://lase.mer.utexas.edu/images/GRodriguez.jpg',
+        },
+    },
+]
+
 export default function Members(props) {
 
     return (
         <View>
             <Text style={styles.header}>Members</Text>
-        <View
-            style={{ justifyContent: 'center', alignItems: 'center',}}>
-            <Image source={membersImage}/>
-        <View>
-
-        <View>
-            <Text style={styles.sectionHeader}>Principal Investigator</Text>
-        </View>
-        {
-        //renders the principal investigator's info in a readable layout
-        PrincipalInvestigator.map(item => (
-            <View key={item.id}>
-                  <View style={styles.imageTextContainer}>
-                      <Image style={styles.image} source={item.image}/>
-                          <View style={styles.textContainer}>
-                              <Text style={styles.infoHeader}>{item.name}</Text>
-                              <Text>{item.title}</Text>
-                              <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
-                              <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                              <Text style={styles.infoHeader}>CV: <Text style={styles.info}>{item.cv}</Text></Text>
-                              <Text style={styles.infoHeader}>Scholar: <Text style={styles.info}>{item.scholar}</Text></Text>
-                              <Text style={styles.bio}>{item.bio}</Text>
-                          </View>
-                    </View>
+            <View
+                style={{ justifyContent: 'center', alignItems: 'center',}}>
+                <Image source={membersImage}/>
             </View>
-        ))
-      }
 
-        <View>
-            <Text style={styles.sectionHeader}>Graduate Students</Text>
-        </View>
-        {
-        //renders the array of grad students in a readable layout
-        //// TODO: don't displat email and phone headers when fields are null
-        GradStudents.map(item => (
-            <View key={item.id}>
-                  <View style={styles.imageTextContainer}>
-                      <Image style={styles.image} source={item.image}/>
-                          <View style={styles.textContainer}>
-                              <Text style={styles.infoHeader}>{item.name}</Text>
-                              <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
-                              <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                              <Text style={styles.bio}>{item.bio}</Text>
-                          </View>
-                    </View>
+            <View>
+                <Text style={styles.sectionHeader}>Principal Investigator</Text>
             </View>
-        ))
-      }
+            {
+            //renders the principal investigator's info in a readable layout
+            PrincipalInvestigator.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text>{item.title}</Text>
+                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
+                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
+                            <Text style={styles.infoHeader}>CV: <Text style={styles.info}>{item.cv}</Text></Text>
+                            <Text style={styles.infoHeader}>Scholar: <Text style={styles.info}>{item.scholar}</Text></Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+            ))
+            }
 
-      <View>
-          <Text style={styles.sectionHeader}>Undergraduate Students</Text>
-      </View>
-      {
-      //renders the array of undergrad students in a readable layout
-      UndergradStudents.map(item => (
-          <View key={item.id}>
-                <View style={styles.imageTextContainer}>
-                    <Image style={styles.image} source={item.image}/>
+            <View>
+                <Text style={styles.sectionHeader}>Graduate Students</Text>
+            </View>
+            {
+            //renders the array of grad students in a readable layout
+            //// TODO: don't displat email and phone headers when fields are null
+            GradStudents.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
+                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+            ))
+            }
+
+            <View>
+                <Text style={styles.sectionHeader}>Undergraduate Students</Text>
+            </View>
+            {
+            //renders the array of undergrad students in a readable layout
+            UndergradStudents.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
                         <View style={styles.textContainer}>
                             <Text style={styles.infoHeader}>{item.name}</Text>
                             <Text style={styles.bio}>{item.bio}</Text>
                         </View>
-                  </View>
-          </View>
-      ))
-    }
-
-    <View>
-        <Text style={styles.sectionHeader}>Staff</Text>
-    </View>
-    {
-    //renders the array of staff in a readable layout
-    Staff.map(item => (
-        <View key={item.id}>
-              <View style={styles.imageTextContainer}>
-                  <Image style={styles.image} source={item.image}/>
-                      <View style={styles.textContainer}>
-                          <Text style={styles.infoHeader}>{item.name}</Text>
-                          <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
-                          <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                          <Text style={styles.bio}>{item.bio}</Text>
-                      </View>
-                </View>
-        </View>
-    ))
-  }
-
-
-  <View>
-      <Text style={styles.sectionHeader}>Alumni (Ph.D.'s and Postdocs</Text>
-  </View>
-  {
-  //renders the array of alumni postdocs staff in a readable layout
-  Postdocs.map(item => (
-      <View key={item.id}>
-            <View style={styles.imageTextContainer}>
-                <Image style={styles.image} source={item.image}/>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.infoHeader}>{item.name}</Text>
-                        <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
-                        <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                        <Text style={styles.infoHeader}>CV: <Text style={styles.link}>{item.cv}</Text></Text>
-                        <Text style={styles.infoHeader}>Website: <Text style={styles.info}>{item.website}</Text></Text>
-                        <Text style={styles.bio}>{item.bio}</Text>
                     </View>
-              </View>
-      </View>
-  ))
-}
+                </View>
+            ))
+            }
+
+            <View>
+                <Text style={styles.sectionHeader}>Staff</Text>
+            </View>
+            {
+            //renders the array of staff in a readable layout
+            Staff.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
+                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+            ))
+            }
 
 
-      </View>
-  </View>
-</View>
+            <View>
+                <Text style={styles.sectionHeader}>Alumni (Ph.D.'s and Postdocs)</Text>
+            </View>
+            {
+            //renders the array of alumni postdocs staff in a readable layout
+            Postdocs.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
+                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
+                            {
+                            item.cv ? (<Text style={styles.infoHeader}>CV: <Text style={styles.link}>{item.cv}</Text></Text>) : (<View/>)
+                            }
+                            <Text style={styles.infoHeader}>Website: <Text style={styles.info}>{item.website}</Text></Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+                ))
+            }
+
+            <View>
+                <Text style={styles.sectionHeader}>Alumni (Master's)</Text>
+            </View>
+            {
+            //renders the array of alumni masters staff in a readable layout
+            Masters.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            {
+                            item.education ? (<Text style={styles.bio}>{item.education}</Text>) : (<View/>)
+                            }
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+                ))
+            }
+
+            <View>
+                <Text style={styles.sectionHeader}>Alumni (Teacher Researchers)</Text>
+            </View>
+            {
+            //renders the array of alumni teacher researchers staff in a readable layout
+            TeacherResearchers.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+                ))
+            }
+
+            <View>
+                <Text style={styles.sectionHeader}>Alumni (Undergraduate Researchers)</Text>
+            </View>
+            {
+            //renders the array of alumni undergraduate researchers staff in a readable layout
+            UndergradResearchers.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+                ))
+            }
+
+            <View>
+                <Text style={styles.sectionHeader}>Alumni (Young Scholars)</Text>
+            </View>
+            {
+            //renders the array of alumni young scholars staff in a readable layout
+            YoungScholars.map(item => (
+                <View key={item.id}>
+                    <View style={styles.imageTextContainer}>
+                        <Image style={styles.image} source={item.image}/>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.infoHeader}>{item.name}</Text>
+                            <Text style={styles.bio}>{item.bio}</Text>
+                        </View>
+                    </View>
+                </View>
+                ))
+            }
+
+        </View>
     );
 }
 
@@ -620,6 +1005,7 @@ const styles = StyleSheet.create({
   },
 
     textContainer: {
+        flex: 1,
       flexDirection: 'column',
     },
 
@@ -645,6 +1031,7 @@ const styles = StyleSheet.create({
     bio: {
       paddingTop: 10,
       flexWrap: 'wrap',
+      flexShrink: 1,
     },
 
     link: {
@@ -655,5 +1042,7 @@ const styles = StyleSheet.create({
     image: {
         marginLeft: 50,
         marginRight: 20,
+        width: 100,
+        height: 150,
     }
 });
