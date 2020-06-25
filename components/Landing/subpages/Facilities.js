@@ -148,6 +148,7 @@ function hyperlink(theString){
     Parameter (theString): a variable contains a whole text
     Purpose: this has a same functionality as hyperlink subroutine except this will return a text in a smaller form
 */
+
 function hyperlinkSmall(theString){
     var newArr = []; //To contain only the id
     var newArr2 = []; //To contain only the URL
