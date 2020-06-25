@@ -1,0 +1,1505 @@
+openapi: "3.0.0"
+info:
+  description: "This API serves as a middleman for carrying out basic CRUD operations on the UT Austin LASE database."
+  version: "2.0.0"
+  title: "LASE Database"
+  contact:
+    email: "devhub@virginia.edu"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+servers:
+  - url: "{protocol}://kh10uhxdw5.execute-api.us-east-2.amazonaws.com/{stage}"
+    variables:
+      protocol:
+        enum:
+          - https
+          - http
+        default: https
+      stage:
+        enum:
+          - production
+        default: production
+
+tags:
+- name: "Machines"
+  description: "Access, update, and remove data from specific systems, such as Bravo or Echo."
+- name: "Settings"
+  description: "Access settings, constants, etc used throughout the database."
+- name: "Wafers"
+  description: "Access and insert information about wafers or from/into a wafer's log."
+- name: "Publications"
+  description: "Access, insert, and remove new or existing publications from the database."
+- name: "Maintenance"
+  description: "Access and insert records from/to the machine maintenance logs."
+
+paths:
+  /machine/{machine}/sources:
+    get:
+      tags:
+      - "Machines"
+      summary: "Gets all sources available on a given machine"
+      description: "Sources on a machine are a list of dopants, group V's, and group III's which are available to growers on that machine."
+      parameters:
+      - in: "path"
+        schema:
+          type: "string"
+        name: "machine"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  sources:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/MachineSource"
+  /machine/{machine}/materials/{SampleID}:
+    get:
+      tags:
+      - "Machines"
+      summary: "Get a list of materials used in a specific sample."
+      description: "Some samples have materials associated with them. This endpoint allows accessing the list of materials associated with a given sample. Note that some samples have no associated materials."
+      parameters:
+      - in: "path"
+        name: "machine"
+        schema:
+          type: "string"
+        description: "Identity of the machine to source the data from."
+        required: true
+      - in: "path"
+        name: "SampleID"
+        schema:
+          type: "string"
+        description: "ID of the sample to retrieve materials from."
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  materiwals:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Material"
+  /machine/{machine}/growths:
+    get:
+      tags:
+      - "Machines"
+      summary: "Access growth records from a machine's database."
+      description: "All query parameters are optional and used for filtering (limiting) results."
+      parameters:
+      - in: "path"
+        name: "machine"
+        schema:
+          type: "string"
+        description: "Identity the machine to source the data from."
+        required: true
+      - in: "query"
+        name: "sampleID"
+        schema:
+          type: "string"
+        description: "ID of the sample desired."
+      - in: "query"
+        name: "grower"
+        schema:
+          type: "string"
+        description: "Name of the LASE member who grew the sample. Valid LASE names can be found in /settings/members, and members who have grown samples are accessible at /settings/growers."
+      - in: "query"
+        name: "substrate"
+        schema:
+          type: "string"
+        description: "Substrate used in the sample's growth."
+      - in: "query"
+        name: "keywords"
+        schema:
+          type: "string"
+        description: "Keywords which should make an appearance in the growth's record."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  results:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Growth"
+    put:
+      tags:
+      - "Machines"
+      summary: "Add a new growth record to the database."
+      description: "Insertion of a growth record requires three things as shown in the body below: the growth record, a list of recipes used, and a list of materials used. If not applicable, these recipe and material lists may be empty."
+      parameters:
+      - in: "path"
+        name: "machine"
+        schema:
+          type: "string"
+        description: "Identity the machine to send the data to."
+        required: true
+      requestBody:
+        description: "Details of the growth record should be provided in the request body."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                growth:
+                  $ref: "#/components/schemas/GrowthSansID"
+                recipes:
+                  type: "array"
+                  items:
+                    $ref: "#/components/schemas/RecipeSansID"
+                materials:
+                  type: "array"
+                  items:
+                    $ref: "#/components/schemas/MaterialSansID"
+      responses:
+        200:
+          description: "Successful insertion. The ID field is what the new record was assigned after it was inserted."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessfulInsertResponse"
+  /machine/{machine}/growths/{SampleID}:
+    delete:
+      tags:
+      - "Machines"
+      summary: "Remove a growth record from the database."
+      description: "Removing a growth record will also remove any associated recipes and materials used in the record."
+      parameters:
+      - in: "path"
+        name: "machine"
+        schema:
+          type: "string"
+        required: true
+      - in: "path"
+        name: "SampleID"
+        schema:
+          type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  /machine/{machine}/recipe/{SampleID}:
+    get:
+      tags:
+      - "Machines"
+      summary: "Get a list of recipes used in a specific sample."
+      description: "Retrieves a list of recipes associated with a specific sample. Some samples have multiple recipes associated with them."
+      parameters:
+      - in: "path"
+        name: "machine"
+        schema:
+          type: "string"
+        required: true
+      - in: "path"
+        name: "SampleID"
+        schema:
+          type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  recipes:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Recipe"
+  
+  
+  /settings/growers:
+    get:
+      tags:
+      - "Settings"
+      summary: "Retrieve a list of grower names."
+      description: "Gets the list of members who have grower status. Results are returned with names only."
+      parameters:
+      - in: "query"
+        name: "active"
+        schema:
+          type: "boolean"
+        description: "To access only active growers, set this field to true. If this is not set or false, all growers, regardless of active status, will be retrieved."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  growers:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Grower"
+  /settings/members:
+    get:
+      tags:
+      - "Settings"
+      summary: "Retrieve a list of all LASE members."
+      description: "Includes all members, even those who are marked as inactive or a non-grower."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  members:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Member"
+  /settings/substrates:
+    get:
+      tags:
+      - "Settings"
+      summary: "Retrieve the set of available substrates."
+      description: "The retrieval of this list of available substrates is not machine-dependent, but the substrates avaialble to growers does vary based on machine. Not all machines have access to all substrates in this list."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  substrates:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Substrate"
+  /settings/machines:
+    get:
+      tags:
+      - "Settings"
+      summary: "Retrieve the set of machines interacting with the database."
+      description: "Items present in this list constitute the set of valid names passable to endpoints or fields requesting a `{machine}`."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  machines:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Machine"
+  
+  
+  /wafers/sizes:
+    get:
+      tags:
+      - "Wafers"
+      summary: "Retrieve the set of available wafer/substrate sizes."
+      description: "Shows all different wafer/substrate sizes available to machines in the system."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  sizes:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/SubstrateSize"
+  /wafers/{substrate}:
+    get:
+      tags:
+      - "Wafers"
+      summary: "View logs for a given wafer type."
+      description: ""
+      parameters:
+      - in: "path"
+        name: "substrate"
+        schema:
+          type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  entries:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/WaferLog"
+    put:
+      tags:
+      - "Wafers"
+      summary: "Add a record to a wafer's log."
+      description: ""
+      parameters:
+      - in: "path"
+        name: "substrate"
+        schema:
+          type: "string"
+        required: true
+      requestBody:
+        description: ""
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                entry:
+                  $ref: "#/components/schemas/WaferLogSansID"
+      responses:
+        200:
+          description: "OK. Record inserted successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessfulInsertResponse"
+        422:
+          description: "Invalid types provided for one or more fields. Ensure timestamp follows the time format `YYYY-MM-DD HH:MM:SS`, wafers_added is a number, and notes is a valid note type (listed in the WaferLog model)."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  /wafers/{substrate}/id/{id}:
+    delete:
+      tags:
+      - "Wafers"
+      summary: "Remove a record from a wafer's log."
+      description: ""
+      parameters:
+      - in: "path"
+        name: "substrate"
+        schema:
+          type: "string"
+        required: true
+      - in: "path"
+        name: "id"
+        schema:
+          type: "integer"
+        required: true
+      responses:
+        200:
+          description: "OK. Record removed."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  /wafers/{substrate}/recent/{days}:
+    get:
+      tags:
+      - "Wafers"
+      summary: "View recent (n-day-old) logs for a given wafer type."
+      description: "Access only logs which are more recent than n days ago, where n is {days} from the path."
+      parameters:
+      - in: "path"
+        name: "substrate"
+        schema:
+          type: "string"
+        required: true
+      - in: "path"
+        name: "days"
+        schema:
+          type: "integer"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  entries:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/WaferLog"
+        422:
+          description: "Unprocessable Entity. Verify substrate is a valid wafer type. If the provided days is NaN, the default of 14 days is used."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  
+  
+  /publications:
+    get:
+      tags:
+      - "Publications"
+      summary: "Retrieve a list of all LASE related publications."
+      description: "All official publications involving LASE operations. Includes articles, journals, etc."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  publications:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Publication"
+    put:
+      tags:
+      - "Publications"
+      summary: "Add a new publication to the database."
+      description: "New publications involving LASE should be added to the database so they may be displayed elsewhere."
+      requestBody:
+        description: "Details of the publication are specified in the request body as shown below."
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                publication:
+                  $ref: "#/components/schemas/Publication"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  /publications/{id}:
+    delete:
+      tags:
+      - "Publications"
+      summary: "Remove a publication from the database."
+      description: "If a publication is removed from circulation or is otherwise wrongly in the publications database, it can be removed via this method."
+      parameters:
+      - in: "path"
+        schema:
+          type: "integer"
+        name: "id"
+        description: "ID of the publication to be deleted"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  /publications/types:
+    get:
+      tags:
+      - "Publications"
+      summary: "Retrieve the list of supported/understood publication types."
+      description: "In order to display citations correctly, the database must know how to work with different publication types. The types known to the database and the structure they expect are accessible here."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  types:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/PublicationDescriptor"
+  
+  
+  /maintenance:
+    get:
+      tags:
+      - "Maintenance"
+      summary: "Access the list of maintenance records on the machines."
+      description: "When maintenance is performed on the various machines, it is logged here with a maintenance record."
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  records:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/MaintenanceRecord"
+    put:
+      tags:
+      - "Maintenance"
+      summary: "Add a new maintenance record to the database."
+      description: "When maintenance is performed, add a record of it and any material sources added/removed/reconciled with this endpoint."
+      requestBody:
+        description: "Maintenance Record"
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                record:
+                  $ref: "#/components/schemas/MaintenanceRecord"
+                sources:
+                  type: "array"
+                  items:
+                    $ref: "#/components/schemas/MaintenanceSource"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+  /maintenance/{RecordID}:
+    get:
+      tags:
+      - "Maintenance"
+      summary: "Access the sources from a particular maintenance record."
+      description: "Some maintenance records have associated sources. These are materials which were accessed in some way during the maintenance, such as a material refill. Not all maintenance records work with materials, so some maintenance records will produce an empty list of sources."
+      parameters:
+      - in: "path"
+        name: "RecordID"
+        schema:
+          type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  statusCode:
+                    type: "integer"
+                  sources:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/MaintenanceSource"
+    delete:
+      tags:
+      - "Maintenance"
+      summary: "Remove a maintenance record from the database."
+      description: "When a maintenance record is removed from the system, any sources associated with that record are also removed."
+      parameters:
+      - in: "path"
+        name: "RecordID"
+        schema:
+          type: "string"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicMessageResponse"
+
+
+components:
+  schemas:
+    Growth:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        SampleID:
+          type: "string"
+        Grower:
+          type: "string"
+        Machine:
+          type: "string"
+        Date:
+          type: "string"
+        HolderID:
+          type: "string"
+        GrowthNum:
+          type: "string"
+        Substrate:
+          type: "string"
+        SubstrateSize:
+          type: "string"
+        GaTip:
+          type: "string"
+        GaBase:
+          type: "string"
+        GaFlux:
+          type: "string"
+        InTip:
+          type: "string"
+        InBase:
+          type: "string"
+        InFlux:
+          type: "string"
+        AlBase:
+          type: "string"
+        AlFlux:
+          type: "string"
+        Er:
+          type: "string"
+        ErFlux:
+          type: "string"
+        Si:
+          type: "string"
+        Be:
+          type: "string"
+        GaTe:
+          type: "string"
+        AsSub:
+          type: "string"
+        AsCrk:
+          type: "string"
+        AsValve:
+          type: "string"
+        AsFlux:
+          type: "string"
+        SbSub:
+          type: "string"
+        SbCrk:
+          type: "string"
+        SbValve:
+          type: "string"
+        SbFlux:
+          type: "string"
+        NRF:
+          type: "string"
+        ReflectedRF:
+          type: "string"
+        NFlow:
+          type: "string"
+        ForlinePressure:
+          type: "string"
+        PyroDeox:
+          type: "string"
+        TCDeox:
+          type: "string"
+        PyroGrowth:
+          type: "string"
+        TCGrowth:
+          type: "string"
+        GCPressure:
+          type: "string"
+        BFBackground:
+          type: "string"
+        HVP:
+          type: "string"
+        PyroOffset:
+          type: "string"
+        Description:
+          type: "string"
+        Ga_Tip:
+          type: "string"
+        Ga_Base:
+          type: "string"
+        Ga_Flux:
+          type: "string"
+        In_Tip:
+          type: "string"
+        In_Base:
+          type: "string"
+        In_Flux:
+          type: "string"
+        Al_Base:
+          type: "string"
+        Al_Flux:
+          type: "string"
+        La_Temp:
+          type: "string"
+        La_Flux:
+          type: "string"
+        Lu_Temp:
+          type: "string"
+        Lu_Flux:
+          type: "string"
+        As_Sub:
+          type: "string"
+        As_Crk:
+          type: "string"
+        Chamber_Background:
+          type: "string"
+        BF_Background:
+          type: "string"
+        Bi_Temp:
+          type: "string"
+        Bi_Flux:
+          type: "string"
+        Bi_Tip:
+          type: "string"
+        Bi_Base:
+          type: "string"
+        Gd_Temp:
+          type: "string"
+        Gd_Flux:
+          type: "string"
+        B_Temp:
+          type: "string"
+        B_Flux:
+          type: "string"
+        waferTracked:
+          type: "string"
+        GaP_Temp:
+          type: "string"
+        GaP_Flux:
+          type: "string"
+    
+    Publication:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        jabref_eid:
+          type: "string"
+        typeID:
+          type: "integer"
+        citeKey:
+          type: "string"
+        author:
+          type: "string"
+        title:
+          type: "string"
+        journal:
+          type: "string"
+        day:
+          type: "string"
+        dayFiled:
+          type: "string"
+        month:
+          type: "string"
+        monthFiled:
+          type: "string"
+        year:
+          type: "string"
+        yearFiled:
+          type: "string"
+        volume:
+          type: "string"
+        pages:
+          type: "string"
+        number:
+          type: "string"
+        eid:
+          type: "string"
+        note:
+          type: "string"
+        crossref:
+          type: "string"
+        keywords:
+          type: "string"
+        doi:
+          type: "string"
+        url:
+          type: "string"
+        file:
+          type: "string"
+        citeseeurl:
+          type: "string"
+        pdf:
+          type: "string"
+        abstract:
+          type: "string"
+        comment:
+          type: "string"
+        owner:
+          type: "string"
+        timestamp:
+          type: "string"
+        review:
+          type: "string"
+        search:
+          type: "string"
+        publisher:
+          type: "string"
+        editor:
+          type: "string"
+        series:
+          type: "string"
+        address:
+          type: "string"
+        edition:
+          type: "string"
+        howPublished:
+          type: "string"
+        lastChecked:
+          type: "string"
+        bookTitle:
+          type: "string"
+        organization:
+          type: "string"
+        language:
+          type: "string"
+        chapter:
+          type: "string"
+        type:
+          type: "string"
+        school:
+          type: "string"
+        nationality:
+          type: "string"
+        assignee:
+          type: "string"
+        institution:
+          type: "string"
+        revisor:
+          type: "string"
+    PublicationDescriptor:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        label:
+          $ref: "#/components/schemas/PubEnum"
+        author:
+          $ref: "#/components/schemas/PubEnum"
+        title:
+          $ref: "#/components/schemas/PubEnum"
+        journal:
+          $ref: "#/components/schemas/PubEnum"
+        year:
+          $ref: "#/components/schemas/PubEnum"
+        volume:
+          $ref: "#/components/schemas/PubEnum"
+        pages:
+          $ref: "#/components/schemas/PubEnum"
+        number:
+          $ref: "#/components/schemas/PubEnum"
+        month:
+          $ref: "#/components/schemas/PubEnum"
+        eid:
+          $ref: "#/components/schemas/PubEnum"
+        note:
+          $ref: "#/components/schemas/PubEnum"
+        crossref:
+          $ref: "#/components/schemas/PubGen"
+        keywords:
+          $ref: "#/components/schemas/PubGen"
+        doi:
+          $ref: "#/components/schemas/PubGen"
+        url:
+          $ref: "#/components/schemas/PubGen"
+        file:
+          $ref: "#/components/schemas/PubGen"
+        citeseeurl:
+          $ref: "#/components/schemas/PubGen"
+        pdf:
+          $ref: "#/components/schemas/PubGen"
+        abstract:
+          $ref: "#/components/schemas/PubGen"
+        comment:
+          $ref: "#/components/schemas/PubGen"
+        owner:
+          $ref: "#/components/schemas/PubGen"
+        timestamp:
+          $ref: "#/components/schemas/PubGen"
+        review:
+          $ref: "#/components/schemas/PubGen"
+        search:
+          $ref: "#/components/schemas/PubUti"
+        publisher:
+          $ref: "#/components/schemas/PubEnum"
+        editor:
+          $ref: "#/components/schemas/PubEnum"
+        series:
+          $ref: "#/components/schemas/PubEnum"
+        address:
+          $ref: "#/components/schemas/PubEnum"
+        edition:
+          $ref: "#/components/schemas/PubEnum"
+        howPublished:
+          $ref: "#/components/schemas/PubEnum"
+        lastChecked:
+          $ref: "#/components/schemas/PubEnum"
+        bookTitle:
+          $ref: "#/components/schemas/PubEnum"
+        organization:
+          $ref: "#/components/schemas/PubEnum"
+        language:
+          $ref: "#/components/schemas/PubEnum"
+        chapter:
+          $ref: "#/components/schemas/PubEnum"
+        type:
+          $ref: "#/components/schemas/PubEnum"
+        school:
+          $ref: "#/components/schemas/PubEnum"
+        nationality:
+          $ref: "#/components/schemas/PubEnum"
+        yearFiled:
+          $ref: "#/components/schemas/PubEnum"
+        assignee:
+          $ref: "#/components/schemas/PubEnum"
+        day:
+          $ref: "#/components/schemas/PubEnum"
+        dayFiled:
+          $ref: "#/components/schemas/PubEnum"
+        monthFiled:
+          $ref: "#/components/schemas/PubEnum"
+        institution:
+          $ref: "#/components/schemas/PubEnum"
+        revisor:
+          $ref: "#/components/schemas/PubEnum"
+        
+    WaferLog:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        timestamp:
+          type: "string"
+        wafersAdded:
+          type: "number"
+        notes:
+          type: "string"
+          enum:
+          - "add"
+          - "growth"
+          - "non-growth"
+          - "reconcile"
+    Machine:
+      type: "string"
+      description: "Valid Machine names can be found at /settings/machines"
+    Substrate:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        substrate:
+          type: "string"
+        latticeConstant:
+          type: "string"
+        size:
+          type: "integer"
+  
+    SuccessfulInsertResponse:
+      type: "object"
+      properties:
+        statusCode:
+          type: "integer"
+        id:
+          type: "integer"
+    BasicMessageResponse:
+      type: "object"
+      properties:
+        statusCode:
+          type: "integer"
+        message:
+          type: "string"
+    
+    Recipe:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        SampleID:
+          type: "string"
+        Type:
+          type: "string"
+        Recipe:
+          type: "string"
+    RecipeSansID:
+      type: "object"
+      properties:
+        SampleID:
+          type: "string"
+        Type:
+          type: "string"
+        Recipe:
+          type: "string"
+    
+    Material:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        SampleID:
+          type: "string"
+        GrowthNum:
+          type: "integer"
+        SubstrateTemp:
+          type: "string"
+        SubstrateTC:
+          type: "string"
+        Name:
+          type: "string"
+        Description:
+          type: "string"
+        InShutter:
+          type: "string"
+        GaShutter:
+          type: "string"
+        AlShutter:
+          type: "string"
+        ErShutter:
+          type: "string"
+        SiShutter:
+          type: "string"
+        SiTemp:
+          type: "string"
+        BeShutter:
+          type: "string"
+        BeTemp:
+          type: "string"
+        GaTeShutter:
+          type: "string"
+        GaTeTemp:
+          type: "string"
+        AsShutter:
+          type: "string"
+        AsValve:
+          type: "string"
+        AsFlux:
+          type: "string"
+        SbShutter:
+          type: "string"
+        SbValve:
+          type: "string"
+        SbFlux:
+          type: "string"
+        NShutter:
+          type: "string"
+        NFlow:
+          type: "string"
+        NPower:
+          type: "string"
+        RedirectedRF:
+          type: "string"
+        ForlinePressure:
+          type: "string"
+        NOptical:
+          type: "string"
+        mat_name:
+          type: "string"
+        nat_description:
+          type: "string"
+        As_valve:
+          type: "string"
+        As_flux:
+          type: "string"
+        Si_temp:
+          type: "string"
+        Be_temp:
+          type: "string"
+        mat_Pyro:
+          type: "string"
+        mat_TC:
+          type: "string"
+        mat_Rot:
+          type: "string"
+        GaTe_temp:
+          type: "string"
+    MaterialSansID:
+      type: "object"
+      properties:
+        SampleID:
+          type: "string"
+        GrowthNum:
+          type: "integer"
+        SubstrateTemp:
+          type: "string"
+        SubstrateTC:
+          type: "string"
+        Name:
+          type: "string"
+        Description:
+          type: "string"
+        InShutter:
+          type: "string"
+        GaShutter:
+          type: "string"
+        AlShutter:
+          type: "string"
+        ErShutter:
+          type: "string"
+        SiShutter:
+          type: "string"
+        SiTemp:
+          type: "string"
+        BeShutter:
+          type: "string"
+        BeTemp:
+          type: "string"
+        GaTeShutter:
+          type: "string"
+        GaTeTemp:
+          type: "string"
+        AsShutter:
+          type: "string"
+        AsValve:
+          type: "string"
+        AsFlux:
+          type: "string"
+        SbShutter:
+          type: "string"
+        SbValve:
+          type: "string"
+        SbFlux:
+          type: "string"
+        NShutter:
+          type: "string"
+        NFlow:
+          type: "string"
+        NPower:
+          type: "string"
+        RedirectedRF:
+          type: "string"
+        ForlinePressure:
+          type: "string"
+        NOptical:
+          type: "string"
+        mat_name:
+          type: "string"
+        nat_description:
+          type: "string"
+        As_valve:
+          type: "string"
+        As_flux:
+          type: "string"
+        Si_temp:
+          type: "string"
+        Be_temp:
+          type: "string"
+        mat_Pyro:
+          type: "string"
+        mat_TC:
+          type: "string"
+        mat_Rot:
+          type: "string"
+        GaTe_temp:
+          type: "string"
+    
+    GrowthSansID:
+      type: "object"
+      properties:
+        SampleID:
+          type: "string"
+        Grower:
+          type: "string"
+        Machine:
+          type: "string"
+        Date:
+          type: "string"
+        HolderID:
+          type: "string"
+        GrowthNum:
+          type: "string"
+        substrate:
+          type: "string"
+        substrateSize:
+          type: "string"
+        GaTip:
+          type: "string"
+        GaBase:
+          type: "string"
+        GaFlux:
+          type: "string"
+        InTip:
+          type: "string"
+        InBase:
+          type: "string"
+        InFlux:
+          type: "string"
+        AlBase:
+          type: "string"
+        AlFlux:
+          type: "string"
+        Er:
+          type: "string"
+        ErFlux:
+          type: "string"
+        Si:
+          type: "string"
+        Be:
+          type: "string"
+        GaTe:
+          type: "string"
+        AsSub:
+          type: "string"
+        AsCrk:
+          type: "string"
+        AsValve:
+          type: "string"
+        AsFlux:
+          type: "string"
+        SbSub:
+          type: "string"
+        SbCrk:
+          type: "string"
+        SbValve:
+          type: "string"
+        SbFlux:
+          type: "string"
+        NRF:
+          type: "string"
+        ReflectedRF:
+          type: "string"
+        NFlow:
+          type: "string"
+        ForlinePressure:
+          type: "string"
+        PyroDeox:
+          type: "string"
+        TCDeox:
+          type: "string"
+        PyroGrowth:
+          type: "string"
+        TCGrowth:
+          type: "string"
+        GCPressure:
+          type: "string"
+        BFBackground:
+          type: "string"
+        HVP:
+          type: "string"
+        PyroOffset:
+          type: "string"
+        Description:
+          type: "string"
+        Ga_Tip:
+          type: "string"
+        Ga_Base:
+          type: "string"
+        Ga_Flux:
+          type: "string"
+        In_Tip:
+          type: "string"
+        In_Base:
+          type: "string"
+        In_Flux:
+          type: "string"
+        Al_Base:
+          type: "string"
+        Al_Flux:
+          type: "string"
+        La_Temp:
+          type: "string"
+        La_Flux:
+          type: "string"
+        Lu_Temp:
+          type: "string"
+        Lu_Flux:
+          type: "string"
+        As_Sub:
+          type: "string"
+        As_Crk:
+          type: "string"
+        Chamber_Background:
+          type: "string"
+        BF_Background:
+          type: "string"
+        Bi_Temp:
+          type: "string"
+        Bi_Flux:
+          type: "string"
+        Bi_Tip:
+          type: "string"
+        Bi_Base:
+          type: "string"
+        Gd_Temp:
+          type: "string"
+        Gd_Flux:
+          type: "string"
+        B_Temp:
+          type: "string"
+        B_Flux:
+          type: "string"
+        waferTracked:
+          type: "string"
+        GaP_Temp:
+          type: "string"
+        GaP_Flux:
+          type: "string"
+    MachineSource:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        source:
+          type: "string"
+        type:
+          type: "string"
+        active:
+          type: "boolean"
+        temp_name:
+          type: "string"
+        idle_temp:
+          type: "string"
+        gr_cal:
+          type: "string"
+        sto:
+          type: "integer"
+        tip:
+          type: "integer"
+        tip_idle:
+          type: "string"
+        base:
+          type: "integer"
+        base_idle:
+          type: "string"
+        flux:
+          type: "integer"
+        valve:
+          type: "integer"
+        valve_idle:
+          type: "string"
+        sub:
+          type: "integer"
+        sub_idle:
+          type: "string"
+        crk:
+          type: "integer"
+        crk_idle:
+          type: "string"
+    
+    Grower:
+      type: "string"
+    
+    Member:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        active:
+          type: "boolean"
+        grower:
+          type: "boolean"
+    
+    SubstrateSize:
+      type: "string"
+    
+    MaintenanceSource:
+      type: "object"
+      properties:
+        record_id:
+          type: "string"
+        date:
+          type: "string"
+        source:
+          type: "string"
+        amount:
+          type: "number"
+        system:
+          $ref: "#/components/schemas/Machine"
+    MaintenanceRecord:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        date:
+          type: "string"
+        system:
+          $ref: "#/components/schemas/Machine"
+        p1:
+          type: "string"
+        p2:
+          type: "string"
+        summary:
+          type: "string"
+        issues:
+          type: "string"
+        future:
+          type: "string"
+        notes:
+          type: "string"
+        recorder:
+          type: "string"
+    
+    WaferLogSansID:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+        wafersAdded:
+          type: "number"
+        notes:
+          type: "string"
+          enum:
+          - "add"
+          - "growth"
+          - "non-growth"
+          - "reconcile"
+    
+    PubUti:
+      type: "string"
+      enum:
+      - "uti"
+    PubGen:
+      type: "string"
+      enum:
+      - "gen"
+    PubEnum:
+      type: "string"
+      enum:
+      - "req"
+      - "opt"
+      - ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
