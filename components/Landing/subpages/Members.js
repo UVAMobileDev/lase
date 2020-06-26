@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions, Linking } from 'react-native';
 
 //header image
 const membersImage = {
   uri: 'https://lase.mer.utexas.edu/images/group2019.jpg',
-  width: 500,
-  height: 500,
+  width: 600,
+  height: 400,
 };
 
 //principal investigator's infomation
@@ -20,15 +20,20 @@ const PrincipalInvestigator = [
     name: 'Seth R. Bank',
     title: 'Cullen Trust for Higher Education Endowed Professorship in Engineering #6',
     email: 'sbank_at_ece.utexas.edu',
+    emaillink: 'mailto:sbank_at_ece.utexas.edu',
     phone: '(512) 471-9669',
     cv: 'SRB_CV.pdf',
+    cvlink: 'https://lase.mer.utexas.edu/documents/SRB_CV.pdf',
     scholar: 'Profile',
+    scholarlink: 'http://scholar.google.com/citations?user=Ey4P2ywAAAAJ',
     bio: `
-    Seth Bank received the B.S. degree from the University of Illinois at Urbana-Champaign in 1999 and the M.S. and Ph.D. degrees in 2003 and 2006 from Stanford University, all in electrical engineering. In 2006, he was a post-doctoral scholar at the University of California at Santa Barbara. He joined the faculty of the University of Texas at Austin in 2007, where he is currently a full professor and holder of Cullen Trust for Higher Education Endowed Professorship in Engineering #6.
+Seth Bank received the B.S. degree from the University of Illinois at Urbana-Champaign in 1999 and the M.S. and Ph.D. degrees in 2003 and 2006 from Stanford University, all in electrical engineering. In 2006, he was a post-doctoral scholar at the University of California at Santa Barbara. He joined the faculty of the University of Texas at Austin in 2007, where he is currently a full professor and holder of Cullen Trust for Higher Education Endowed Professorship in Engineering #6.
 
-    His current research interests are centered on the growth of analog/digital alloy semiconductors (e.g. AlInAsSb) and metal/semiconductor hetero- and nano-structures (e.g. ErAs nanoparticles in GaAs) and their application to plasmonics, silicon-based lasers, avalanche photodiodes, mid-IR lasers, sensors, THz generation and sensing, and high-speed transistors. He has coauthored >350 papers and presentations that have been cited >4500 times, with a Hirsch-Index of 36.
-    His group has received 5 Best Paper Awards and he has received the 2008 Young Investigator Award at the North American MBE Conference (NAMBE), a 2008 Young Faculty Award from DARPA, the 2009 Young Scientist Award from the International Symposium on Compound Semiconductors (ISCS), a Presidential Early Career Award for Scientists and Engineers (PECASE) in 2009 (nominated by ARO), an AFOSR Young Investigator Program (YIP) Award in 2009, an ONR Young Investigator Program (YIP) Award in 2010, a Faculty Early Career Development (CAREER) Program Award from the NSF in 2010, as well as the 2019 Gordon T. Lepley IV Memorial Teaching Award from UT.
-    He has been the Program Chair of the AVS North American MBE meeting (NAMBE), as well as a Program and General Chair for the IEEE/OSA Conference on Lasers and Electro-Optical (CLEO) and the IEEE Device Research Conference (DRC). He is currently a Board Member of IEEE DRC and was a Steering Committee member of OSA/IEEE CLEO; he is an active member of the Electronic Materials Conference (EMC) committee and has helped organize other conferences, including the IEEE Electron Device Meeting (IEDM), InP and Related Materials (IPRM), and the IEEE Photonics Society Annual Meeting (IPC).`
+His current research interests are centered on the growth of analog/digital alloy semiconductors (e.g. AlInAsSb) and metal/semiconductor hetero- and nano-structures (e.g. ErAs nanoparticles in GaAs) and their application to plasmonics, silicon-based lasers, avalanche photodiodes, mid-IR lasers, sensors, THz generation and sensing, and high-speed transistors. He has coauthored >350 papers and presentations that have been cited >4500 times, with a Hirsch-Index of 36.
+
+His group has received 5 Best Paper Awards and he has received the 2008 Young Investigator Award at the North American MBE Conference (NAMBE), a 2008 Young Faculty Award from DARPA, the 2009 Young Scientist Award from the International Symposium on Compound Semiconductors (ISCS), a Presidential Early Career Award for Scientists and Engineers (PECASE) in 2009 (nominated by ARO), an AFOSR Young Investigator Program (YIP) Award in 2009, an ONR Young Investigator Program (YIP) Award in 2010, a Faculty Early Career Development (CAREER) Program Award from the NSF in 2010, as well as the 2019 Gordon T. Lepley IV Memorial Teaching Award from UT.
+
+He has been the Program Chair of the AVS North American MBE meeting (NAMBE), as well as a Program and General Chair for the IEEE/OSA Conference on Lasers and Electro-Optical (CLEO) and the IEEE Device Research Conference (DRC). He is currently a Board Member of IEEE DRC and was a Steering Committee member of OSA/IEEE CLEO; he is an active member of the Electronic Materials Conference (EMC) committee and has helped organize other conferences, including the IEEE Electron Device Meeting (IEDM), InP and Related Materials (IPRM), and the IEEE Photonics Society Annual Meeting (IPC).`
   }
 ]
 
@@ -38,8 +43,10 @@ const GradStudents = [
         id: '0',
         name: 'Andrew Briggs',
         email: 'abriggs_at_utexas.edu',
+        emaillink: 'mailto:abriggs_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Physics and Mathematics, Bates College 2015 \nM.S. in Electrical Engineering, University of Texas at Austin 2017 \nAndrew is an ECE Ph.D. student studying MBE growth`,
+        education: `B.S. in Physics and Mathematics, Bates College 2015 \nM.S. in Electrical Engineering, University of Texas at Austin 2017`,
+        bio: `Andrew is an ECE Ph.D. student studying MBE growth`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/abriggs.jpg',
             width: 100,
@@ -51,8 +58,10 @@ const GradStudents = [
         id: '1',
         name: 'Rasha El-Jaroudi',
         email: 'reljaroudi_at_utexas.edu',
+        emaillink: 'mailto:reljaroudi_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S.in Electrical Engineering, Georgia Institute of Technology 2015 \nFulbright Research Grant, United Arab Emirates 2015-2016 \nM.S. in Electrical Engineering, University of Texas at Austin 2018 \nRasha is an ECE Ph.D. student studying strain engineering and highly-mismatched alloys.`,
+        education: `B.S.in Electrical Engineering, Georgia Institute of Technology 2015 \nFulbright Research Grant, United Arab Emirates 2015-2016 \nM.S. in Electrical Engineering, University of Texas at Austin 2018`,
+        bio: `Rasha is an ECE Ph.D. student studying strain engineering and highly-mismatched alloys.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/reljaroudi2.jpg',
             width: 100,
@@ -64,8 +73,10 @@ const GradStudents = [
         id: '2',
         name: 'Ashlee Garcia',
         email: 'ashgarcia_at_utexas.edu',
+        emaillink: 'mailto:ashgarcia_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Electrical Engineering and Computer Sciences, University of California, Berkeley 2019 \nAshlee is an ECE Ph.D. student studying MBE growth.`,
+        education: `B.S. in Electrical Engineering and Computer Sciences, University of California, Berkeley 2019`,
+        bio: `Ashlee is an ECE Ph.D. student studying MBE growth.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/AGarcia.jpg',
             width: 100,
@@ -77,8 +88,10 @@ const GradStudents = [
         id: '3',
         name: 'Hardik Jain',
         email: 'hardikbjain_at_utexas.edu',
+        emaillink: 'mailto:hardikbjain_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.E.(Hons.) in Electronics and Instrumentation Engineering, Birla Institute of Technology and Science 2011 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2016 \nHardik is a PhD student in the ECE department of UT Austin studying analog photonics and interference cancelation for wireless and wired communication system.`,
+        education: `B.E.(Hons.) in Electronics and Instrumentation Engineering, Birla Institute of Technology and Science 2011 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2016`,
+        bio: `Hardik is a PhD student in the ECE department of UT Austin studying analog photonics and interference cancelation for wireless and wired communication system.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/HJain.jpg',
             width: 100,
@@ -90,8 +103,10 @@ const GradStudents = [
         id: '4',
         name: 'Farzad Mokhtari Koushyar',
         email: 'mokhtari_at_utexas.edu',
+        emaillink: 'mailto:mokhtari_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Electrical Engineering at Bu-Ali Sina University, 2008-2012 \nM.S. in Microwave and Optics Engineering at Sharif University of Technology, 2012-2015 \nFarzad is a Ph.D. student in the ECE department of UT Austin studying high-speed and highly-linear microwave photonics, since 2017.`,
+        education: `B.S. in Electrical Engineering at Bu-Ali Sina University, 2008-2012 \nM.S. in Microwave and Optics Engineering at Sharif University of Technology, 2012-2015`,
+        bio: `Farzad is a Ph.D. student in the ECE department of UT Austin studying high-speed and highly-linear microwave photonics, since 2017.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/Farzard.png',
             width: 100,
@@ -103,8 +118,10 @@ const GradStudents = [
         id: '5',
         name: 'Thomas Leonard',
         email: 'taleona3_at_ncsu.edu',
+        emaillink: 'mailto:taleona3_at_ncsu.edu',
         phone: '(512) 471-5383',
-        bio: `B.S.in Materials Science and Engineering, North Carolina State University 2018 \nThomas is a Ph.D. student studying the fabrication of emerging materials. As an NNCI REU at UT during Summer 2017, Thomas optically characterized encapsulated high-contrast dielectric gratings.`,
+        education: `B.S.in Materials Science and Engineering, North Carolina State University 2018`,
+        bio: `Thomas is a Ph.D. student studying the fabrication of emerging materials. As an NNCI REU at UT during Summer 2017, Thomas optically characterized encapsulated high-contrast dielectric gratings.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/thomas.jpg',
             width: 100,
@@ -116,8 +133,10 @@ const GradStudents = [
         id: '6',
         name: 'Stephen March',
         email: 'sdmarch_at_utexas.edu',
+        emaillink: 'mailto:sdmarch_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Electrical Engineering, Iowa State University 2013 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2016 \nNational Science Foundation Graduate Research Fellow \nStephen spent Summer 2013 in the group as a NNIN REU. He returned to the group as an ECE graduate student after spending 2014 working for IBM and is studying novel photodetector devices and materials grown by MBE.`,
+        education: `B.S. in Electrical Engineering, Iowa State University 2013 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2016 \nNational Science Foundation Graduate Research Fellow`,
+        bio: `Stephen spent Summer 2013 in the group as a NNIN REU. He returned to the group as an ECE graduate student after spending 2014 working for IBM and is studying novel photodetector devices and materials grown by MBE.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/StephenMarch.jpg',
             width: 100,
@@ -129,8 +148,10 @@ const GradStudents = [
         id: '7',
         name: '(Joshua) Andrew McArthur',
         email: 'jandrewmcarthur_at_utexas.edu',
+        emaillink: 'mailto:jandrewmcarthur_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Mechanical Engineering, University of Arkansas 2019 \nIn 2018, as a summer REU student, Andrew studied the optical properties of III-V semiconductor alloys incorporating boron.`,
+        education: `B.S. in Mechanical Engineering, University of Arkansas 2019`,
+        bio: `In 2018, as a summer REU student, Andrew studied the optical properties of III-V semiconductor alloys incorporating boron.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/JoshuaMcArthur.jpg',
             width: 100,
@@ -142,8 +163,10 @@ const GradStudents = [
         id: '8',
         name: 'Qian Meng',
         email: 'qmeng19_at_utexas.edu',
+        emaillink: 'mailto:qmeng19_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S in Microelectronic Science and Engineering, Sichuan University 2018 \nQian is studying the simulation of highly-mismatched III-V alloys.`,
+        education: `B.S in Microelectronic Science and Engineering, Sichuan University 2018`,
+        bio: `Qian is studying the simulation of highly-mismatched III-V alloys.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/Qian_Meng.jpg',
             width: 100,
@@ -155,8 +178,10 @@ const GradStudents = [
         id: '9',
         name: 'Ann Kathryn Rockwell',
         email: 'akrockwell_at_utexas.edu',
+        emaillink: 'mailto:akrockwell_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Physics, University of Alabama 2013 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2016 \nNational Science Foundation Graduate Research Fellow \nAnn Kathryn is an ECE Ph.D. student studying the MBE growth of photonic materials, including AlInAsSb-based avalanche photodetectors.`,
+        education: `B.S. in Physics, University of Alabama 2013 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2016 \nNational Science Foundation Graduate Research Fellow`,
+        bio: `Ann Kathryn is an ECE Ph.D. student studying the MBE growth of photonic materials, including AlInAsSb-based avalanche photodetectors.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/AK_Rockwell_new.jpg',
             width: 100,
@@ -168,8 +193,10 @@ const GradStudents = [
         id: '10',
         name: 'Scott D. Sifferman',
         email: 'Scott.D.Sifferman_at_utexas.edu',
+        emaillink: 'mailto:Scott.D.Sifferman_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S.E in Electrical Engineering, Arizona State University 2004 \nM.S. in Electrical Engineering, Stanford University 2006 \nScott is an ECE Ph.D. student whose research focus is the development and study of devices for mid-infrared and terahertz generation.`,
+        education: `B.S.E in Electrical Engineering, Arizona State University 2004 \nM.S. in Electrical Engineering, Stanford University 2006`,
+        bio: `Scott is an ECE Ph.D. student whose research focus is the development and study of devices for mid-infrared and terahertz generation.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/siff.jpg',
             width: 100,
@@ -181,8 +208,10 @@ const GradStudents = [
         id: '11',
         name: 'Alec M. Skipper',
         email: 'alecskipper_at_utexas.edu',
+        emaillink: 'mailto:alecskipper_at_utexas.edu',
         phone: '(512) 934-3717',
-        bio: `B.S. in Electrical and Computer Engineering, University of Texas at Austin 2018 \nB.A. in East Asian Studies, University of Texas at Austin 2017 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2018 \nAlec is an ECE Ph.D. student who joined the group as an undergraduate and is studying lateral epitaxial overgrowth by MBE.`,
+        education: `B.S. in Electrical and Computer Engineering, University of Texas at Austin 2018 \nB.A. in East Asian Studies, University of Texas at Austin 2017 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2018`,
+        bio: `Alec is an ECE Ph.D. student who joined the group as an undergraduate and is studying lateral epitaxial overgrowth by MBE.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/alec.jpg',
             width: 100,
@@ -194,8 +223,10 @@ const GradStudents = [
         id: '12',
         name: '(Rachel) Corey White',
         email: 'coreywhite_at_utexas.edu',
+        emaillink: 'mailto:coreywhite_at_utexas.edu',
         phone: '(512) 471-5383',
-        bio: `B.S. in Electrical Engineering, North Carolina State University 2019 \nNational Science Foundation Graduate Research Fellow \nCorey is Ph.D. student studying dilute-boride sources and detectors on silicon. As an REU student during Summer 2018, Corey worked on characterizing B-III-V alloys for use as photodetectors.`,
+        education: `B.S. in Electrical Engineering, North Carolina State University 2019 \nNational Science Foundation Graduate Research Fellow`,
+        bio: `Corey is Ph.D. student studying dilute-boride sources and detectors on silicon. As an REU student during Summer 2018, Corey worked on characterizing B-III-V alloys for use as photodetectors.`,
         image: {
             uri: 'https://lase.mer.utexas.edu/images/Cwhite.jpg',
             width: 100,
@@ -281,6 +312,7 @@ const Staff = [
     id: '0',
     name: 'Terry Mattord',
     email: 'tmattord_at_mail.utexas.edu',
+    emaillink: 'mailto:tmattord_at_mail.utexas.edu',
     phone: '(512) 471-1013',
     bio: 'Terry supports the UT-Austin MBE lab. He is a world-recognizezed expert in MBE and ultra-high vacuum equipment and holds several key patents related to the technology of MBE: the valved arsenic cracker, the heated viewport, and several novel effusion cell designs. He has >20 years experience maintaining, upgrading, and supervising the MBE facility at UT-Austin. He has almost 10 years additional experience as a staff member at Perkin-Elmer in their MBE and physical electronics divisions.',
     image: {
@@ -294,6 +326,7 @@ const Staff = [
     id: '1',
     name: 'Christine Wood',
     email: 'christine.wood_at_austin.utexas.edu',
+    emaillink: 'mailto:christine.wood_at_austin.utexas.edu',
     phone: '(512) 232-9007',
     bio: 'Christine is the group Administrative Assistant. In her “spare” time, she keeps the LASE group running smoothly (despite Seth’s best efforts).',
     image: {
@@ -340,7 +373,8 @@ const Postdocs = [
     phone: null,
     website: 'https://www.ee.iitb.ac.in/~akumar/',
     cv: null,
-    bio: `B.Tech. in Electrical Engineering, Indian Institute of Tech. Madras, India 2008 \nM.Tech. in Comm. Engineering, Indian Institute of Tech. Madras, India 2008 \nPh.D. in Electrical and Computer Engineering, University of Texas at Austin 2013 \nKumar was co-supervised with Prof. Sriram Vishwanath and worked on signal processing, electronic dispersion compensation and MIMO for optical fibers. After graduation, he joined the Qualcomm Research to apply advanced modulation techniques to visible light communication links. He is currently an Associate Prof. at IIT-Bombay.`,
+    education: `B.Tech. in Electrical Engineering, Indian Institute of Tech. Madras, India 2008 \nM.Tech. in Comm. Engineering, Indian Institute of Tech. Madras, India 2008 \nPh.D. in Electrical and Computer Engineering, University of Texas at Austin 2013`,
+    bio: `Kumar was co-supervised with Prof. Sriram Vishwanath and worked on signal processing, electronic dispersion compensation and MIMO for optical fibers. After graduation, he joined the Qualcomm Research to apply advanced modulation techniques to visible light communication links. He is currently an Associate Prof. at IIT-Bombay.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/kumar.jpg',
       width: 100,
@@ -352,10 +386,13 @@ const Postdocs = [
     id: '1',
     name: 'Adam Crook (Principal Device Physicist, FLIR)',
     email: 'acrook_at_mail.utexas.edu',
+    emaillink: 'mailto:acrook_at_mail.utexas.edu',
     phone: '(512) 471-5383',
     website: 'lase.ece.utexas.edu/acrook',
     cv: 'AMC_CV.pdf',
-    bio: `B.S. in Electrical and Computer Engineering, UC Santa Barbara 2007 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2009 \nPh.D. in Electrical and Computer Engineering, University of Texas at Austin 2012 \nAdam was an ECE Ph.D. student studying the MBE growth and optical properties of midinfrared compound semiconductor and rare-earth nanocomposite optical materials. Upon graduation, he joined the R&D division at Lockheed Martin in Goleta, CA. Check out a pic of Seth built taken with one of their IR cameras here. He then moved to Raytheon as a program manager, before joining FLIR in 2019 as a Principal Device Physicist.`,
+    cvlink: 'https://lase.mer.utexas.edu/acrook/documents/AMC_CV.pdf',
+    education: `B.S. in Electrical and Computer Engineering, UC Santa Barbara 2007 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2009 \nPh.D. in Electrical and Computer Engineering, University of Texas at Austin 2012`,
+    bio: `Adam was an ECE Ph.D. student studying the MBE growth and optical properties of midinfrared compound semiconductor and rare-earth nanocomposite optical materials. Upon graduation, he joined the R&D division at Lockheed Martin in Goleta, CA. Check out a pic of Seth built taken with one of their IR cameras here. He then moved to Raytheon as a program manager, before joining FLIR in 2019 as a Principal Device Physicist.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/AdamCrook.jpg',
       width: 100,
@@ -367,10 +404,13 @@ const Postdocs = [
     id: '2',
     name: 'Vaishno Devi Dasika (Research Scientist, Cree)',
     email: 'vdasika_at_austin.utexas.edu',
+    emaillink: 'mailto:vdasika_at_austin.utexas.edu',
     phone: '(512) 471-5383',
-    website: 'Here',
+    publications: 'Here',
+    publicationslink: 'http://lase.ece.utexas.edu/publications.php?last=Dasika',
     cv: null,
-    bio: `B.S.E. in Electrical Engineering, University of Michigan, Ann Arbor 2002 \nM.S.E. in Electrical Engineering, University of Michigan, Ann Arbor 2004 \nPh.D. in Electrical Engineering, University of Michigan, Ann Arbor 2010 \nVaishno was a postdoctoral scholar working on the molecular beam epitaxial growth, fabrication, and nanoscale characterization of metal:semiconductor nanocomposites and related materials in collaboration with Prof. Ed Yu. After her postdoc, she joined Texas Instruments in Dallas, TX before moving to Cree as a Research Scientist.`,
+    education: `B.S.E. in Electrical Engineering, University of Michigan, Ann Arbor 2002 \nM.S.E. in Electrical Engineering, University of Michigan, Ann Arbor 2004 \nPh.D. in Electrical Engineering, University of Michigan, Ann Arbor 2010`,
+    bio: `Vaishno was a postdoctoral scholar working on the molecular beam epitaxial growth, fabrication, and nanoscale characterization of metal:semiconductor nanocomposites and related materials in collaboration with Prof. Ed Yu. After her postdoc, she joined Texas Instruments in Dallas, TX before moving to Cree as a Research Scientist.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/vdd.jpg',
       width: 100,
@@ -382,10 +422,12 @@ const Postdocs = [
     id: '3',
     name: 'Daniel Ironside (Tactual Labs)',
     email: 'daniel.ironside_at_utexas.edu',
+    emaillink: 'mailto:daniel.ironside_at_utexas.edu',
     phone: '(512) 471-5383',
     website: null,
     cv: null,
-    bio: `B.S. in Aerospace Engineering, Saint Louis University 2010 \nB.S. in Physics, Saint Louis University 2010 \nM.S. in Electrical Engineering, Washington University in St. Louis 2012 \nPh.D. in Electrical and Computer Engineering, The University of Texas at Austin 2019 \nDan was an ECE PhD student studying the application of new metamaterial functionality to photonic devices. After graduation, he joined Tactual Labs working on human-machine interfaces.`,
+    education: `B.S. in Aerospace Engineering, Saint Louis University 2010 \nB.S. in Physics, Saint Louis University 2010 \nM.S. in Electrical Engineering, Washington University in St. Louis 2012 \nPh.D. in Electrical and Computer Engineering, The University of Texas at Austin 2019`,
+    bio: `Dan was an ECE PhD student studying the application of new metamaterial functionality to photonic devices. After graduation, he joined Tactual Labs working on human-machine interfaces.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/DIronside.jpg',
       width: 100,
@@ -397,10 +439,12 @@ const Postdocs = [
     id: '4',
     name: 'Erica (Krivoy) Davis (Fish & Richardson)',
     email: 'erica.krivoy_at_utexas.edu',
+    emaillink: 'mailto:erica.krivoy_at_utexas.edu',
     phone: '(512) 471-5383',
     website: 'http://emkrivoy.com',
     cv: null,
-    bio: `B.S. Physics, Carnegie Mellon University 2007 \nM.S. Electrical and Computer Engineering, University of Texas at Austin 2010 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2013 \nErica was an ECE PhD student studying the MBE growth and properties of new rare-earth/group-V compounds, including LaAs, LuAs, and LaxLu1-xAs, as well as the applications of these materials to plasmonics, buried transparent contacts, and metamorphic buffer layers. She is now a technical specialist / patent agent with Fish & Richardson, an intellectual property law firm.`,
+    education: `B.S. Physics, Carnegie Mellon University 2007 \nM.S. Electrical and Computer Engineering, University of Texas at Austin 2010 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2013`,
+    bio: `Erica was an ECE PhD student studying the MBE growth and properties of new rare-earth/group-V compounds, including LaAs, LuAs, and LaxLu1-xAs, as well as the applications of these materials to plasmonics, buried transparent contacts, and metamorphic buffer layers. She is now a technical specialist / patent agent with Fish & Richardson, an intellectual property law firm.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/Erica_LASE.jpg',
       width: 100,
@@ -412,10 +456,12 @@ const Postdocs = [
     id: '5',
     name: 'Scott Maddox (Intel)',
     email: 'smaddox_at_utexas.edu',
+    emaillink: 'mailto:smaddox_at_utexas.edu',
     phone: '(512) 471-5383',
     website: null,
     cv: null,
-    bio: `B.S. in Electrical and Computer Engineering, University of Texas at Austin 2009 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2011 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2015 \nAs an ECE PhD student and postdoctoral scholar with the LASE group, Scott researched and developed compound semiconductor materials and devices including InAs and GaSb-based high-gain, low-noise avalanche photodiodes grown by molecular beam epitaxy (MBE). Following his postdoc, he joined the Portland Technology Development (PTD) group at Intel in Hillsboro, OR.`,
+    education: `B.S. in Electrical and Computer Engineering, University of Texas at Austin 2009 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2011 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2015`,
+    bio: `As an ECE PhD student and postdoctoral scholar with the LASE group, Scott researched and developed compound semiconductor materials and devices including InAs and GaSb-based high-gain, low-noise avalanche photodiodes grown by molecular beam epitaxy (MBE). Following his postdoc, he joined the Portland Technology Development (PTD) group at Intel in Hillsboro, OR.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/scott_000.jpg',
       width: 100,
@@ -427,10 +473,12 @@ const Postdocs = [
     id: '6',
     name: 'Kyle McNicholas (MIT Lincoln Laboratory)',
     email: 'kyle.mcnicholas_at_utexas.edu',
+    emaillink: 'mailto:kyle.mcnicholas_at_utexas.edu',
     phone: '(512) 471-5383',
     website: null,
     cv: null,
-    bio: `B.S. in Electrical and Computer Engineering, The Ohio State University 2011 \nM.S. in Electrical and Computer Engineering, The Ohio State University 2012 \nPh.D. in Electrical and Computer Engineering, The University of Texas at Austin 2019 \nAs a PhD student, Kyle studied the growth and properties of highly-mismatched alloys incorporating boron and rare-earth pnictide alloys using molecular beam epitaxy. After graduating, he joined MIT Lincoln Laboratory as a member of the technical staff.`,
+    education: `B.S. in Electrical and Computer Engineering, The Ohio State University 2011 \nM.S. in Electrical and Computer Engineering, The Ohio State University 2012 \nPh.D. in Electrical and Computer Engineering, The University of Texas at Austin 2019`,
+    bio: `As a PhD student, Kyle studied the growth and properties of highly-mismatched alloys incorporating boron and rare-earth pnictide alloys using molecular beam epitaxy. After graduating, he joined MIT Lincoln Laboratory as a member of the technical staff.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/Kyle_McNicholas2.jpg',
       width: 100,
@@ -442,10 +490,12 @@ const Postdocs = [
     id: '7',
     name: 'Hari Nair (Cornell University MSE Dept.)',
     email: 'hnair_at_mail.utexas.edu',
+    emaillink: 'mailto:hnair_at_mail.utexas.edu',
     phone: '(512) 471-5383',
     website: 'uts.cc.utexas.edu/~hnair',
     cv: null,
-    bio: `B.Tech in Engineering Physics, Indian Institute of Technology Madras, India 2006 \nM.S. Electrical and Computer Engineering, University of Texas at Austin 2009 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2013 \nHari was an ECE Ph.D. student that developed a new approach to extend the emission wavelength of mid-infrared diode lasers. After making the group's first laser, he joined Prof Darrell Schlom's lab at Cornell as a postdoctoral scholar.`,
+    education: `B.Tech in Engineering Physics, Indian Institute of Technology Madras, India 2006 \nM.S. Electrical and Computer Engineering, University of Texas at Austin 2009 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2013`,
+    bio: `Hari was an ECE Ph.D. student that developed a new approach to extend the emission wavelength of mid-infrared diode lasers. After making the group's first laser, he joined Prof Darrell Schlom's lab at Cornell as a postdoctoral scholar.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/IMG_2278.JPG',
       width: 100,
@@ -457,10 +507,12 @@ const Postdocs = [
     id: '8',
     name: 'Rodolfo Salas (Lockheed Martin)',
     email: 'rodolfo.salas_at_utexas.edu',
+    emaillink: 'mailto:rodolfo.salas_at_utexas.edu',
     phone: '(512) 471-5383',
     website: null,
     cv: null,
-    bio: `B.S. Electrical Engineering, University of Oklahoma 1999 \nM.S. Electrical Engineering, University of Oklahoma 2006 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2015 \nRodolfo was an ECE Ph.D. student studying the MBE growth and optical properties of RE-As based nanocomposite materials for heterodyne THz generation. After graduation, he moved to Boston, MA and joined MIT Lincoln Labs as a full-time member of the technical staff. He is currently a researcher at Lockheed Martin.`,
+    education: `B.S. Electrical Engineering, University of Oklahoma 1999 \nM.S. Electrical Engineering, University of Oklahoma 2006 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2015`,
+    bio: `Rodolfo was an ECE Ph.D. student studying the MBE growth and optical properties of RE-As based nanocomposite materials for heterodyne THz generation. After graduation, he moved to Boston, MA and joined MIT Lincoln Labs as a full-time member of the technical staff. He is currently a researcher at Lockheed Martin.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/rodolfo_000.jpg',
       width: 100,
@@ -472,10 +524,12 @@ const Postdocs = [
     id: '9',
     name: 'Emily Walker (Intel)',
     email: 'eswalker_at_utexas.edu',
+    emaillink: 'mailto:eswalker_at_utexas.edu',
     phone: '(512) 471-5383',
     website: null,
     cv: null,
-    bio: `B.S. in Materials Science Engineering, Carnegie Mellon University 2012 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2014 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2018 \nEmily was an ECE PhD student studying the MBE growth, transfer, and electronic properties of group-V thin films (Bi and Bi1-xSbx) for spintronic devices. After her PhD, she joined the Components Research group at Intel in Hillsboro, OR.`,
+    education: `B.S. in Materials Science Engineering, Carnegie Mellon University 2012 \nM.S. in Electrical and Computer Engineering, University of Texas at Austin 2014 \nPh.D. Electrical and Computer Engineering, University of Texas at Austin 2018`,
+    bio: `Emily was an ECE PhD student studying the MBE growth, transfer, and electronic properties of group-V thin films (Bi and Bi1-xSbx) for spintronic devices. After her PhD, she joined the Components Research group at Intel in Hillsboro, OR.`,
     image: {
       uri: 'https://lase.mer.utexas.edu/images/EmilyWalker.jpg',
       width: 100,
@@ -798,7 +852,8 @@ const YoungScholars = [
 export default function Members(props) {
 
     return (
-        <View>
+        <View style={styles.container}>
+
             <Text style={styles.header}>Members</Text>
             <View
                 style={{ justifyContent: 'center', alignItems: 'center',}}>
@@ -816,11 +871,11 @@ export default function Members(props) {
                         <Image style={styles.image} source={item.image}/>
                         <View style={styles.textContainer}>
                             <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text>{item.title}</Text>
-                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
+                            <Text style={styles.italic}>{item.title}</Text>
+                            <Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>
                             <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                            <Text style={styles.infoHeader}>CV: <Text style={styles.info}>{item.cv}</Text></Text>
-                            <Text style={styles.infoHeader}>Scholar: <Text style={styles.info}>{item.scholar}</Text></Text>
+                            <Text style={styles.infoHeader}>CV: <Text style={styles.link} onPress={() => Linking.openURL(item.cvlink)}>{item.cv}</Text></Text>
+                            <Text style={styles.infoHeader}>Scholar: <Text style={styles.link} onPress={() => Linking.openURL(item.scholarlink)}>{item.scholar}</Text></Text>
                             <Text style={styles.bio}>{item.bio}</Text>
                         </View>
                     </View>
@@ -828,20 +883,22 @@ export default function Members(props) {
             ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Graduate Students</Text>
             </View>
             {
             //renders the array of grad students in a readable layout
-            //// TODO: don't displat email and phone headers when fields are null
+            //// TODO: don't display email and phone headers when fields are null
             GradStudents.map(item => (
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
                         <View style={styles.textContainer}>
                             <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
+                            <Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>
                             <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
+                            <Text style={styles.bio}>{item.education}</Text>
                             <Text style={styles.bio}>{item.bio}</Text>
                         </View>
                     </View>
@@ -849,6 +906,7 @@ export default function Members(props) {
             ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Undergraduate Students</Text>
             </View>
@@ -867,6 +925,7 @@ export default function Members(props) {
             ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Staff</Text>
             </View>
@@ -878,8 +937,12 @@ export default function Members(props) {
                         <Image style={styles.image} source={item.image}/>
                         <View style={styles.textContainer}>
                             <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
-                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
+                            {
+                            item.email ? (<Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>) : (<View/>)
+                            }
+                            {
+                            item.phone ? (<Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>) : (<View/>)
+                            }
                             <Text style={styles.bio}>{item.bio}</Text>
                         </View>
                     </View>
@@ -887,7 +950,7 @@ export default function Members(props) {
             ))
             }
 
-
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Alumni (Ph.D.'s and Postdocs)</Text>
             </View>
@@ -899,12 +962,22 @@ export default function Members(props) {
                         <Image style={styles.image} source={item.image}/>
                         <View style={styles.textContainer}>
                             <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.infoHeader}>Email: <Text style={styles.link}>{item.email}</Text></Text>
-                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
                             {
-                            item.cv ? (<Text style={styles.infoHeader}>CV: <Text style={styles.link}>{item.cv}</Text></Text>) : (<View/>)
+                            item.email ? (<Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>) : (<View/>)
                             }
-                            <Text style={styles.infoHeader}>Website: <Text style={styles.info}>{item.website}</Text></Text>
+                            {
+                            item.phone ? (<Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>) : (<View/>)
+                            }
+                            {
+                            item.cv ? (<Text style={styles.infoHeader}>CV: <Text style={styles.link} onPress={() => Linking.openURL(item.cvlink)}>{item.cv}</Text></Text>) : (<View/>)
+                            }
+                            {
+                            item.website ? (<Text style={styles.infoHeader}>Website: <Text style={styles.link} onPress={() => Linking.openURL(item.website)}>{item.website}</Text></Text>) : (<View/>)
+                            }
+                            {
+                            item.publications ? (<Text style={styles.infoHeader}>Publications: <Text style={styles.link} onPress={() => Linking.openURL(item.publicationslink)}>{item.publications}</Text></Text>) : (<View/>)
+                            }
+                            <Text style={styles.bio}>{item.education}</Text>
                             <Text style={styles.bio}>{item.bio}</Text>
                         </View>
                     </View>
@@ -912,6 +985,7 @@ export default function Members(props) {
                 ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Alumni (Master's)</Text>
             </View>
@@ -933,6 +1007,7 @@ export default function Members(props) {
                 ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Alumni (Teacher Researchers)</Text>
             </View>
@@ -951,6 +1026,7 @@ export default function Members(props) {
                 ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Alumni (Undergraduate Researchers)</Text>
             </View>
@@ -969,6 +1045,7 @@ export default function Members(props) {
                 ))
             }
 
+            <View style={styles.separator}/>
             <View>
                 <Text style={styles.sectionHeader}>Alumni (Young Scholars)</Text>
             </View>
@@ -994,15 +1071,18 @@ export default function Members(props) {
 
 const styles = StyleSheet.create({
 
-  header: {
-    color: '#c60',
-    fontSize: 40,
-  },
+    container: {backgroundColor: 'white'},
 
-  imageTextContainer: {
+    header: {
+    color: '#c60',
+    fontSize: 35,
+    padding: 20,
+    },
+
+    imageTextContainer: {
     flexDirection: 'row',
     padding: 20,
-  },
+    },
 
     textContainer: {
         flex: 1,
@@ -1013,7 +1093,7 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       fontSize: 15,
       marginLeft: 20,
-      paddingTop: 10,
+      paddingTop: 20,
       paddingBottom: 10,
     },
 
@@ -1032,6 +1112,7 @@ const styles = StyleSheet.create({
       paddingTop: 10,
       flexWrap: 'wrap',
       flexShrink: 1,
+      textAlign: 'left',
     },
 
     link: {
@@ -1044,5 +1125,15 @@ const styles = StyleSheet.create({
         marginRight: 20,
         width: 100,
         height: 150,
-    }
+    },
+
+    separator: {
+        borderBottomColor: 'gray',
+        borderBottomWidth: 1,
+        marginLeft: 20,
+        marginRight: 20,
+    },
+
+    italic: {fontStyle: 'italic', paddingBottom: 10},
+
 });
