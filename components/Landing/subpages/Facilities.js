@@ -10,7 +10,7 @@ function getSuperScript(base,power) {
   return (
     <View style = {{flexDirection: 'row'}}>
       <Text style = {{fontSize: 14}}>{base}</Text>
-      <Text style = {{fontSize: 7}}>{power}</Text>
+      <Text style = {{fontSize: 8}}>{power}</Text>
     </View>
   );
 
@@ -18,7 +18,37 @@ function getSuperScript(base,power) {
 
 /*
     Parameter (text): a variable contains a whole text
-    Parameter (name): a name of the section
+    Purpose: if a word should be linking to URL in a text, then this subroutine will be used to achieve that
+    Credit to G.Micheal
+*/
+const linkify = text => {
+	// If no url in the text, return just the text
+	let link_start = text.indexOf("$URL|");
+	if(link_start === -1) return (<Text>{text}</Text>);
+	// Trim pre-text
+	let pre = text.substring(0, link_start);
+	text = text.substring(link_start + 5);
+	// Trim link title
+	let url_start = text.indexOf("|");
+	let link_text = text.substring(0, url_start);
+	text = text.substring(url_start + 1);
+	// Trim url
+	let post_start = text.indexOf("|");
+	let url = text.substring(0, post_start);
+	text = text.substring(post_start + 1);
+	// Linkify the rest of the text
+	return (
+		<Text>
+			<Text>{pre}</Text>
+			<Text style = {styles.orangeFont} onPress={() => Linking.openURL(url)}>{link_text}</Text>
+			{linkify(text)}
+		</Text>
+	);
+}
+
+/*
+    Parameter (text): a variable contains a whole text
+    Parameter (name): a name of the section that has superscript
     Purpose: return a whole text with superscript.
 
 */
@@ -26,10 +56,10 @@ function superScript(text,name) {
 
     if (name == 'FTIR: Bruker Vertex v80') {
         if (text.includes('cm-1')) {
-            var indexof = text.indexOf('cm-1');
-            var newText = text.replace('cm-1', '');
-            var subs1 = newText.substring(0,indexof);
-            var subs2 = newText.substring(indexof, newText.length);
+            let indexof = text.indexOf('cm-1');
+            let newText = text.replace('cm-1', '');
+            let subs1 = newText.substring(0,indexof);
+            let subs2 = newText.substring(indexof, newText.length);
             return (
                 <Text style = {styles.subBullet}>{'\u25E6'}{subs1}{getSuperScript('cm','-1')}{subs2}</Text>
             );
@@ -49,136 +79,10 @@ function superScript(text,name) {
 
 
 
-/*
-    An array to store all URL links
-*/
-const url = [
-    {
-        id: '0',
-        'convert': 'BoS',
-        'theURL': 'https://lase.mer.utexas.edu/images/BOS_v2.jpg',
-    },{
-        id: '1',
-        'convert': 'Podolskiy Group, UML',
-        'theURL': 'http://faculty.uml.edu/vpodolskiy/codes/index.html',
-    },{
-        id: '2',
-        'convert': 'Campbell Group, UVA',
-        'theURL': 'http://www.ece.virginia.edu/pdg/index.html',
-    },{
-        id: '3',
-        'convert': 'OpenBandParams',
-        'theURL': 'https://github.com/scott-maddox/openbandparams',
-    },{
-        id: '4',
-        'convert': 'Futur-er',
-        'theURL': 'https://lase.mer.utexas.edu/images/FTIR.jpg',
-    },
-]
-/*
-    An array to store all words that needed to be linking to URL
-*/
-const specialWord = [
-    'BoS','Podolskiy Group, UML', 'Campbell Group, UVA', 'OpenBandParams','Futur-er'
-]
-
-/*
-    Parameter (item): a variable contains a whole text
-    Purpose: return true if a special word (a word needs to be linked to URL) is a substring of the passing in text. Otherwise, return false
-*/
-function ifContain(item) {
-    var signal = 0;
-    for (var i = 0; i < specialWord.length; i++) {
-        if (item.includes(specialWord[i])) {
-            signal = 1;
-        }
-    }
-    if (signal == 1) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/*
-    Parameter (boo): a boolean variable to see which form of text that should be printed
-    Purpose: return a whole text with or without a special word (linking to URL)
-*/
-function print(boo,text){
-
-    if (boo){
-        return (<Text> {'\u2022'} {hyperlinkSmall(text)} </Text>);
-    } else {
-        return (<Text> {'\u2022'} {text} </Text>);
-    }
-}
-
-/*
-    Parameter (theString): a variable contains a whole text
-    Purpose: if a word should be linking to URL, then this subroutine will be used to achieve that
-*/
-function hyperlink(theString){
-    var newArr = []; //To contain only the id
-    var newArr2 = []; //To contain only the URL
-    for (var i = 0; i < url.length; i++) {
-        newArr.push(url[i]['convert']);
-        newArr2.push(url[i]['theURL']);
-    }
-
-    for (var item = 0; item < newArr.length; item++) {
-        //Check if the special word is in our text
-        if (theString.includes(newArr[item])) {
-            var temp = newArr[item]; //Contain a whole text
-            var myURL = newArr2[item]; //URL corresponding to special word
-            var index = theString.indexOf(newArr[item]); //This will return the index of first appearance of the special word
-            var newString = theString.replace(newArr[item],'');
-            var substring1 = newString.substring(0,index);
-            var substring2 = newString.substring(index,newString.length);
-            return (
-                <Text>{substring1}<Text style = {styles.specialWord} onPress= {() => Linking.openURL(myURL)}>{temp}</Text>{substring2} </Text>
-            );
-        }
-    }
-
-
-
-}
-
-/*
-    Parameter (theString): a variable contains a whole text
-    Purpose: this has a same functionality as hyperlink subroutine except this will return a text in a smaller form
-*/
-
-function hyperlinkSmall(theString){
-    var newArr = []; //To contain only the id
-    var newArr2 = []; //To contain only the URL
-    for (var i = 0; i < url.length; i++) {
-        newArr.push(url[i]['convert']);
-        newArr2.push(url[i]['theURL']);
-    }
-
-    for (var item = 0; item < newArr.length; item++) {
-        //Check if the special word is in our text
-        if (theString.includes(newArr[item])) {
-            var temp = newArr[item]; //Contain a whole text
-            var myURL = newArr2[item]; //URL corresponding to special word
-            var index = theString.indexOf(newArr[item]); //This will return the index of first appearance of the special word
-            var newString = theString.replace(newArr[item],'');
-            var substring1 = newString.substring(0,index);
-            var substring2 = newString.substring(index,newString.length);
-            return (
-                <Text>{substring1}<Text style = {styles.normalText} onPress= {() => Linking.openURL(myURL)}>{temp}</Text>{substring2} </Text>
-            );
-        }
-    }
-
-
-
-}
-
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 /*
-    Declare arrays to store objects to render
+    This array contains information regarding all machines such as Bravo,Echo,and Foxtrot
 */
 const machines = [
     {
@@ -250,14 +154,17 @@ const machines = [
             'MBE Komponenten cooling water nipple and shutter',
             'Stanford Research Systems RGA 200',
         ],
-    }
+    },
 ]
 
-const struct = [
+/*
+    This array contains information regarding Bakeout structure
+*/
+const structure = [
     {
         id: '0',
         description: 'Outgassing MBE components prior to introducing them to the MBE system',
-        title: 'Bakeout Structure (BoS) (Status: Operational, v2.1)',
+        title: 'Bakeout Structure ($URL|BoS|https://lase.mer.utexas.edu/images/BOS_v2.jpg|) (Status: Operational, v2.1)',
         equipment: [
             'CTI CT10 cryo',
             'Stanford Research Systems RGA 200',
@@ -268,6 +175,9 @@ const struct = [
     },
 ]
 
+/*
+    This array contains information regarding optical characterization setups
+*/
 const opticalSetup = [
     {
         id: '0',
@@ -284,11 +194,14 @@ const opticalSetup = [
     }
 ]
 
+/*
+    This array contains information regarding FTIR and IR microscope
+*/
 const fourier = [
     {
         id: '0',
         name: 'FTIR: Bruker Vertex v80',
-        title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope (Futur-er)',
+        title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope ($URL|Futur-er|https://lase.mer.utexas.edu/images/FTIR.jpg|)',
         options: [
             'Vacuum FTIR with high resolution option (Δν < 0.06 cm-1)',
             'Operating range: 5 - 25000 cm-1 (0.4 – 2000 μm)',
@@ -299,7 +212,7 @@ const fourier = [
     {
         id: '1',
         name: 'IR Microscope: Bruker Hyperion 2000',
-        title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope (Futur-er)',
+        title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope ($URL|Futur-er|https://lase.mer.utexas.edu/images/FTIR.jpg|)',
         options: [
             'Coupled to FTIR for spatial/spectral/temporal mapping',
             'Single point MCT detector w/automated stage for imaging',
@@ -309,7 +222,7 @@ const fourier = [
     },{
         id: '2',
         name: 'Accessories:',
-        title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope (Futur-er)',
+        title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope ($URL|Futur-er|https://lase.mer.utexas.edu/images/FTIR.jpg|)',
         options: [
             'Keysight B1500A semiconductor device analyzer (1x high-power, 2x high-resolution SMUs)',
             'MMR variable temperature micro miniature refrigerator w/controller (under installation)',
@@ -317,7 +230,12 @@ const fourier = [
     },
 ]
 
-
+/*
+    This array contains the following sections:
+        1. Edge-emitting laser (EEL) test setup
+        2. Photodetector / Photocurrent spectroscopy setup (visible-to-mid-IR)
+        3. Probe station
+*/
 const tools = [
     {
         id: '0',
@@ -351,22 +269,27 @@ const tools = [
             'HP 4145 semiconductor parameter analyzer',
         ],
     },
-
 ]
 
-const other = [
+/*
+    This array contains the following sections:
+        1. Simulations
+        2. Other equipment available through Microelectronics Research Center (NSF-NNCI)
+        3. Advanced energetics
+*/
+const sim_otherEquip_energeties = [
     {
         id: '0',
         title: 'Simulations',
         list: [
             'VASP (TACC) - Density Functional Theory (DFT)',
             'nextnano (Windows) - k.p, wavefunction solver, electrostatics, etc.',
-            'RCWA (Windows) - Rigorous coupled-wave analysis; tool developed by Podolskiy Group, UML',
+            'RCWA (Windows) - Rigorous coupled-wave analysis; tool developed by $URL|Podolskiy Group, UML|http://faculty.uml.edu/vpodolskiy/codes/index.html|',
             'COMSOL (Windows) - Finite element method (FEM)',
             'Lumerical (Windows) - Finite-difference time-domain (FDTD) and FEM',
             'MEEP (Unix) - FDTD',
-            'Monte Carlo (Unix) - APD simulations, including noise; tool developed by Campbell Group, UVA',
-            'Band diagramming (Java and Python) - Poisson and Poisson-Schrodinger solvers, e.g. OpenBandParams',
+            'Monte Carlo (Unix) - APD simulations, including noise; tool developed by $URL|Campbell Group, UVA|http://www.ece.virginia.edu/pdg/index.html|',
+            'Band diagramming (Java and Python) - Poisson and Poisson-Schrodinger solvers, e.g. $URL|OpenBandParams|https://github.com/scott-maddox/openbandparams|',
         ],
     },{
         id: '1',
@@ -391,8 +314,6 @@ const other = [
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
 export default function Facilities(props) {
 
     return (
@@ -406,24 +327,25 @@ export default function Facilities(props) {
             </View>
 
             {
-                machines.map(item => (
-                    <View key = {item.id}>
-                        <Text style = {styles.titleIndent}> {item.title} </Text>
-                            <Text style = {styles.listIndent}> {'\u2022'} {item.history} </Text>
+                //Use map to render all information about machines to the page
+                machines.map(machine => (
+                    <View key = {machine.id}>
+                        <Text style = {styles.titleIndent}> {machine.title} </Text>
+                            <Text style = {styles.listIndent}> {'\u2022'} {machine.history} </Text>
                             <Text style = {styles.listIndent}> {'\u2022'} Materials: </Text>
                                 {
-                                    item.materials.map(item2 => (
+                                    machine.materials.map(material => (
                                         <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {item2}
+                                            {'\u25E6'} {material}
                                         </Text>
 
                                     ))
                                 }
                             <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                 {
-                                    item.equipment.map(item3 => (
+                                    machine.equipment.map(equip => (
                                         <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {item3}
+                                            {'\u25E6'} {equip}
                                         </Text>
                                     ))
                                 }
@@ -433,15 +355,16 @@ export default function Facilities(props) {
 
 
             {
-                struct.map(item => (
-                    <View key = {item.id}>
-                        <Text style = {styles.titleIndent}> {hyperlink(item.title)} </Text>
-                            <Text style = {styles.listIndent}> {'\u2022'} {item.description} </Text>
+                //Use map to render all information about Bakeout Structure to the page
+                structure.map(struct => (
+                    <View key = {struct.id}>
+                        <Text style = {styles.titleIndent}> {linkify(struct.title)} </Text>
+                            <Text style = {styles.listIndent}> {'\u2022'} {struct.description} </Text>
                             <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                 {
-                                    item.equipment.map(item2 => (
+                                    struct.equipment.map(equip => (
                                         <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {item2}
+                                            {'\u25E6'} {equip}
                                         </Text>
                                     ))
                                 }
@@ -451,22 +374,23 @@ export default function Facilities(props) {
 
 
             {
-                opticalSetup.map(item => (
-                    <View key = {item.id}>
-                        <Text style = {styles.titleIndent}> {item.title} </Text>
+                //Use map to render all information about test setup to the page
+                opticalSetup.map(opt => (
+                    <View key = {opt.id}>
+                        <Text style = {styles.titleIndent}> {opt.title} </Text>
 
                                 {
-                                    item.setup.map(item2 => (
+                                    opt.setup.map(setUp => (
                                         <Text style = {styles.listIndent}>
-                                            {'\u2022'} {item2}
+                                            {'\u2022'} {setUp}
                                         </Text>
                                     ))
                                 }
                                 <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                     {
-                                        item.Equipment.map(item3 => (
+                                        opt.Equipment.map(equip => (
                                             <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {item3}
+                                                {'\u25E6'} {equip}
                                             </Text>
                                         ))
                                     }
@@ -475,16 +399,17 @@ export default function Facilities(props) {
             }
 
 
-            <Text style = {styles.titleIndent}> {hyperlink(fourier[0].title)} </Text>
+            <Text style = {styles.titleIndent}> {linkify(fourier[0].title)} </Text>
             {
-                fourier.map(item => (
-                    <View key = {item.id}>
-                        <Text style = {styles.listIndent}> {'\u2022'} {item.name} </Text>
+                //Use map to render all information about Fourier transform infrared spectrometer (FTIR) and IR microscope to the page
+                fourier.map(section => (
+                    <View key = {section.id}>
+                        <Text style = {styles.listIndent}> {'\u2022'} {section.name} </Text>
 
                                 {
-                                    item.options.map(item2 => (
+                                    section.options.map(subsection => (
                                         <Text>
-                                            {superScript(item2,item.name)}
+                                            {superScript(subsection,section.name)}
                                         </Text>
                                     ))
                                 }
@@ -495,15 +420,16 @@ export default function Facilities(props) {
 
 
             {
-                tools.map(item => (
-                    <View key = {item.id}>
-                        <Text style = {styles.titleIndent}> {item.title} </Text>
-                                <Text style = {styles.listIndent}> {'\u2022'} {item.description} </Text>
+                //Use map to render all information about different kind of tools to the page
+                tools.map(tool => (
+                    <View key = {tool.id}>
+                        <Text style = {styles.titleIndent}> {tool.title} </Text>
+                                <Text style = {styles.listIndent}> {'\u2022'} {tool.description} </Text>
                                 <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                     {
-                                        item.Equipment.map(item3 => (
+                                        tool.Equipment.map(equip => (
                                             <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {item3}
+                                                {'\u25E6'} {equip}
                                             </Text>
                                         ))
                                     }
@@ -513,17 +439,16 @@ export default function Facilities(props) {
 
 
             {
-                other.map(item => (
-                    <View key = {item.id}>
-                        <Text style = {styles.titleIndent}> {item.title} </Text>
+                //Use map to render all information about simulations, other equipment, and advanced energetics to the page
+                sim_otherEquip_energeties.map(section => (
+                    <View key = {section.id}>
+                        <Text style = {styles.titleIndent}> {section.title} </Text>
 
                                     {
-                                        item.list.map(item3 => (
+                                        section.list.map(subsection => (
 
                                             <Text style = {styles.listIndent}>
-
-                                            {print(ifContain(item3),item3)}
-
+                                                {'\u2022'} {linkify(subsection)}
                                             </Text>
                                         ))
                                     }
@@ -546,7 +471,7 @@ export default function Facilities(props) {
                     <Text style = {styles.smallText}>
                         <Text style = {styles.mini} onPress= {() => Linking.openURL("https://policies.utexas.edu/")}> Private Information </Text>
                         <Text> | </Text>
-                        <Text style = {styles.mini} onPress= {() => Linking.openURL("http://www.ece.utexas.edu/")}> Resources for Accesibility </Text>
+                        <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.utexas.edu/web/guidelines/accessibility.html")}> Resources for Accesibility </Text>
                     </Text>
 
                     <Text style = {styles.smallText}> Comments:
@@ -673,8 +598,9 @@ const styles = StyleSheet.create({
     marginLeft: 120,
     marginTop: 20,
     height: 40,
-
-
   },
+  orangeFont: {
+      color: 'orange',
+  }
 
 });
