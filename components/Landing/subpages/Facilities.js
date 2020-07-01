@@ -335,18 +335,22 @@ export default function Facilities(props) {
                             <Text style = {styles.listIndent}> {'\u2022'} Materials: </Text>
                                 {
                                     machine.materials.map(material => (
-                                        <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {material}
-                                        </Text>
+                                        <View key = {material.id}>
+                                            <Text style = {styles.subBullet}>
+                                                {'\u25E6'} {material}
+                                            </Text>
+                                        </View>
 
                                     ))
                                 }
                             <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                 {
                                     machine.equipment.map(equip => (
-                                        <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {equip}
-                                        </Text>
+                                        <View key = {equip.id}>
+                                            <Text style = {styles.subBullet}>
+                                                {'\u25E6'} {equip}
+                                            </Text>
+                                        </View>
                                     ))
                                 }
                     </View>
@@ -363,9 +367,11 @@ export default function Facilities(props) {
                             <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                 {
                                     struct.equipment.map(equip => (
-                                        <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {equip}
-                                        </Text>
+                                        <View key = {equip.id}>
+                                            <Text style = {styles.subBullet}>
+                                                {'\u25E6'} {equip}
+                                            </Text>
+                                        </View>
                                     ))
                                 }
                     </View>
@@ -381,17 +387,21 @@ export default function Facilities(props) {
 
                                 {
                                     opt.setup.map(setUp => (
-                                        <Text style = {styles.listIndent}>
-                                            {'\u2022'} {setUp}
-                                        </Text>
+                                        <View key = {setUp.id}>
+                                            <Text style = {styles.listIndent}>
+                                                {'\u2022'} {setUp}
+                                            </Text>
+                                        </View>
                                     ))
                                 }
                                 <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                     {
                                         opt.Equipment.map(equip => (
-                                            <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {equip}
-                                            </Text>
+                                            <View key = {equip.id}>
+                                                <Text style = {styles.subBullet}>
+                                                    {'\u25E6'} {equip}
+                                                </Text>
+                                            </View>
                                         ))
                                     }
                     </View>
@@ -408,9 +418,11 @@ export default function Facilities(props) {
 
                                 {
                                     section.options.map(subsection => (
-                                        <Text>
-                                            {superScript(subsection,section.name)}
-                                        </Text>
+                                        <View key = {subsection.id}>
+                                            <Text>
+                                                {superScript(subsection,section.name)}
+                                            </Text>
+                                        </View>
                                     ))
                                 }
 
@@ -428,9 +440,11 @@ export default function Facilities(props) {
                                 <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                     {
                                         tool.Equipment.map(equip => (
-                                            <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {equip}
-                                            </Text>
+                                            <View key = {equip.id}>
+                                                <Text style = {styles.subBullet}>
+                                                    {'\u25E6'} {equip}
+                                                </Text>
+                                            </View>
                                         ))
                                     }
                     </View>
@@ -446,10 +460,11 @@ export default function Facilities(props) {
 
                                     {
                                         section.list.map(subsection => (
-
-                                            <Text style = {styles.listIndent}>
-                                                {'\u2022'} {linkify(subsection)}
-                                            </Text>
+                                            <View key = {subsection.id}>
+                                                <Text style = {styles.listIndent}>
+                                                    {'\u2022'} {linkify(subsection)}
+                                                </Text>
+                                            </View>
                                         ))
                                     }
                     </View>
@@ -546,8 +561,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 28,
-    fontWeight: "bold",
-    color: 'orange',
+    color: '#c60',
   },
   sectionText: {
     fontSize: 17,
@@ -573,7 +587,7 @@ const styles = StyleSheet.create({
   mini:{
     fontSize: 10,
     flexDirection: "row",
-    color: 'orange',
+    color: '#c60',
   },
   normalText: {
       color: 'orange',
@@ -600,7 +614,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   orangeFont: {
-      color: 'orange',
+      color: '#c60',
   }
 
 });
