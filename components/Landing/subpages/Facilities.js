@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   subsectionText: {
-    fontsize:16,
+    fontSize:16,
   },
   specialWord: {
       fontSize: 17,
@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
   },
   normalText: {
       color: 'orange',
-      fontWeigght: 'bold',
+      fontWeight: 'bold',
   },
   newStyle: {
     fontSize: 10,
