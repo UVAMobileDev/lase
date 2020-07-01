@@ -90,69 +90,166 @@ const machines = [
         title: '"Bravo" Varian Gen II MBE (Status) Operational',
         history: 'History: Donation from Bell Labs, installed 1994 and refurbished 2007 ',
         materials: [
-            'Er – Veeco 10CC high temperature source',
-            'Ga – Veeco 400g SUMO cell',
-            'In – Veeco 900g SUMO cell',
-            'Al – Veeco 200g SUMO cell',
-            'N – SVTA rf plasma source (Status: not installed)',
-            'As – Veeco 500CC valved-cracker',
-            'Sb – Veeco 200CC valved-cracker',
-            'Bi – Veeco 250g downward-looking SUMO cell',
-            'Si/Be – MBE Komponenten custom dual dopant source (Si filament and Be effusion)',
-            'GaTe – MBE Komponenten tilted crucible dopant source',
-            'Si – MBE Komponenten filament source',
-            'Be – MBE Komponenten tilted crucible dopant source',
+            {
+                Material_id: '0-0',
+                text: 'Er – Veeco 10CC high temperature source',
+            },{
+                Material_id: '0-1',
+                text: 'Ga – Veeco 400g SUMO cell',
+            }, {
+                Material_id: '0-2',
+                text: 'In – Veeco 900g SUMO cell',
+            }, {
+                Material_id: '0-3',
+                text: 'Al – Veeco 200g SUMO cell',
+            }, {
+                Material_id: '0-4',
+                text: 'N – SVTA rf plasma source (Status: not installed)',
+            },{
+                Material_id: '0-5',
+                text: 'As – Veeco 500CC valved-cracker',
+            },{
+                Material_id: '0-6',
+                text: 'Sb – Veeco 200CC valved-cracker',
+            }, {
+                Material_id: '0-7',
+                text: 'Bi – Veeco 250g downward-looking SUMO cell',
+            }, {
+                Material_id: '0-8',
+                text: 'Si/Be – MBE Komponenten custom dual dopant source (Si filament and Be effusion)',
+            }, {
+                Material_id: '0-9',
+                text: 'GaTe – MBE Komponenten tilted crucible dopant source',
+            }, {
+                Material_id: '0-10',
+                text:'Si – MBE Komponenten filament source',
+            }, {
+                Material_id: '0-11',
+                text:'Be – MBE Komponenten tilted crucible dopant source',
+            },
         ],
         equipment: [
-            'kSA multibeam optical stress (MOS) system',
-            'kSA BandiT bandedge/blackbody temperature measurement',
-            'Staib 15 keV RHEED system',
-            'kSA RHEED analysis',
-            'Stanford Research Systems RGA 300',
-            'Veeco externally adjustable group-III shutters',
-            'Riber (formerly MBE Control) AMBER growth software',
-            'Veeco 3” substrate manipulator',
+            {
+                Equip_id: '0-0',
+                text: 'kSA multibeam optical stress (MOS) system',
+            },{
+                Equip_id: '0-1',
+                text: 'kSA BandiT bandedge/blackbody temperature measurement',
+            }, {
+                Equip_id: '0-2',
+                text: 'Staib 15 keV RHEED system',
+            }, {
+                Equip_id: '0-3',
+                text: 'kSA RHEED analysis',
+            }, {
+                Equip_id: '0-4',
+                text: 'Stanford Research Systems RGA 300',
+            },{
+                Equip_id: '0-5',
+                text: 'Veeco externally adjustable group-III shutters',
+            },{
+                Equip_id: '0-6',
+                text: 'Riber (formerly MBE Control) AMBER growth software',
+            }, {
+                Equip_id: '0-7',
+                text: 'Veeco 3” substrate manipulator',
+            },
         ],
     }, {
         id: '1',
         title: '“Echo” EPI MOD Gen II MBE (Status: Operational)',
         history: 'History: Purchased in 1995 by NIST, donated to LASE in 2008, refurbished in 2009',
         materials: [
-            'B - MBE Komponenten EBVV vertical e-beam evaporator',
-            'Ga – Veeco 400g SUMO cell',
-            'In – Veeco 400g SUMO cell',
-            'P – E-SCIENCE valved GaP decomposition source',
-            'As – Veeco 500CC valved-cracker',
-            'Bi – Veeco 250g downward-looking SUMO cell',
-            'Si/Be – Veeco dual dopant source',
-            'GaTe/Er - Veeco dual dopant source',
-            'La – Veeco 10CC high temperature source (Status: not installed)',
-            'Lu – Veeco 10CC high temperature source (Status: not installed)',
-            'C – Veeco CBr4 with MBE Control custom injector (Status: not installed)',
-            'Al – Veeco 200g SUMO cell (Status: not installed)',
-            'Gd – Veeco 10CC high temperature source (Status: not installed)',
+            {
+                Material_id: '1-0',
+                text: 'B - MBE Komponenten EBVV vertical e-beam evaporator',
+            },{
+                Material_id: '1-1',
+                text: 'Ga – Veeco 400g SUMO cell',
+            }, {
+                Material_id: '1-2',
+                text: 'In – Veeco 400g SUMO cell',
+            }, {
+                Material_id: '1-3',
+                text: 'P – E-SCIENCE valved GaP decomposition source',
+            }, {
+                Material_id: '1-4',
+                text: 'As – Veeco 500CC valved-cracker',
+            },{
+                Material_id: '1-5',
+                text: 'Bi – Veeco 250g downward-looking SUMO cell',
+            },{
+                Material_id: '1-6',
+                text: 'Si/Be – Veeco dual dopant source',
+            }, {
+                Material_id: '1-7',
+                text: 'GaTe/Er - Veeco dual dopant source',
+            }, {
+                Material_id: '1-8',
+                text: 'La – Veeco 10CC high temperature source (Status: not installed)',
+            }, {
+                Material_id: '1-9',
+                text: 'Lu – Veeco 10CC high temperature source (Status: not installed)',
+            }, {
+                Material_id: '1-10',
+                text: 'C – Veeco CBr4 with MBE Control custom injector (Status: not installed)',
+            }, {
+                Material_id: '1-11',
+                text: 'Al – Veeco 200g SUMO cell (Status: not installed)',
+            }, {
+                Material_id: '1-12',
+                text: 'Gd – Veeco 10CC high temperature source (Status: not installed)',
+            },
         ],
         equipment: [
-            'kSA BandiT bandedge/blackbody temperature measurement (under installation)',
-            'MBE Control EZ-RHEED analysis',
-            'Stanford Research Systems RGA 200',
-            'Veeco externally adjustable group-III shutters',
-            'Riber (formerly MBE Control) AMBER growth software',
-            'Custom cryogen-free P-recovery system (Status: under installation)',
-            'Veeco 3” substrate manipulator',
+            {
+                Equip_id: '1-0',
+                text: 'kSA BandiT bandedge/blackbody temperature measurement (under installation)',
+            }, {
+                Equip_id: '1-1',
+                text: 'MBE Control EZ-RHEED analysis',
+            }, {
+                Equip_id: '1-2',
+                text: 'Stanford Research Systems RGA 200',
+            }, {
+                Equip_id: '1-3',
+                text: 'Veeco externally adjustable group-III shutters',
+            },{
+                Equip_id: '1-4',
+                text: 'Riber (formerly MBE Control) AMBER growth software',
+            },{
+                Equip_id: '1-5',
+                text: 'Custom cryogen-free P-recovery system (Status: under installation)',
+            }, {
+                Equip_id: '1-6',
+                text: 'Veeco 3” substrate manipulator',
+            },
         ],
     }, {
         id: '2',
         title: '“Foxtrot” (a.k.a. “The Juice”) Varian Chamber (Status: Under installation)',
         history: 'History: Donation from UT-Arlington in 2011',
         materials: [
-            'Epitaxial plasmonic and emerging materials',
+            {
+                Material_id: '2-0',
+                text: 'Epitaxial plasmonic and emerging materials',
+            },
+
         ],
         equipment: [
-            'Thermionics 6-pocket e-beam evaporator',
-            'Veeco dual dopant source',
-            'MBE Komponenten cooling water nipple and shutter',
-            'Stanford Research Systems RGA 200',
+            {
+                Equip_id: '2-0',
+                text: 'Thermionics 6-pocket e-beam evaporator',
+            }, {
+                Equip_id: '2-1',
+                text: 'Veeco dual dopant source',
+            }, {
+                Equip_id: '2-2',
+                text: 'MBE Komponenten cooling water nipple and shutter',
+            }, {
+                Equip_id: '2-3',
+                text: 'Stanford Research Systems RGA 200',
+            },
         ],
     },
 ]
@@ -166,11 +263,22 @@ const structure = [
         description: 'Outgassing MBE components prior to introducing them to the MBE system',
         title: 'Bakeout Structure ($URL|BoS|https://lase.mer.utexas.edu/images/BOS_v2.jpg|) (Status: Operational, v2.1)',
         equipment: [
-            'CTI CT10 cryo',
-            'Stanford Research Systems RGA 200',
-            'Four 8" arms for baking sources',
-            'One 10" arm for baking substrate manipulator',
-            'Vertical group-III thermal deposition system (indium currently installed)',
+            {
+                Equip_id: '0-0',
+                text: 'CTI CT10 cryo',
+            }, {
+                Equip_id: '0-1',
+                text: 'Stanford Research Systems RGA 200',
+            }, {
+                Equip_id: '0-2',
+                text: 'Four 8" arms for baking sources',
+            }, {
+                Equip_id: '0-3',
+                text: 'One 10" arm for baking substrate manipulator',
+            },{
+                Equip_id: '0-4',
+                text: 'Vertical group-III thermal deposition system (indium currently installed)',
+            },
         ],
     },
 ]
@@ -183,13 +291,25 @@ const opticalSetup = [
         id: '0',
         title: 'Optical characterization setups',
         setup: [
-            'Photoluminescence (PL): Measuring luminescence efficiency, emission wavelength, and so on',
-            'near/mid-IR Reflection/Transmission (R&T): Measuring absorption and band-edge',
-            'Pump/probe: Femtosecond carrier dynamics using mode-locked fiber laser',
-            'Photoreflectance (PR): Measuring band alignments',
+            {
+                Setup_id: '0-0',
+                text: 'Photoluminescence (PL): Measuring luminescence efficiency, emission wavelength, and so on',
+            }, {
+                Setup_id: '0-1',
+                text: 'near/mid-IR Reflection/Transmission (R&T): Measuring absorption and band-edge',
+            }, {
+                Setup_id: '0-2',
+                text: 'Pump/probe: Femtosecond carrier dynamics using mode-locked fiber laser',
+            }, {
+                Setup_id: '0-3',
+                text: 'Photoreflectance (PR): Measuring band alignments',
+            },
         ],
         Equipment: [
-            'LHe cryostat and controller',
+            {
+                Equip_id: '0-0',
+                text: 'LHe cryostat and controller',
+            }
         ],
     }
 ]
@@ -203,10 +323,19 @@ const fourier = [
         name: 'FTIR: Bruker Vertex v80',
         title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope ($URL|Futur-er|https://lase.mer.utexas.edu/images/FTIR.jpg|)',
         options: [
-            'Vacuum FTIR with high resolution option (Δν < 0.06 cm-1)',
-            'Operating range: 5 - 25000 cm-1 (0.4 – 2000 μm)',
-            'Step scan',
-            'Rapid scan',
+            {
+                Opt_id: '0-0',
+                text: 'Vacuum FTIR with high resolution option (Δν < 0.06 cm-1)',
+            }, {
+                Opt_id: '0-1',
+                text: 'Operating range: 5 - 25000 cm-1 (0.4 – 2000 μm)',
+            }, {
+                Opt_id: '0-2',
+                text: 'Step scan',
+            }, {
+                Opt_id: '0-3',
+                text: 'Rapid scan',
+            },
         ],
     },
     {
@@ -214,18 +343,33 @@ const fourier = [
         name: 'IR Microscope: Bruker Hyperion 2000',
         title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope ($URL|Futur-er|https://lase.mer.utexas.edu/images/FTIR.jpg|)',
         options: [
-            'Coupled to FTIR for spatial/spectral/temporal mapping',
-            'Single point MCT detector w/automated stage for imaging',
-            'ZnSe A ttenuated Total Reflectance (ATR) objective (ZnSe)',
-            'Grazing Angle Objective (GAO)',
+            {
+                Opt_id: '1-0',
+                text: 'Coupled to FTIR for spatial/spectral/temporal mapping',
+            }, {
+                Opt_id: '1-1',
+                text: 'Single point MCT detector w/automated stage for imaging',
+            }, {
+                Opt_id: '1-2',
+                text: 'ZnSe A ttenuated Total Reflectance (ATR) objective (ZnSe)',
+            }, {
+                Opt_id: '1-3',
+                text: 'Grazing Angle Objective (GAO)',
+            },
         ],
     },{
         id: '2',
         name: 'Accessories:',
         title: 'Fourier transform infrared spectrometer (FTIR) and IR microscope ($URL|Futur-er|https://lase.mer.utexas.edu/images/FTIR.jpg|)',
         options: [
-            'Keysight B1500A semiconductor device analyzer (1x high-power, 2x high-resolution SMUs)',
-            'MMR variable temperature micro miniature refrigerator w/controller (under installation)',
+            {
+                Opt_id: '2-0',
+                text: 'Keysight B1500A semiconductor device analyzer (1x high-power, 2x high-resolution SMUs)',
+            }, {
+                Opt_id: '2-1',
+                text: 'MMR variable temperature micro miniature refrigerator w/controller (under installation)',
+            },
+
         ],
     },
 ]
@@ -242,31 +386,60 @@ const tools = [
         description: 'CW, pulsed, and temperature-dependant EEL characterization',
         title: 'Edge-emitting laser (EEL) test setup',
         Equipment: [
-            'Vigo high-speed (ns) MCT detector (5μm cutoff)',
-            'Thorlabs InGaAs amplified detector (1.5μm cutoff)',
-            'Princeton Instruments Acton 2500 spectrometer',
-            'Labsphere Infragold 2" integrating sphere with fiber port',
-            'ILX Laser drivers - pulsed (LDP-3840B), CW/temperature (LDC-3744)',
-            'ILX temperature-controlled laser mount (LDM-4415)',
-            'Neslab recirculating chiller',
+            {
+                Equip_id: '0-0',
+                text: 'Vigo high-speed (ns) MCT detector (5μm cutoff)',
+            },{
+                Equip_id: '0-1',
+                text: 'Thorlabs InGaAs amplified detector (1.5μm cutoff)',
+            }, {
+                Equip_id: '0-2',
+                text: 'Princeton Instruments Acton 2500 spectrometer',
+            }, {
+                Equip_id: '0-3',
+                text: 'Labsphere Infragold 2" integrating sphere with fiber port',
+            }, {
+                Equip_id: '0-4',
+                text: 'ILX Laser drivers - pulsed (LDP-3840B), CW/temperature (LDC-3744)',
+            },{
+                Equip_id: '0-5',
+                text: 'ILX temperature-controlled laser mount (LDM-4415)',
+            },{
+                Equip_id: '1-6',
+                text: 'Neslab recirculating chiller',
+            },
         ],
     }, {
         id: '1',
         description: 'Spectrally-resolved photocurrent/photovoltage response',
         title: 'Photodetector / Photocurrent spectroscopy setup (visible-to-mid-IR)',
         Equipment: [
-            'Stanford research systems lock-in amplifier and chopper',
-            'Princeton Instruments Acton 2500 spectrometer',
-            'Various light sources',
+            {
+                Equip_id: '1-0',
+                text: 'Stanford research systems lock-in amplifier and chopper',
+            },{
+                Equip_id: '1-1',
+                text: 'Princeton Instruments Acton 2500 spectrometer',
+            }, {
+                Equip_id: '1-2',
+                text: 'Various light sources',
+            },
         ],
     }, {
         id: '2',
         description: 'I-V: Tunnel junctions characterization and process flow diagnostics (e.g. TLM)',
         title: 'Probe station',
         Equipment: [
-            'Micromanipulator 6200 probe station',
-            'Keysight B1500A semiconductor device analyzer (1x high-power, 2x high-resolution SMUs)',
-            'HP 4145 semiconductor parameter analyzer',
+            {
+                Equip_id: '2-0',
+                text: 'Micromanipulator 6200 probe station',
+            },{
+                Equip_id: '2-1',
+                text: 'Keysight B1500A semiconductor device analyzer (1x high-power, 2x high-resolution SMUs)',
+            }, {
+                Equip_id: '2-2',
+                text: 'HP 4145 semiconductor parameter analyzer',
+            },
         ],
     },
 ]
@@ -282,31 +455,64 @@ const sim_otherEquip_energeties = [
         id: '0',
         title: 'Simulations',
         list: [
-            'VASP (TACC) - Density Functional Theory (DFT)',
-            'nextnano (Windows) - k.p, wavefunction solver, electrostatics, etc.',
-            'RCWA (Windows) - Rigorous coupled-wave analysis; tool developed by $URL|Podolskiy Group, UML|http://faculty.uml.edu/vpodolskiy/codes/index.html|',
-            'COMSOL (Windows) - Finite element method (FEM)',
-            'Lumerical (Windows) - Finite-difference time-domain (FDTD) and FEM',
-            'MEEP (Unix) - FDTD',
-            'Monte Carlo (Unix) - APD simulations, including noise; tool developed by $URL|Campbell Group, UVA|http://www.ece.virginia.edu/pdg/index.html|',
-            'Band diagramming (Java and Python) - Poisson and Poisson-Schrodinger solvers, e.g. $URL|OpenBandParams|https://github.com/scott-maddox/openbandparams|',
+            {
+                List_id: '0-0',
+                text: 'VASP (TACC) - Density Functional Theory (DFT)',
+            },{
+                List_id: '0-1',
+                text: 'nextnano (Windows) - k.p, wavefunction solver, electrostatics, etc.',
+            }, {
+                List_id: '0-2',
+                text: 'RCWA (Windows) - Rigorous coupled-wave analysis; tool developed by $URL|Podolskiy Group, UML|http://faculty.uml.edu/vpodolskiy/codes/index.html|',
+            }, {
+                List_id: '0-3',
+                text: 'COMSOL (Windows) - Finite element method (FEM)',
+            }, {
+                List_id: '0-4',
+                text: 'Lumerical (Windows) - Finite-difference time-domain (FDTD) and FEM',
+            },{
+                List_id: '0-5',
+                text: 'MEEP (Unix) - FDTD',
+            },{
+                List_id: '0-6',
+                text: 'Monte Carlo (Unix) - APD simulations, including noise; tool developed by $URL|Campbell Group, UVA|http://www.ece.virginia.edu/pdg/index.html|',
+            }, {
+                List_id: '0-7',
+                text: 'Band diagramming (Java and Python) - Poisson and Poisson-Schrodinger solvers, e.g. $URL|OpenBandParams|https://github.com/scott-maddox/openbandparams|',
+            },
         ],
     },{
         id: '1',
         title: 'Other equipment available through Microelectronics Research Center (NSF-NNCI)',
         list: [
-            'Processing: III-V and Si processing (litho, ICP/RIE dry etch, metallization, etc), wafer bonding, lapping/polishing, wire bonding, etc.',
-            'Characterization: HR-XRD (rotating anode Rigaku SmartLab), AFM, TEM, Hall Effect, PPMS, C-V, etc.',
+            {
+                List_id: '1-0',
+                text: 'Processing: III-V and Si processing (litho, ICP/RIE dry etch, metallization, etc), wafer bonding, lapping/polishing, wire bonding, etc.',
+            },{
+                List_id: '1-1',
+                text: 'Characterization: HR-XRD (rotating anode Rigaku SmartLab), AFM, TEM, Hall Effect, PPMS, C-V, etc.',
+            },
         ],
     }, {
         id: '2',
         title: 'Advanced energetics',
         list: [
-            'Espresso - Illy Francis Francis! Model X7.1 IperEspresso Machine',
-            'Pourover (6 cup) - Chemex Classic Series',
-            'French Press (20 oz.) - Bodum Chambord (all-metal construction)',
-            'Jura-Capresso Infinity (commercial-grade conical burr grinder)',
-            'Dairy - Nespresso Aerocinno Plus',
+            {
+                List_id: '2-0',
+                text: 'Espresso - Illy Francis Francis! Model X7.1 IperEspresso Machine',
+            },{
+                List_id: '2-1',
+                text: 'Pourover (6 cup) - Chemex Classic Series',
+            }, {
+                List_id: '2-2',
+                text: 'French Press (20 oz.) - Bodum Chambord (all-metal construction)',
+            }, {
+                List_id: '2-3',
+                text: 'Jura-Capresso Infinity (commercial-grade conical burr grinder)',
+            }, {
+                List_id: '2-4',
+                text: 'Dairy - Nespresso Aerocinno Plus',
+            },
         ],
     }
 ]
@@ -335,9 +541,9 @@ export default function Facilities(props) {
                             <Text style = {styles.listIndent}> {'\u2022'} Materials: </Text>
                                 {
                                     machine.materials.map(material => (
-                                        <View key = {material.id}>
+                                        <View key = {material.Material_id}>
                                             <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {material}
+                                                {'\u25E6'} {material.text}
                                             </Text>
                                         </View>
 
@@ -346,9 +552,9 @@ export default function Facilities(props) {
                             <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                 {
                                     machine.equipment.map(equip => (
-                                        <View key = {equip.id}>
+                                        <View key = {equip.Equip_id}>
                                             <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {equip}
+                                                {'\u25E6'} {equip.text}
                                             </Text>
                                         </View>
                                     ))
@@ -356,7 +562,6 @@ export default function Facilities(props) {
                     </View>
                 ))
             }
-
 
             {
                 //Use map to render all information about Bakeout Structure to the page
@@ -367,9 +572,9 @@ export default function Facilities(props) {
                             <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                 {
                                     struct.equipment.map(equip => (
-                                        <View key = {equip.id}>
+                                        <View key = {equip.Equip_id}>
                                             <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {equip}
+                                                {'\u25E6'} {equip.text}
                                             </Text>
                                         </View>
                                     ))
@@ -378,18 +583,17 @@ export default function Facilities(props) {
                 ))
             }
 
-
             {
-                //Use map to render all information about test setup to the page
+                //Use map to render all information about Optical Characterization Setups to the page
                 opticalSetup.map(opt => (
                     <View key = {opt.id}>
                         <Text style = {styles.titleIndent}> {opt.title} </Text>
 
                                 {
                                     opt.setup.map(setUp => (
-                                        <View key = {setUp.id}>
+                                        <View key = {setUp.Setup_id}>
                                             <Text style = {styles.listIndent}>
-                                                {'\u2022'} {setUp}
+                                                {'\u2022'} {setUp.text}
                                             </Text>
                                         </View>
                                     ))
@@ -397,9 +601,9 @@ export default function Facilities(props) {
                                 <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                     {
                                         opt.Equipment.map(equip => (
-                                            <View key = {equip.id}>
+                                            <View key = {equip.Equip_id}>
                                                 <Text style = {styles.subBullet}>
-                                                    {'\u25E6'} {equip}
+                                                    {'\u25E6'} {equip.text}
                                                 </Text>
                                             </View>
                                         ))
@@ -408,31 +612,28 @@ export default function Facilities(props) {
                 ))
             }
 
-
             <Text style = {styles.titleIndent}> {linkify(fourier[0].title)} </Text>
-            {
-                //Use map to render all information about Fourier transform infrared spectrometer (FTIR) and IR microscope to the page
-                fourier.map(section => (
-                    <View key = {section.id}>
-                        <Text style = {styles.listIndent}> {'\u2022'} {section.name} </Text>
+           {
+               //Use map to render all information about Fourier transform infrared spectrometer (FTIR) and IR microscope to the page
+               fourier.map(section => (
+                   <View key = {section.id}>
+                       <Text style = {styles.listIndent}> {'\u2022'} {section.name} </Text>
 
-                                {
-                                    section.options.map(subsection => (
-                                        <View key = {subsection.id}>
-                                            <Text>
-                                                {superScript(subsection,section.name)}
-                                            </Text>
-                                        </View>
-                                    ))
-                                }
+                               {
+                                   section.options.map(subsection => (
+                                       <View key= {subsection.Opt_id}>
+                                           <Text>
+                                               {superScript(subsection.text,section.name)}
+                                           </Text>
+                                       </View>
+                                   ))
+                               }
+                   </View>
+               ))
+           }
 
-                    </View>
-                ))
-            }
-
-
-            {
-                //Use map to render all information about different kind of tools to the page
+           {
+               //Use map to render all information about different kind of tools to the page
                 tools.map(tool => (
                     <View key = {tool.id}>
                         <Text style = {styles.titleIndent}> {tool.title} </Text>
@@ -440,9 +641,9 @@ export default function Facilities(props) {
                                 <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                     {
                                         tool.Equipment.map(equip => (
-                                            <View key = {equip.id}>
+                                            <View key = {equip.Equip_id}>
                                                 <Text style = {styles.subBullet}>
-                                                    {'\u25E6'} {equip}
+                                                    {'\u25E6'} {equip.text}
                                                 </Text>
                                             </View>
                                         ))
@@ -450,26 +651,25 @@ export default function Facilities(props) {
                     </View>
                 ))
             }
-
 
             {
-                //Use map to render all information about simulations, other equipment, and advanced energetics to the page
-                sim_otherEquip_energeties.map(section => (
-                    <View key = {section.id}>
-                        <Text style = {styles.titleIndent}> {section.title} </Text>
+                //Use map to render all information about Simulations ,Other equipments, and Advanced energetics to the page
+               sim_otherEquip_energeties.map(section => (
+                   <View key = {section.id}>
+                       <Text style = {styles.titleIndent}> {section.title} </Text>
+                                   {
+                                       section.list.map(subsection => (
+                                           <View key = {subsection.List_id}>
+                                               <Text style = {styles.listIndent}>
+                                                   {'\u2022'} {linkify(subsection.text)}
+                                               </Text>
+                                           </View>
+                                       ))
+                                   }
+                   </View>
+               ))
+           }
 
-                                    {
-                                        section.list.map(subsection => (
-                                            <View key = {subsection.id}>
-                                                <Text style = {styles.listIndent}>
-                                                    {'\u2022'} {linkify(subsection)}
-                                                </Text>
-                                            </View>
-                                        ))
-                                    }
-                    </View>
-                ))
-            }
 
             <Text style = {styles.updateDate}> Last Updated 4/22/2020</Text>
 
