@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Landing from './components/Landing/Landing.js';
 import Maintenance from './components/Maintenance/Maintenance';
 import Utilities from './components/Utilities/Utilities';
+import Public from './components/Publications/Navigator_Publication';
 
 // Create left side drawer navigator. For this application, this drawer is the
 //  top level navigator.
@@ -67,7 +68,7 @@ export default function App() {
                 <Drawer.Screen name="Home" component={Landing}/>
                 <Drawer.Screen name="Growths" component={TodoScreen}/>
                 <Drawer.Screen name="Maintenance" component={Maintenance}/>
-                <Drawer.Screen name="Publications" component={TodoScreen}/>
+                <Drawer.Screen name="Publications" component={Public}/>
                 <Drawer.Screen name="Utilities" component={Utilities}/>
             </Drawer.Navigator>
         </NavigationContainer>
