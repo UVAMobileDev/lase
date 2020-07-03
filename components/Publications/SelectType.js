@@ -47,7 +47,7 @@ export default class SelectType extends React.Component {
             let parsed = await fetch(`${BASE_URL}/publications/types/`).then(r => r.json());
 
 
-            SelectType.types = parsed.types.map(type => type.type).sort();
+            SelectType.types = parsed.types.map(type => type.label).sort();
             SelectType.loaded = true;
         } finally {
 

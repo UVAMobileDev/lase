@@ -14,30 +14,52 @@ import { Ionicons } from '@expo/vector-icons';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 
+// Array to contain all types of publication
+const AllTypes = [
+            'None',
+            'Article',
+            'Book',
+            'Booklet',
+            'Conference',
+            'electronic',
+            `inbook`,
+            `incollection`,
+            `inproceedings`,
+            `manual`,
+            `mastersthesis`,
+            `misc`,
+            `other`,
+            `patent`,
+            `periodical`,
+            `phdthesis`,
+            `proceedings`,
+            `standard`,
+            `techreport`,
+            `unpublished`
+]
 
+function type(id) {
+    let theID = parseInt(id);
+    for (let i = 0; i < AllTypes.length; i++) {
+        if (theID === i) {
+            return (
+                <View style={{width: 100}}>
+                    <Text style={styles.rowText}>{AllTypes[i]}</Text>
+                </View>
+            )
+        }
+    }
+
+}
+const getAllTypes = async () => {
+    let types = [];
+    let parsed = await fetch(`${BASE_URL}/publications/types/`).then(r => r.json());
+    types = parsed.types.map(type => type.id).sort();
+
+}
 /*
-Original version
-const GetAllPublications = async () => {
-    let page = 0;
-    let records = []
-    let parsed = {records: []};
+function getType(array,id) {
 
-    do {
-        let response = await fetch(`${BASE_URL}/publications?page=${page}`);
-        parsed = await response.json();
-        records = records.concat(parsed.records);
-        page++;
-    } while(parsed.records.length > 0)
-    return records;
-} */
-
-
-/*
-const loadPublications = async update => {
-    //waiting to load the information from the URL and transform to json format
-    let parsed = await fetch(`${BASE_URL}/publications?page=0`).then(r => r.json());
-    //Update the new information to the current state
-    update(parsed.publications);
 }*/
 
 const GetAllPublications = async () => {
@@ -82,22 +104,29 @@ export default function ViewTab(props){
         {
             <ScrollView>
                 <View style = {styles.top}>
-                           <View>
 
+                            <View>
+                                <Text style = {styles.type}>
+                                    Type
+                                </Text>
+                            </View>
+
+                           <View>
                                <Text style = {styles.title}>
-                                   Publication Title:
+                                   Publication Title
                                </Text>
                            </View>
 
+
                            <View>
                                <Text style = {styles.author}>
-                                   Author:
+                                   Author
                                </Text>
                            </View>
 
                            <View>
                                <Text style={styles.id}>
-                                   Number
+                                   ID
                                </Text>
                            </View>
                 </View>
@@ -120,11 +149,11 @@ export default function ViewTab(props){
                                     </TouchableOpacity>
                                 </View>
 
-
-                                <View style={{width: 500}}>
-                                    <Text style={styles.rowText}>{item.author}</Text>
+                                {type(item.typeID)}
+                                <View style={{width: 450}}>
+                                    <Text style={styles.rowText}>{item.title}</Text>
                                 </View>
-                                <View style={{width: 600}}>
+                                <View style={{width: 570}}>
                                     <Text style={styles.rowText}>{item.author}</Text>
                                 </View>
                                 <View>
@@ -142,6 +171,11 @@ export default function ViewTab(props){
 }
 
 const styles = StyleSheet.create({
+    type: {
+        width: 55,
+        fontWeight: "bold",
+        fontSize: 22,
+    },
     title: {
         width: 500,
         fontSize: 22,
