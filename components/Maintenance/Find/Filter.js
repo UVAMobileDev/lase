@@ -2,12 +2,14 @@
 //  abbreviated list form; allow the user to select and view a second record.
 
 // Imports
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useReducer } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { Ionicons } from '@expo/vector-icons';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
+import SelectDate from '../../lib/forms/SelectDate';
+
 
 // Helper method which retrieves all the maintenance records from the API. It's not
 //  just as straightforward as a single API call, though, since the results are paginated
@@ -26,10 +28,50 @@ const GetAllRecords = async () => {
     return records;
 }
 
+const FilterReducer = (state, action) => {
+
+    switch(action.type) {
+        case "recorder":
+            return {...state, recorder: action.payload};
+
+        case "system":
+            return {...state, system: action.payload};
+
+        case "p1":
+            return {...state, p1: action.payload};
+
+        case "p2":
+            return {...state, p1: action.payload};
+
+        case "minDate":
+            return {...state, minDate: action.payload};
+
+        case "maxDate":
+            return {...state, maxDate: action.payload};
+
+        default:
+            return state;
+    }
+}
+
 // Function used to filter the displayed items based on the applied constraints
 const FilterFx = filter => {
     return record => {
-        for(var key in filter) if(filter[key] !== "" && record[key] !== filter[key]) return false;
+        for(var key in filter) {
+            switch(key) {
+                case "minDate":
+                if(record.date < filter.minDate) return false;
+                break;
+
+                case "maxDate":
+                if(record.date > filter.maxDate) return false;
+                break;
+
+                default:
+                if( filter[key] !== ""
+                    && record[key] !== filter[key]) return false;
+            }
+        }
         return true;
     };
 };
@@ -39,8 +81,8 @@ const FilterFx = filter => {
 //  folder which deals with retrieving the list of recent publications.
 export default function Filter(props) {
     let [records, setRecords] = useState({loaded: false, items: []});
-    let [filter, setFilter] = useState({});
-    let [[system, setSystem], [recorder, setRecorder], [p1, setP1], [p2, setP2]] = [useState(""), useState(""), useState(""), useState("")];
+    let [filter, dispatchFilter] = useReducer(FilterReducer, {});
+
 
     useEffect(() => {
         let load = async () => {
@@ -50,59 +92,94 @@ export default function Filter(props) {
         load();
     }, [0]);
 
-    // Refilters records every time the filter is changed
-    useEffect(() => {
-        setFilter({
-            system,
-            recorder,
-            p1,
-            p2,
-        })
-    }, [system, recorder, p1, p2]);
-
     return (
         <View style={styles.container}>
-            {
-                records.loaded ? (
-                    <View style={styles.listContainer}>
-                        <View style={styles.filterControls}>
-                            <SelectSystem placeholder={{label: "Select System", value: ""}} update={setSystem}/>
-                            <SelectMember placeholder={{label: "Select Recorder", value: ""}} update={setRecorder}/>
-                            <SelectMember placeholder={{label: "Select P1", value: ""}} update={setP1}/>
-                            <SelectMember placeholder={{label: "Select P2", value: ""}} update={setP2}/>
-                            <Text>Filter records</Text>
+            <View style={styles.filterControls}>
 
+                <View style={styles.filterControlGroup}>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.inputLabel}>System</Text>
+                        <View style={styles.input}>
+                            <SelectSystem placeholder={{label: "", value: ""}} update={sys => dispatchFilter({type: "system", payload: sys})}/>
                         </View>
-                        {/* FlatLists are easily one of the most power components in React. Learning how to make good use of them is a must! */}
-                        <FlatList   style={styles.list}
-                                    data={records.items.filter(FilterFx(filter))}
-                                    keyExtractor={item => item.id.toString()}
-                                    renderItem={({item}) => (
-                                        <View style={styles.recordRow}>
-                                            <View>
-                                                <TouchableOpacity   style={styles.openRecordButton}
-                                                                    onPress={() => props.navigation.navigate("Record", {record: item})}>
-                                                    <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View style={{width: 60}}>
-                                                <Text style={styles.rowText}>{item.system}</Text>
-                                            </View>
-                                            <View style={{width: 75}}>
-                                                <Text style={styles.rowText}>{item.date}</Text>
-                                            </View>
-                                            <View>
-                                                <Text style={styles.rowText}>{item.summary}</Text>
-                                            </View>
-                                        </View>
-                                    )}/>
                     </View>
-                ) : (
-                    <View style={{marginTop: 50}}>
-                        <ActivityIndicator size="large" color="#0000ff"/>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.inputLabel}>Recorder</Text>
+                        <View style={styles.input}>
+                            <SelectMember placeholder={{label: "", value: ""}} update={rec => dispatchFilter({type: "recorder", payload: rec})}/>
+                        </View>
                     </View>
-                )
-            }
+                </View>
+
+                <View style={styles.filterControlGroup}>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.inputLabel}>P1</Text>
+                        <View style={styles.input}>
+                            <SelectMember placeholder={{label: "", value: ""}} update={p1 => dispatchFilter({type: "p1", payload: p1})}/>
+                        </View>
+                    </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.inputLabel}>P2</Text>
+                        <View style={styles.input}>
+                            <SelectMember placeholder={{label: "", value: ""}} update={p2 => dispatchFilter({type: "p2", payload: p2})}/>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={[styles.filterControlGroup]}>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.inputLabel}>Newer than</Text>
+                        <View style={styles.input}>
+                            <SelectDate update={date => dispatchFilter({type: "minDate", payload: date})}/>
+                        </View>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.inputLabel}>Older than</Text>
+                        <View style={styles.input}>
+                            <SelectDate initYear={new Date().getFullYear()}
+                                initMonth={new Date().getMonth() + 1}
+                                initDay={new Date().getDate()}
+                                update={date => dispatchFilter({type: "maxDate", payload: date})}/>
+                        </View>
+                    </View>
+                </View>
+            </View>
+            <View style={styles.listContainer}>
+                {
+                    /* FlatLists are easily one of the most power components in React. Learning how to make good use of them is a must! */
+                    records.loaded ? (
+                        <ScrollView>
+                            <FlatList   style={styles.list}
+                                        data={records.items.filter(FilterFx(filter))}
+                                        keyExtractor={item => item.id.toString()}
+                                        renderItem={({item}) => (
+                                            <View style={styles.recordRow}>
+                                                <View>
+                                                    <TouchableOpacity   style={styles.openRecordButton}
+                                                                        onPress={() => props.navigation.navigate("Record", {record: item})}>
+                                                        <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <View style={{width: 60}}>
+                                                    <Text style={styles.rowText}>{item.system}</Text>
+                                                </View>
+                                                <View style={{width: 75}}>
+                                                    <Text style={styles.rowText}>{item.date}</Text>
+                                                </View>
+                                                <View>
+                                                    <Text style={styles.rowText}>{item.summary}</Text>
+                                                </View>
+                                            </View>
+                                        )}/>
+                        </ScrollView>
+                    ) : (
+                        <View style={{marginTop: 50}}>
+                            <ActivityIndicator size="large" color="#0000ff"/>
+                        </View>
+                    )
+                }
+            </View>
         </View>
     )
 }
@@ -140,6 +217,25 @@ const styles = StyleSheet.create({
         color: "black",
     },
     filterControls: {
-        backgroundColor: "red",
-    }
+        flexDirection: "row",
+        borderBottomWidth: 2,
+        borderColor: "black",
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+    },
+    filterControlGroup: {
+        flex: 1,
+        flexDirection: "column",
+        padding: 5,
+    },
+    inputLabel: {
+        fontSize: 18,
+    },
+    inputGroup: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    input: {
+        flex: 1,
+    },
 });
