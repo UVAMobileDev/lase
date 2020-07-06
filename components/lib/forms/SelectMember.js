@@ -107,9 +107,9 @@ export default class SelectMember extends React.Component {
 
 const styles = StyleSheet.create({
     picker: {
+        flex: 1,
         margin: 5,
         padding: 5,
-        borderLeftWidth: 2,
         borderRadius: 5,
     }
 });
