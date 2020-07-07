@@ -43,7 +43,7 @@ function type(id) {
     for (let i = 0; i < AllTypes.length; i++) {
         if (theID === i) {
             return (
-                <View style={{width: 100}}>
+                <View style={{width: 95}}>
                     <Text style={styles.rowText}>{AllTypes[i]}</Text>
                 </View>
             )
@@ -51,17 +51,23 @@ function type(id) {
     }
 
 }
+
+
+
+
 const getAllTypes = async () => {
     let types = [];
     let parsed = await fetch(`${BASE_URL}/publications/types/`).then(r => r.json());
     types = parsed.types.map(type => type.id).sort();
-
 }
+
+
+
 /*
 function getType(array,id) {
 
 }*/
-
+/*
 const GetAllPublications = async () => {
     let page = 0;
     let publications = []
@@ -76,33 +82,68 @@ const GetAllPublications = async () => {
     //This will return the array that contains all publications for all pages
     return publications;
 }
+*/
+
+// Parameter: pageNumb (the current page number)
+// Return a list of publications in one page only
+const GetAllPublications = async (page_numb) => {
+    //let page = 0;
+
+    let publications = []
+    let parsed = {publications: []};
+    let response = await fetch(`${BASE_URL}/publications?page=${page_numb}`);
+    parsed = await response.json();
+    publications = publications.concat(parsed.publications);
+    return publications;
+}
+
+
+
+
 
 
 export default function ViewTab(props){
     //const [publications, setPublications] = useState([]);
     const [publications, setPublications] = useState({loaded: false, items: []});
+    //To keep track and upload publications from new page.
+    const [page,setPage] = useState(0);
+    //To make sure that we are not requesting any more data if we reach the end
+    const [morePage,setMorePage] = useState(true);
+
+
+    const loadMorePage = () => {
+        if (morePage) {
+            setPage(page + 1);
+        }
+    }
 
     useEffect(() => {
         //Calling the subroutine
         //Alternative
 
         //A function to load all publications
+
         let load = async () => {
-            let allPublications = await GetAllPublications();
-            setPublications({loaded: true, items: allPublications});
+            let allPublications = await GetAllPublications(page);
+            if (allPublications.length === 0) {
+                setMorePage(false);
+            }
+            //Change from item: allPublication to items: publications.items.concat(allPublications) because we want to keep the previous publications although we load more publication
+            setPublications({loaded: true, items: publications.items.concat(allPublications)});
         }
+
+
         //Call funtion to load after component is rendered
         load();
         //loadPublications(setPublications);
-    }, [0]);
+    }, [page]);
 
 
 
     return (
 
         <View style = {styles.tabContainer}>
-        {
-            <ScrollView>
+
                 <View style = {styles.top}>
 
                             <View>
@@ -162,10 +203,13 @@ export default function ViewTab(props){
                                 </View>
                             </View>
 
-                    )}/>
-            </ScrollView>
 
-        }
+                    )}
+                    onEndReached = {loadMorePage}
+                    onEndReachedThreshold = {0.3}
+                    />
+
+
 
         </View>
     )
