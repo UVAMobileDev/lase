@@ -22,6 +22,7 @@ import SelectType from '../../Publications/SelectType';
 
 export default function InsertTab(props){
     const [publication,setPublication] = useState();
+    //const [record, setRecord] = useState(Object.assign({}, RecordDefault));
     return (
         <View style = {styles.container}>
             <ScrollView>
@@ -42,7 +43,6 @@ export default function InsertTab(props){
             </ScrollView>
 
         </View>
-
     )
 
 
