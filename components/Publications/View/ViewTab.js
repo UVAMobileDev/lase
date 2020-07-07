@@ -141,11 +141,12 @@ export default function ViewTab(props){
 
                         item => item.id.toString()}
                         renderItem = {({item}) => (
-                            <View   style={styles.recordRow}>
+                            <View  style={styles.recordRow}>
+
                                 <View>
                                     <TouchableOpacity   style={styles.openRecordButton}
                                         onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
-                                        <Ionicons name="md-open" size={16} color={'green'} style={{position: "relative", left: 3, top: 1}}/>
+                                        <Ionicons name="md-open" size={16} color={'grey'} style={{position: "relative", left: 3, top: 1}}/>
                                     </TouchableOpacity>
                                 </View>
 
@@ -181,7 +182,6 @@ const styles = StyleSheet.create({
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
-
     },
     author: {
         width: 600,
@@ -210,8 +210,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         margin: 4,
-        borderRadius: 8,
         borderLeftWidth: 3,
+        borderRadius: 5,
+        borderColor: 'red',
     },
     top: {
         flexDirection: "row",
