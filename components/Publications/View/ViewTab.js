@@ -43,7 +43,7 @@ function type(id) {
     for (let i = 0; i < AllTypes.length; i++) {
         if (theID === i) {
             return (
-                <View style={{width: 95}}>
+                <View style={{width: "10%"}}>
                     <Text style={styles.rowText}>{AllTypes[i]}</Text>
                 </View>
             )
@@ -99,9 +99,6 @@ const GetAllPublications = async (page_numb) => {
 
 
 
-
-
-
 export default function ViewTab(props){
     //const [publications, setPublications] = useState([]);
     const [publications, setPublications] = useState({loaded: false, items: []});
@@ -146,26 +143,26 @@ export default function ViewTab(props){
 
                 <View style = {styles.top}>
 
-                            <View>
+                            <View style={{width: "10%"}}>
                                 <Text style = {styles.type}>
                                     Type
                                 </Text>
                             </View>
 
-                           <View>
+                           <View style={{width: "45%"}}>
                                <Text style = {styles.title}>
                                    Publication Title
                                </Text>
                            </View>
 
 
-                           <View>
+                           <View style={{width: "40%"}}>
                                <Text style = {styles.author}>
                                    Author
                                </Text>
                            </View>
 
-                           <View>
+                           <View style={{width: "5%"}}>
                                <Text style={styles.id}>
                                    ID
                                </Text>
@@ -192,13 +189,13 @@ export default function ViewTab(props){
                                 </View>
 
                                 {type(item.typeID)}
-                                <View style={{width: 450}}>
+                                <View style={{width: "45%"}}>
                                     <Text style={styles.rowText}>{item.title}</Text>
                                 </View>
-                                <View style={{width: 570}}>
+                                <View style={{width: "40%"}}>
                                     <Text style={styles.rowText}>{item.author}</Text>
                                 </View>
-                                <View>
+                                <View style={{width: "5%"}}>
                                     <Text style={styles.rowText}>{item.id}</Text>
                                 </View>
                             </View>
@@ -217,25 +214,22 @@ export default function ViewTab(props){
 
 const styles = StyleSheet.create({
     type: {
-        width: 55,
         fontWeight: "bold",
         fontSize: 22,
+        textAlign: 'center',
     },
     title: {
-        width: 500,
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
     },
     author: {
-        width: 600,
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
     },
     id: {
         fontSize: 22,
-        textAlign: 'center',
         fontWeight: "bold",
     },
     container: {
