@@ -863,6 +863,7 @@ export default function Members(props) {
             <View>
                 <Text style={styles.sectionHeader}>Principal Investigator</Text>
             </View>
+
             {
             //renders the principal investigator's info in a readable layout
             PrincipalInvestigator.map(item => (
@@ -889,7 +890,6 @@ export default function Members(props) {
             </View>
             {
             //renders the array of grad students in a readable layout
-            //// TODO: don't display email and phone headers when fields are null
             GradStudents.map(item => (
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
