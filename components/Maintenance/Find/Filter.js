@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import SelectDate from '../../lib/forms/SelectDate';
+import SortingButton from '../../lib/sort/SortingButton';
 
 
 // Helper method which retrieves all the maintenance records from the API. It's not
@@ -80,8 +81,8 @@ const FilterFx = filter => {
 //  technfilterically identical to the portion of the Overview subpage in the Landing
 //  folder which deals with retrieving the list of recent publications.
 export default function Filter(props) {
-    let [records, setRecords] = useState({loaded: false, items: []});
-    let [filter, dispatchFilter] = useReducer(FilterReducer, {});
+    const [records, setRecords] = useState({loaded: false, items: []});
+    const [filter, dispatchFilter] = useReducer(FilterReducer, {});
 
 
     useEffect(() => {
@@ -92,8 +93,25 @@ export default function Filter(props) {
         load();
     }, [0]);
 
+    const SortBy = (key, stage) => {
+        let invert = stage === "reverse";
+
+        let presort = records.items.concat();
+        presort.sort((a, b) => {
+            if(a[key] < b[key]) return invert ? 1 : -1;
+            if(a[key] > b[key]) return invert ? -1 : 1;
+            return 0;
+        });
+
+        setRecords({
+            loaded: records.loaded,
+            items: presort,
+        });
+    }
+
     return (
         <View style={styles.container}>
+
             <View style={styles.filterControls}>
 
                 <View style={styles.filterControlGroup}>
@@ -145,6 +163,16 @@ export default function Filter(props) {
                     </View>
                 </View>
             </View>
+
+            <View style={styles.sortControls}>
+                <View style={{width: 95, textAlign: "center"}}>
+                    <Text style={{fontSize: 15}}>Sort Records</Text>
+                </View>
+                <View style={{width: 75}}>
+                    <SortingButton label="Date" trigger={stage => SortBy("date", stage)}/>
+                </View>
+            </View>
+
             <View style={styles.listContainer}>
                 {
                     /* FlatLists are easily one of the most power components in React. Learning how to make good use of them is a must! */
@@ -218,10 +246,9 @@ const styles = StyleSheet.create({
     },
     filterControls: {
         flexDirection: "row",
+        justifyContent: "space-evenly",
         borderBottomWidth: 2,
         borderColor: "black",
-        flexDirection: "row",
-        justifyContent: "space-evenly",
     },
     filterControlGroup: {
         flex: 1,
@@ -237,5 +264,12 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
+    },
+    sortControls: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        borderBottomWidth: 2,
+        borderColor: "black",
     },
 });
