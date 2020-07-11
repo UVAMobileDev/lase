@@ -78,7 +78,7 @@ const RemoveSource = (index, state, update) => {
 //  sources, like date or system, then it propagates the change to all sources
 //  as well.
 const UpdateRecord = (state, update, updateDict, sources, setSources) => {
-    let new_version = Object.assign(state, updateDict);
+    let new_version = Object.assign({}, state, updateDict);
 
     if(sources.length > 0 && (updateDict.system || updateDict.date)) {
         // Either the system or date of the record changed. Update the source(s)
