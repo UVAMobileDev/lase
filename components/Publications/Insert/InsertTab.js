@@ -195,6 +195,7 @@ export default function InsertTab(props){
                     <View style = {styles.ScrollMenu}>
                         {/* This is for the scroll-menu for choosing type to public */}
                         <Picker onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}>
+                            <Picker.Item key={-1} label= "" value= ""/>
                             {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
                         </Picker>
                     </View>
@@ -209,7 +210,7 @@ export default function InsertTab(props){
                                 {filterFields.map(field => (
                                     <View key = {field.key} style = {styles.infoRow}>
                                         <View style = {{width: '40%'}}>
-                                            <Text style = {styles.fieldName}> {field.key} </Text>
+                                            <Text style = {styles.fieldName}> {field.key}: </Text>
                                         </View>
 
                                         <View style = {{width: '60%'}}>
