@@ -5,13 +5,14 @@ export default function Classes(props) {
 
     return (
         <View>
-            <Text>Classes</Text>
-        </View>
+            <View>
+                <Text>Classes</Text>
+            </View>
 
-        <View>
-          <Text style={styles.sectionHeader}> EE 383P-6: Optoelectronic Devices (Spring 2007-2015, 2017, 2019, 2021 - Planned)</Text>
+            <View>
+              <Text style={styles.sectionHeader}> EE 383P-6: Optoelectronic Devices (Spring 2007-2015, 2017, 2019, 2021 - Planned)</Text>
+            </View>
         </View>
-
     );
 }
 
@@ -25,7 +26,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 10,
   },
-  }
 
   // sectionText:{
   //   fontSize:
