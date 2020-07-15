@@ -20,6 +20,7 @@ import Landing from './components/Landing/Landing.js';
 import Maintenance from './components/Maintenance/Maintenance';
 import Utilities from './components/Utilities/Utilities';
 import Public from './components/Publications/Navigator_Publication';
+import Growths from './components/Growths/Growths'
 
 // Create left side drawer navigator. For this application, this drawer is the
 //  top level navigator.
@@ -66,7 +67,7 @@ export default function App() {
                                 drawerStyle={drawerStyle}>
                 {/* Each screen has a name to appear in the UI and a component which it displays when selected. */}
                 <Drawer.Screen name="Home" component={Landing}/>
-                <Drawer.Screen name="Growths" component={TodoScreen}/>
+                <Drawer.Screen name="Growths" component={Growths}/>
                 <Drawer.Screen name="Maintenance" component={Maintenance}/>
                 <Drawer.Screen name="Publications" component={Public}/>
                 <Drawer.Screen name="Utilities" component={Utilities}/>
