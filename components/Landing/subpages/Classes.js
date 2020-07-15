@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, Linking, StyleSheet, Image } from 'react-native';
-
+import React, { Component } from 'react';
+import { View, Text, Linking, StyleSheet, Image} from 'react-native';
+import { WebView } from "react-native-webview";
 
 // const Books = [
 //     {
@@ -100,6 +100,14 @@ export default function Classes(props) {
 
                 <Text style={styles.sectionHeader}> EE 364H/464H: Honors Senior Design (Fall 2010-Present) </Text>
                 <Text style={styles.textContainer}> Mentored senior design teams; supervised projects include a real-time ketone minitor, personal hydration sensor, real-time health monitor, virtual whiteboard system, face-tracking directional audio system, a LED-based solar cell testing system (won 3rd place), and a real-time exercise form monitoring system: </Text>
+                <View style = {styles.Container}>
+                  <WebView
+                    style={styles.WebViewStyle}
+                    source={{ uri: 'https://www.youtube.com/embed/C5i-UnuUKUI'}}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    />
+                </View>
             </View>
         </View>
     );
@@ -110,6 +118,7 @@ export default function Classes(props) {
 //Picture? linking
 //Video?
 //The bottom?
+
 
 const robotImage = {
   uri: 'https://lase.mer.utexas.edu/images/EE302_Final_Project_small.JPG',
@@ -124,6 +133,16 @@ const styles = StyleSheet.create({
   color: '#c60',
   fontSize: 35,
   padding: 20,
+  },
+
+  Container: {
+    flex: 1
+  },
+
+  WebViewStyle: {
+    flex: 1,
+    margin: 20,
+    backgroundColor: "blue"
   },
 
   textContainer: {
