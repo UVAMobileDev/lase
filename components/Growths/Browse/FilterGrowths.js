@@ -11,7 +11,7 @@ const fetch = require('node-fetch');
 import { Ionicons } from '@expo/vector-icons';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
-const BASE_URL = `https://kh10uhxdw5.execute-api.us-east-2.amazonaws.com/production`
+import { BASE_URL } from '../../../constants/API.js';
 
 /*Loads and displays all growths in the database*/
 const loadAllGrowths = async (running_list, page, update) => {
@@ -28,12 +28,20 @@ const loadAllGrowths = async (running_list, page, update) => {
 }
 
 /*Helper method that allows users to filter growths*/
-const FilterFx = filter => {
-    return growth => {
-        for(var key in filter) if(filter[key] !== "" && growth[key] !== filter[key]) return false;
-        return true;
-    };
-};
+// const FilterFx = filter => {
+//     return growth => {
+//         for(var key in filter) if(filter[key] !== "" && growth[key] !== filter[key]) return false;
+//         return true;
+//     };
+// };
+
+let filter = {
+    grower: "Rasha El-Jaroudi",
+    substrate: "As"
+}
+
+let querystrings = Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "");
+// This string is "grower=Rasha El-Jaroudi&substrate=As"let url_to_fetch = `${BASE_URL}/growths/Echo?${querystrings}`;
 
 export default function GrowthBrowser(props) {
 
@@ -71,13 +79,13 @@ export default function GrowthBrowser(props) {
                     <ScrollView>
                         <FlatList
                             style={styles.list}
-                            data={growths.contents.filter(FilterFx(filter))}
+                            data={growths.contents}
                             keyExtractor={item => item.id.toString()}
                             renderItem={({item}) => (
                                 <View style={styles.recordRow}>
                                     <View>
                                         <TouchableOpacity   style={styles.openRecordButton}
-                                                            onPress={() => props.navigation.navigate("Sample Details")}>
+                                                            onPress={() => props.navigation.navigate("Sample Details", {sample: item})}>
                                             <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
                                         </TouchableOpacity>
                                     </View>

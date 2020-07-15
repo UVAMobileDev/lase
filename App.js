@@ -20,7 +20,8 @@ import Landing from './components/Landing/Landing.js';
 import Maintenance from './components/Maintenance/Maintenance';
 import Utilities from './components/Utilities/Utilities';
 import Public from './components/Publications/Navigator_Publication';
-import Growths from './components/Growths/Growths.js';
+import Growths from './components/Growths/Growths'
+
 // Create left side drawer navigator. For this application, this drawer is the
 //  top level navigator.
 const Drawer = createDrawerNavigator();
