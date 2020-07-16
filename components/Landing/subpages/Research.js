@@ -2,7 +2,7 @@
 
 // Imports
 import React from 'react';
-import { View, Text, StyleSheet, Platform, Dimensions, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Platform, Dimensions, FlatList, Image, ScrollView } from 'react-native';
 
 // The paragraphs to render
 const Paragraphs = [
@@ -45,23 +45,26 @@ export default function Research(props) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.researchFigure}>
-                <Image  style={{width: "100%", height: "100%"}}
-                        source={require('../../../assets/LASE_Research_Figure.jpg')}/>
-            </View>
-            {
-                // We transform the array of paragraphs into an array of JSX
-                //  elements which make the paragraph look nice. This doesn't
-                //  necessarily need to be done with a map, but it's a clean and
-                //  simple way of demonstrating the power of the map function.
-                Paragraphs.map(item => (
-                    <View   key={item.id}
-                            style={styles.researchTopic}>
-                        <Text style={styles.topicTitle}>{item.title}</Text>
-                        <Text style={styles.topicBody}>{item.body}</Text>
-                    </View>
-                ))
-            }
+            <ScrollView>
+                <View style={styles.researchFigure}>
+                    <Image  style={{width: "100%", height: "100%"}}
+                            source={require('../../../assets/LASE_Research_Figure.jpg')}/>
+                </View>
+                {
+                    // We transform the array of paragraphs into an array of JSX
+                    //  elements which make the paragraph look nice. This doesn't
+                    //  necessarily need to be done with a map, but it's a clean and
+                    //  simple way of demonstrating the power of the map function.
+                    Paragraphs.map(item => (
+                        <View   key={item.id}
+                                style={styles.researchTopic}>
+                            <Text style={styles.topicTitle}>{item.title}</Text>
+                            <Text style={styles.topicBody}>{item.body}</Text>
+                        </View>
+                    ))
+                }
+                <View style={{height: 25}}/>
+            </ScrollView>
         </View>
     );
 }
@@ -80,6 +83,7 @@ const GetDimension = (width, height, getWidth) => {
 const styles = StyleSheet.create({
     container: {
         width: Platform.OS === "web" ? "100%" : Dimensions.get('window').width,
+        height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
         flexDirection: "column",
         backgroundColor: "#fff",
         alignItems: "center",
@@ -93,9 +97,8 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginRight: 20,
     },
-    link: {color: "#c60"},
-    researchTopic: {
-
+    link: {
+        color: "#c60"
     },
     researchFigure: {
         width: GetDimension(700, 340, true),

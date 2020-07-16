@@ -15,16 +15,18 @@ function Todo(props) {
 
 export default function Utilities(props) {
     return (
-        <Tab.Navigator  initialRouteName="Browse"
-                        style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
-                        tabBarOptions={{
-                            scrollEnabled: Platform.OS !== "web",
-                        }}>
-            <Tab.Screen name="Growth Calendar" component={GrowthCalendar}/>
-            <Tab.Screen name="STO Generation" component={STO}/>
-            <Tab.Screen name="Wafer Log" component={WaferLog}/>
-            <Tab.Screen name="Delete" component={Todo}/>
-        </Tab.Navigator>
+        <View style={{backgroundColor: "#000"}}>
+            <Tab.Navigator  initialRouteName="Browse"
+                            style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
+                            tabBarOptions={{
+                                scrollEnabled: Platform.OS !== "web",
+                            }}>
+                <Tab.Screen name="Growth Calendar" component={GrowthCalendar}/>
+                <Tab.Screen name="STO Generation" component={STO}/>
+                <Tab.Screen name="Wafer Log" component={WaferLog}/>
+                <Tab.Screen name="Delete" component={Todo}/>
+            </Tab.Navigator>
+        </View>
     );
 }
 

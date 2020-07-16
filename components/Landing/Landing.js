@@ -22,46 +22,42 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function Landing(props) {
     return (
-        <View style={styles.container}>
-            {
-                // If we're on web, then we have to show a background image since
-                //  the homepage doesn't consume the full screen. On native, though,
-                //  the content fills the whole screeen so we include no image. Instead,
-                //  we include a status bar banner which pushes content down so it
-                //  doesn't interfere with things like the time, cell reception, etc.
-                Platform.OS === "web" ? (
-                    <Image  style={styles.backgroundImage}
-                                resizeMode="stretch"
-                                source={require('../../assets/background.gif')}/>
-                ) : (<View style={styles.statusBarBanner}/>)
-            }
-            <ScrollView style={styles.scrollView} contentContainerStyle={{alignItems: "center"}}>
+        <View style={{flex: 1, backgroundColor: "#000"}}>
+            <View style={styles.container}>
+                {
+                    // If we're on web, then we have to show a background image since
+                    //  the homepage doesn't consume the full screen. On native, though,
+                    //  the content fills the whole screeen so we include no image. Instead,
+                    //  we include a status bar banner which pushes content down so it
+                    //  doesn't interfere with things like the time, cell reception, etc.
+                    Platform.OS === "web" ? (
+                        <Image  style={styles.backgroundImage}
+                                    resizeMode="stretch"
+                                    source={require('../../assets/background.gif')}/>
+                    ) : (<View style={styles.statusBarBanner}/>)
+                }
                 <View style={styles.document}>
                     <Image  style={styles.headerImage}
                             source={require('../../assets/UT_banner.png')}/>
-                    <Image  style={styles.headerEquipment}
-                            source={require('../../assets/header_equipment.jpg')}/>
-                    <View style={styles.buildingExterior}>
-                        <Tab.Navigator  tabBarOptions={{
-                                            activeTintColor: '#f90',
-                                            inactiveTintColor: '#fff',
-                                            style: {
-                                                backgroundColor: "#000",
-                                            },
-                                            scrollEnabled: Platform.OS !== "web",
-                                        }}>
-                            <Tab.Screen name="Overview" component={Overview}/>
-                            <Tab.Screen name="Research" component={Research}/>
-                            <Tab.Screen name="What is MBE?" component={WhatIsMBE}/>
-                            <Tab.Screen name="Members" component={Members}/>
-                            <Tab.Screen name="Classes" component={Classes}/>
-                            <Tab.Screen name="Sponsors" component={Sponsors}/>
-                            <Tab.Screen name="Facilities" component={Facilities}/>
-                            <Tab.Screen name="News" component={News}/>
-                        </Tab.Navigator>
-                    </View>
+                    <Tab.Navigator  tabBarOptions={{
+                                        activeTintColor: '#f90',
+                                        inactiveTintColor: '#fff',
+                                        style: {
+                                            backgroundColor: "#000",
+                                        },
+                                        scrollEnabled: Platform.OS !== "web",
+                                    }}>
+                        <Tab.Screen name="Overview" component={Overview}/>
+                        <Tab.Screen name="Research" component={Research}/>
+                        <Tab.Screen name="What is MBE?" component={WhatIsMBE}/>
+                        <Tab.Screen name="Members" component={Members}/>
+                        <Tab.Screen name="Classes" component={Classes}/>
+                        <Tab.Screen name="Sponsors" component={Sponsors}/>
+                        <Tab.Screen name="Facilities" component={Facilities}/>
+                        <Tab.Screen name="News" component={News}/>
+                    </Tab.Navigator>
                 </View>
-            </ScrollView>
+            </View>
         </View>
     )
 }
@@ -84,15 +80,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         flexDirection: "row",
-        backgroundColor: "#ffffff"
-    },
-    scrollView: {
         marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,
     },
     document: {
-        marginTop: Platform.OS === "web" ? 25 : 0,
+        marginTop: Platform.OS === "web" ? 10 : 0,
         backgroundColor: "#fff",
         flexDirection: "column",
+        height: "100%",
+        width: GetDimension(754, 0, true),
     },
     headerImage: {
         width: GetDimension(754, 90, true),
@@ -101,24 +96,12 @@ const styles = StyleSheet.create({
         borderColor: "#000000",
         borderBottomWidth: 1,
     },
-    headerEquipment: {
-        width: GetDimension(754, 173, true),
-        height: GetDimension(754, 173, false),
-        paddingBottom: 20,
-        borderColor: "#000000",
-        borderBottomWidth: 1,
-        paddingBottom: 5,
-    },
     backgroundImage: {
         position: "absolute",
         width: "100%",//842,
         height: "100%",//652,
         top: 0,
         left: 0,
-    },
-    buildingExterior: {
-        width: GetDimension(754, 0, true),
-        marginBottom: 25,
     },
     statusBarBanner: {
         position: "absolute",
