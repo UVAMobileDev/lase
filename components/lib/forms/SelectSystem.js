@@ -6,10 +6,10 @@
 // Imports
 import React from 'react';
 import { View, StyleSheet, Picker } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import { BASE_URL } from '../../../constants/API';
 const fetch = require('node-fetch');
 var Semaphore = require('async-mutex').Semaphore;
-
 
 // All of the comments from SelectMember.js are applicable here as well. From a
 //  technical perspective, this component does the exact same thing.
@@ -43,24 +43,39 @@ export default class SelectSystem extends React.Component {
     render() {
         return (
             <View>
-                <Picker style={styles.picker}
-                        onValueChange={(value, index) => this.state.update(value)}>
-                    <Picker.Item key={-1} label={this.state.placeholder.label} value={this.state.placeholder.value}/>
-                    {SelectSystem.systems.map((sys, index) => (
-                        <Picker.Item key={index} label={sys} value={sys}/>
-                    ))}
-                </Picker>
+                <RNPickerSelect style={pickerStyle}
+                                placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
+                                InputAccessoryView={() => null}
+                                onValueChange={val => this.state.update(val)}
+                                items={SelectSystem.systems.map(sys => (
+                                    {label: `${sys}`, value: sys}
+                                ))}/>
             </View>
         );
     }
 }
 
-const styles = StyleSheet.create({
-    picker: {
-        flex: 1,
-        margin: 5,
-        padding: 5,
-        borderLeftWidth: 2,
-        borderRadius: 5,
-    }
+// Styles copied from the react-native-picker-select sample snack, with some modifications
+// https://snack.expo.io/@lfkwtz/react-native-picker-select
+const pickerStyle = StyleSheet.create({
+    inputIOS: {
+        fontSize: 16,
+        paddingVertical: 7,
+        paddingHorizontal: 5,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30,
+    },
+    inputAndroid: { // Covers Android & Web platforms
+        fontSize: 16,
+        paddingHorizontal: 5,
+        paddingVertical: 7,
+        borderWidth: 0.5,
+        borderColor: 'gray',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30,
+    },
 });

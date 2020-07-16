@@ -5,7 +5,8 @@
 
 // Imports
 import React from 'react';
-import { View, StyleSheet, Picker } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
 
@@ -93,23 +94,39 @@ export default class SelectMember extends React.Component {
     render() {
         return (
             <View>
-                <Picker style={styles.picker}
-                        onValueChange={(value, index) => this.state.update(value)}>
-                    <Picker.Item key={-1} label={this.state.placeholder.label} value={this.state.placeholder.value}/>
-                    {SelectMember.members.map((name, index) => (
-                        <Picker.Item key={index} label={name} value={name}/>
-                    ))}
-                </Picker>
+                <RNPickerSelect style={pickerStyle}
+                                placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
+                                InputAccessoryView={() => null}
+                                onValueChange={member => this.state.update(member)}
+                                items={SelectMember.members.map(member => (
+                                    {label: `${member}`, value: member}
+                                ))}/>
             </View>
         );
     }
 }
 
-const styles = StyleSheet.create({
-    picker: {
-        flex: 1,
-        margin: 5,
-        padding: 5,
-        borderRadius: 5,
-    }
+// Styles copied from the react-native-picker-select sample snack, with some modifications
+// https://snack.expo.io/@lfkwtz/react-native-picker-select
+const pickerStyle = StyleSheet.create({
+    inputIOS: {
+        fontSize: 16,
+        paddingVertical: 7,
+        paddingHorizontal: 5,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30,
+    },
+    inputAndroid: { // Covers Android & Web platforms
+        fontSize: 16,
+        paddingHorizontal: 5,
+        paddingVertical: 7,
+        borderWidth: 0.5,
+        borderColor: 'gray',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30,
+    },
 });
