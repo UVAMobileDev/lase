@@ -5,7 +5,7 @@
 // Insert: add new publication and scroll list is provided to let user choose which catergories of new publication will be
 
 // All imports
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Picker } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
+import SelectDate from '../../lib/forms/SelectDate';
 
 
 // Array to contain all types of publication
@@ -40,6 +41,17 @@ const AllTypes = [
             `unpublished`
 ]
 
+function minYear(arr) {
+    let min = 0
+    let holder = []
+    for (let i = 0; i < arr.length; i++) {
+        holder[i] = parseInt(arr[i].year);
+    }
+
+    min = Math.min(...holder);
+    return min;
+
+}
 /*
     A function to load all types for users to select in the filter area
 */
@@ -123,16 +135,26 @@ function uniqueAuthor(arr) {
     }
     unique.push(maxYear);
     */
-    console.log(unique);
 
     return unique;
 
 }
+// This function is called whenever the payload is activated
+// Param (state): the current state
+// Param (action): action required from user
+// Return an object to filter
+const FilterReducer = (state, action) => {
+    switch(action.type) {
+        case "set":
+            return {...state, [action.payload.key]: action.payload.value};
+        default:
+            return state;
+    }
+}
 
 
-
-// Parameter: pageNumb (the current page number)
-// Return a list of publications in one page only
+// Param (page_numb): the current page number
+// Return a list of publications in requested page only
 const GetAllPublications = async (page_numb) => {
     //let page = 0;
 
@@ -144,38 +166,40 @@ const GetAllPublications = async (page_numb) => {
     return publications;
 }
 
-const GetAllPublications_year = async(year,index) => {
-    console.log(index);
-    let theYear = year[index].year;
-    console.log(theYear);
+const AllPublications = async () => {
+    let page = 0;
     let publications = []
     let parsed = {publications: []};
-    let response = await fetch(`https://api.lase.mer.utexas.edu/v1/publications?year=${theYear}`);
-    parsed = await response.json();
-    console.log(parsed);
-    publications = publications.concat(parsed.publications);
+        do {
+            let response = await fetch(`${BASE_URL}/publications?page=${page}`);
+            parsed = await response.json();
+            publications = publications.concat(parsed.publications);
+            page++;
+        } while (parsed.publications.length > 0)
+
     return publications;
 }
 
-const GetAllPublications_author = async(arr_author,index) => {
-    console.log(index);
-    let theName = arr_author[index].author;
+// A single line of code to handel query string and return URL to fetch based on the user's request
+const QueryString = filter => `${BASE_URL}/publications?${Object.keys(filter).filter(key => filter[key] != "").reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
 
-    console.log(theName);
+
+const filteredObj = async (filter,page) => {
     let publications = []
-    let parsed = {publications: []};
-    let response = await fetch(`https://api.lase.mer.utexas.edu/v1/publications?author=${theName}`);
-    parsed = await response.json();
-    console.log(parsed);
-    publications = publications.concat(parsed.publications);
+    let parsed = {publication: []};
+    parsed = await fetch(QueryString(filter,page)).then(r => r.json());
+    publications = publications.concat(parsed.publication);
     return publications;
 }
-
-
 
 export default function ViewTab(props){
+    //--------------------------------------------------------------------------------------------------------------------------------------------------------
+    // useState and useReducer area
 
-    // To render all publications to the page
+    // To render all publications
+    const [allPublications,setAllPublications] = useState({loaded: false, items:[]});
+
+    // To render all publications by page
     const [publications, setPublications] = useState({loaded: false, items: []});
 
     //To keep track and upload publications from new page.
@@ -187,19 +211,62 @@ export default function ViewTab(props){
     // To keep track of types and display all types option for users to select in filter area
     const [types,setTypes] = useState([]);
 
+    // To filter publications based on users' choice
+    const [filter,dispatchFilter] = useReducer(FilterReducer,{});
 
-    // UseState to detect if the users want to filter by year
-    const [yearFilter,setYearFilter] = useState({loaded: false, array_year: [], index_year: 0});
+    const [signal,setSignal] = useState(false);
 
-    // UseState to detect if the users want to filter by author
-    const [authorFilter,setAuthorFilter] = useState({loaded:false, array_author: [], index_author: ''});
+    const [loadData, setLoadData] = useState({page: 0, loadMore: true});
+
+    //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-    const loadMorePage = () => {
-        if (morePage) {
-            setPage(page + 1);
+
+
+    let loadAllPublications = async () => {
+        let loadAll = await AllPublications();
+        setAllPublications({loaded: true, items: loadAll});
+    }
+    loadAllPublications();
+
+
+    useEffect(() => {
+        //Each time filter changes, this will set the default. (load from beginning and load more pages)
+        setLoadData({page: 0, loadMore: true});
+    },[filter]);
+
+    useEffect(() => {
+        // This useEffect is only called whenever the number of page changes
+        let loadFilter = async () => {
+
+            if (!loadData.loadMore) return; // don't do anything, we are done loading
+            let response = await fetch(`${QueryString(filter)}&page=${loadData.page}`).then(r => r.json()); //this will return list of objects (publications)
+
+            if (loadData.page === 0) {
+                setPublications({loaded:true, items: response.publications});
+            } else {
+                if (response.publications.length > 0) {
+
+                    // Continue to load more
+                    setPublications({loaded: true, items:publications.items.concat(response.publications)}); // keep loading while there are still publications
+                } else {
+                    setLoadData({page: loadData.page,loadMore: false}); // no more publications, we are done
+
+                }
+            }
+
+        }
+        loadFilter();
+
+    },[loadData.page,filter]);
+
+
+    function ifReach() {
+        if (loadData.loadMore) {
+            setLoadData({page: loadData.page + 1, loadMore: true});
         }
     }
+
 
     // First useEffect: Load all types from the server
     useEffect(() => {
@@ -212,40 +279,28 @@ export default function ViewTab(props){
         load(); //function called to get all types
     }, []);
 
-    // Second useEffect: load all publications from the server
+    /*
+    old code
     useEffect(() => {
-
-        //Calling the subroutine
-        //Alternative
-            if (yearFilter.loaded) {
-                let load_year = async () => {
-                    let allPublications_year = await GetAllPublications_year(yearFilter.array_year,yearFilter.index_year);
-                    setPublications({loaded:true, items: allPublications_year});
-                }
-                load_year();
-                console.log(publications);
-            } else if (yearFilter.loaded === false && authorFilter.loaded) {
-                let load_author = async () => {
-                    let allPublications_author = await GetAllPublications_author(authorFilter.array_author,authorFilter.index_author);
-                    setPublications({loaded:true, items: allPublications_author});
-                }
-                load_author();
-            } else {
-                //A function to load all publications
-
-                let load = async () => {
-                    let allPublications = await GetAllPublications(page);
-                    if (allPublications.length === 0) {
-                        setMorePage(false);
-                    }
-                    //Change from item: allPublication to items: publications.items.concat(allPublications) because we want to keep the previous publications although we load more publication
-                    setPublications({loaded: true, items: publications.items.concat(allPublications)});
-                }
-                load(); //Call funtion to load after component is rendered
+        // No filtering applied, show publications page by page
+        let load = async () => {
+            let allPublications = await GetAllPublications(page);
+            if (allPublications.length === 0) {
+                setMorePage(false);
             }
-    }, [page,yearFilter,authorFilter]);
+            //Change from item: allPublication to items: publications.items.concat(allPublications) because we want to keep the previous publications although we load more publication
+            setPublications({loaded: true, items: publications.items.concat(allPublications)});
+        }
+        load(); //Call funtion to load after component is rendered
+    },[page]);
+    */
 
 
+/*
+    ifReach = {() => {
+
+    }}
+*/
 
     return (
 
@@ -259,12 +314,14 @@ export default function ViewTab(props){
                                 <View style = {{flexDirection: 'row'}}>
                                     <Text style = {styles.filterType}> Filter by type:  </Text>
                                     {/* all pickers should go in here */}
-
                                     {/* Picker for displaying all types */}
+
                                     <Picker
                                     style = {styles.Scrollmenu}
-                                    onValueChange = {value => setTypeFilter({loaded: true, typeid: parseInt(value)})}
-                                    >
+
+                                    //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}}); setSignal(true); setMorePage(true); setPage(0);} }
+                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}>
+                                        <Picker.Item key={-1} label={'Filter by ID: '} value={0}/>
                                         {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
                                     </Picker>
 
@@ -272,43 +329,55 @@ export default function ViewTab(props){
                                     <Text style = {styles.filterType}> Filter by ID number: </Text>
 
                                     {/* Picker for displaying all ID numbers */}
-                                    <Picker style = {styles.Scrollmenu}>
-                                        {publications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
+                                    <Picker
+                                    style = {styles.Scrollmenu}
+                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
+                                    >
+                                        <Picker.Item key={-1} label={'Filter by ID: '} value={0}/>
+                                        {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
                                     </Picker>
 
                                     <Text style = {styles.filterType}> Filter by year: </Text>
-                                    {/* Picker for displaying all authors of publications */}
+                                    {/* Picker for displaying all authors of publications
+                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
+                                        */}
                                     <Picker
                                         style = {styles.Scrollmenu}
-                                        onValueChange ={value => setYearFilter({loaded: true, array_year: uniqueYear(publications.items), index_year: parseInt(value)})}
+                                        //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}}); setSignal(true);} }
+                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
                                     >
+
+                                        <Picker.Item key={-1} label={'Filter by year:'} value={0}/>
+                                        {
+                                            [...Array(new Date().getFullYear() - 1999)].map((_, i) => (
+                                            <Picker.Item key={i} label={2000 + i} value={2000 + i} />
+                                        ))
+                                        /*
+                                        [...Array(new Date().getFullYear() - (minYear(allPublications.items)) - 1)].map((_, i) => (
+                                        <Picker.Item key={i} label={minYear(allPublications.items) + i} value={minYear(allPublications.items) + i} />))
+                                        */
+                                        }
+
+                                        { /*allPublications.items.map(item => (<Picker.Item key={item.id} label={item.year} value={item.id}/>))*/}
+
                                         {/* onValueChange ={value => setYear({loaded: true, input: parseInt(item.year)})}*/}
-                                        {uniqueYear(publications.items).map(item => (<Picker.Item key={item.id} label={item.year} value={item.id}/>))}
+
+
                                     </Picker>
                                 </View>
                             </View>
-
-                            <View style = {{marginBottom: 20}}>
-                                <Text style = {styles.filterType}> Filter by title: </Text>
-                                {/* Picker for displaying all ID numbers */}
-                                <Picker style = {styles.ScrollmenuLong}
-                                >
-                                    {publications.items.map(item => (<Picker.Item key={item.id} label={item.title} value={item.id}/>))}
-                                </Picker>
-                            </View>
-
 
                             <View>
                                 <Text style = {styles.filterType}> Filter by author: </Text>
                                 {/* Picker for displaying all ID numbers */}
                                 <Picker style = {styles.ScrollmenuLong}
-                                onValueChange = {value => setAuthorFilter({loaded: true, array_author: uniqueAuthor(publications.items), index_author: parseInt(value)})}
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "author", value: val}})}>
                                 >
-                                    {uniqueAuthor(publications.items).map(item => (<Picker.Item key={item.id} label={item.author} value={item.id}/>))}
+
+                                <Picker.Item key={-1} label={'Filter by author:'} value={""}/>
+                                    {uniqueAuthor(allPublications.items).map(item => (<Picker.Item key={item.id} label={item.author} value={item.author}/>))}
                                 </Picker>
                             </View>
-
-
 
                 </View>
 
@@ -374,7 +443,7 @@ export default function ViewTab(props){
                             </View>
 
                     )}
-                    onEndReached = {loadMorePage}
+                    onEndReached = {ifReach}
                     onEndReachedThreshold = {0.3}
                     />
 
