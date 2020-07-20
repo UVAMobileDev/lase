@@ -2,21 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, Image,Linking,Platform,Dimensions,FlatList, ScrollView} from 'react-native';
 
 /*
-    Parameters: base and power of a text
-    Purpose: return a text with superscript. For example, cm-1 -> cm^-1
-
-*/
-function getSuperScript(base,power) {
-  return (
-    <View style = {{flexDirection: 'row'}}>
-      <Text style = {{fontSize: 14}}>{base}</Text>
-      <Text style = {{fontSize: 8}}>{power}</Text>
-    </View>
-  );
-
-}
-
-/*
     Parameter (text): a variable contains a whole text
     Purpose: if a word should be linking to URL in a text, then this subroutine will be used to achieve that
     Credit to G.Micheal
@@ -61,7 +46,12 @@ function superScript(text,name) {
             let subs1 = newText.substring(0,indexof);
             let subs2 = newText.substring(indexof, newText.length);
             return (
-                <Text style = {styles.subBullet}>{'\u25E6'}{subs1}{getSuperScript('cm','-1')}{subs2}</Text>
+                <Text style = {styles.subBullet}>
+                    <Text>{'\u25E6'}{subs1}</Text>
+                    <Text style = {{fontSize: 14}}>{"cm"}</Text>
+                    <Text style = {{fontSize: 8}}>{"-1"}</Text>
+                    <Text>{subs2}</Text>
+                </Text>
             );
         } else {
             return (
@@ -618,16 +608,13 @@ export default function Facilities(props) {
                    fourier.map(section => (
                        <View key = {section.id}>
                            <Text style = {styles.listIndent}> {'\u2022'} {section.name} </Text>
-
-                                   {
-                                       section.options.map(subsection => (
-                                           <View key= {subsection.Opt_id}>
-                                               <Text>
-                                                   {superScript(subsection.text,section.name)}
-                                               </Text>
-                                           </View>
-                                       ))
-                                   }
+                           {
+                               section.options.map(subsection => (
+                                   <View key={subsection.Opt_id}>
+                                       {superScript(subsection.text,section.name)}
+                                   </View>
+                               ))
+                           }
                        </View>
                    ))
                }
