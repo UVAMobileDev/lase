@@ -15,9 +15,33 @@ export default function Classes(props) {
         </View>
     );
 }
+//Update about the how my code looks like
+//Ask questions about the Bold text in the applicable semi conductor
+//Downloading the file?
+//Picture?
+//Video?
+//The bottom?
 
 const styles = StyleSheet.create({
   container: {backgroundColor: 'white'},
+
+  header: {
+  color: '#c60',
+  fontSize: 35,
+  padding: 20,
+  },
+
+  textContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    padding: 20,
+  },
+
+  listIndent: {
+      fontSize: 14,
+      marginLeft: 60,
+      marginRight: 20,
+  },
 
   sectionHeader:{
     fontWeight: "bold",
@@ -27,7 +51,4 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
 
-  // sectionText:{
-  //   fontSize:
-  // }
 });

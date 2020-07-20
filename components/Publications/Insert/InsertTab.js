@@ -6,7 +6,7 @@
 
 // All imports
 import React, { useState, useEffect, useReducer } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, TextInput, ScrollView, ActivityIndicator,FlatLsit } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Picker, FlatList, TextInput, ScrollView, ActivityIndicator,FlatLsit } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
@@ -42,239 +42,142 @@ const AllTypes = [
             `unpublished`
 ]
 
-function typeName(id) {
-    return AllTypes[id];
+const LoadAllTypes = async () => {
+    //Get all types from API
+    let container = []
+    let parsed = await fetch(`${BASE_URL}/publications/types/`).then(r => r.json());
+    //container = parsed.types.map(type => type.label).sort();
+    //container = parsed.types.map(type => type.label).sort();
+    container = parsed.types.sort();
+    return container;
 }
 
-// Create an object that contains all default fields from a single publication
-/*
-const PubDefault = {
-    id: 0,
-    jabref_eid: "",
-    typeID: 0,
-    citeKey: "",
-    author: "",
-    title: "",
-    journal: "",
-    day: "",
-    dayFiled: "",
-    month: "",
-    monthFiled: "",
-    year: "",
-    yearFiled: "",
-    volume: "",
-    pages: "",
-    number: "",
-    eid: "",
-    note: "",
-    crossref: "",
-    keywords: "",
-    doi: "",
-    url: "",
-    file: "",
-    citeseeurl: "",
-    pdf: "",
-    abstract: "",
-    comment: "",
-    owner: "",
-    timestamp: "",
-    review: "",
-    search: "",
-    publisher: "",
-    editor: "",
-    series: "",
-    address: "",
-    edition: "",
-    howPublished: "",
-    lastChecked: "",
-    bookTitle: "",
-    organization: "",
-    language: "",
-    chapter: "",
-    type: "",
-    school: "",
-    nationality: "",
-    assignee: "",
-    institution: "",
-    revisor: "",
-}
-*/
+//Declare empty object. UseReducer will know to add a field when it does not have one and modify the field when it is already existed
+const PubDefault = {}
 
-const PubDefault = {
-    
-}
 
-// Remove fields according to chosen type
- const filerFields = [
-     {
-        id: 0,
-        allFields: [],
-     }, {
-         //This is for article
-         id: 1,
-         allFields: [
-             {
-                 text: 'id',
-             }, {
-                 text: 'jabref_eid',
-             }, {
-                 text: 'typeID',
-             }, {
-                 text: 'citeKey',
-             }, {
-                 text: 'author',
-             }, {
-                 text: 'title',
-             }, {
-                 text: 'journal',
-             }, {
-                 text: 'month',
-             }, {
-                 text: 'year',
-             }, {
-                 text: 'volume',
-             }, {
-                 text: 'pages',
-             }, {
-                 text: 'number',
-             }, {
-                 text: 'doi',
-             }, {
-                 text: 'url',
-             }, {
-                 text: 'file',
-             },
-         ]
-     },
- ]
-// Declare an empty array to contain all neccessary fields from chosen type
- var container = [];
 
- function cloneArray(numberID) {
-     for (let i = 0; i < filerFields.length; i++) {
-         if (numberID == filerFields.id) {
-             //Cloning array
-             container = filerFields[i].allFields.slice();
-         }
+/* A function to handle action. This will essentially be passed to reducer
+ Parameter (state): a current state
+ Parameter (action): add/modify the field
+ Return a new state that has been modified given actions
+ */
+ // Reducer to manage state of the current form
+ // Return a state that contains object
+ const PubReducer = (state, action) => {
+     switch(action.type) {
+         case "set":
+             return {...state, [action.payload.key]: action.payload.value}
+         default:
+             return state;
      }
  }
 
 
-
-// A function to handle action. This will essentially be passed to reducer
-// Parameter (state): a current state
-// Parameter (action):
-// Return a new state that has been modified given actions
-const pubReducer = (state,action) => {
-    switch(action.key) {
-        case "jabref_eid":
-            return {...state, jabref_eid: action.payload};
-
-        case "typeID":
-            return {...state, typeID: action.payload};
-
-        case "citeKey":
-            return {...state, citeKey: action.payload};
-
-        case "author":
-            return {...state, author: action.payload};
-
-        case "title":
-            return {...state, title: action.payload};
-
-        case "journal":
-            return {...state, journal: action.payload};
-
-        case "day":
-            return {...state, day: action.payload};
-
-        case "dayFiled":
-            return {...state, dayFiled: action.payload};
-
-        case "month":
-            return {...state, month: action.payload};
-
-        case "monthFiled":
-            return {...state, monthFiled: action.payload};
-
-        case "year":
-            return {...state, year: action.payload};
-
-        case "yearFiled	":
-            return {...state, yearFiled: action.payload};
-
-        case "volume":
-            return {...state, volume: action.payload};
-
-        case "pages":
-            return {...state, pages: action.payload};
-
-        case "number":
-            return {...state, number: action.payload};
-
-        case "eid":
-            return {...state, eid: action.payload};
-
-        default:
-            return state;
-    }
-
-}
-
 /*
-    Param (type): takes in a string (Ex: article, conference, or etc)
-    Return: an integer that represent that type (Ex: article -> 1)
-*/
-function IdenfityType(type){
-    switch(type)
-        {
-            case 'Article' :
-                return 1;
-            case 'Book':
-                return 2;
-            case 'Booklet':
-                return 3;
-            case 'Conference':
-                return 4;
-            case 'electronic':
-                return 5;
-            case 'inbook':
-                return 6;
-            case 'incollection':
-                return 7;
-            case 'inproceedings':
-                return 8;
-            case 'manual':
-                return 9;
-            case 'mastersthesis':
-                return 10;
-            case 'misc':
-                return 11;
-            case'other':
-                return 12;
-            case 'patent':
-                return 13;
-            case 'periodical':
-                return 14;
-            case 'phdthesis':
-                return 15;
-            case 'proceedings':
-                return 16;
-            case 'standard':
-                return 17;
-            case 'techreport':
-                return 18;
-            case 'unpublished':
-                return 19;
-        }
+const SubmitForm = async (nav, record, sources) => {
+    // Source entries carry an id (required by React). We don't want them here.
+    let clean_sources = sources.map(src => {
+        return {date: src.date,
+        system: src.system,
+        amount: src.amount,
+        source: src.source};
+    });
+
+    // Send PUT request
+    let response = await fetch(`${BASE_URL}/publications`, {
+        method: "PUT",
+        headers: {
+            "x-api-key": process.env.X_API_KEY,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            record,
+            sources: clean_sources
+        })
+    });
+    let parsed = await response.json();
+
+    // Navigate to the Browse tab, then open the newly created record.
+    nav.navigate("Browse");
+    nav.navigate("Record", {record});
+}*/
+
+
+
+// Take the current state of the form and prepare it for submission
+const SubmitForm = (publication, filterFields) => {
+    let acceptableKeys = filterFields.map(ff => ff.key);
+
+    let submission = Object.keys(publication).filter(key => acceptableKeys.includes(key) || key === "typeID" ).reduce((acc, cur) => {
+        acc[cur] = publication[cur];
+        return acc;
+    });
+
+    console.log(submission);
+    /*
+    // Send PUT request
+    let response = await fetch(`${BASE_URL}/publications`, {
+        method: "PUT",
+        headers: {
+            "x-api-key": process.env.X_API_KEY,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            record,
+            sources: clean_sources
+        })
+    });
+    let parsed = await response.json();
+
+    // Navigate to the Browse tab, then open the newly created record.
+    nav.navigate("");
+    nav.navigate("Record", {record});
+    */
 }
+
 
 export default function InsertTab(props){
 
     // Use reducer to handle changing fields of an object
     // Its first paramter is a function
-    const [publication,dispatchPublication] = useReducer(pubReducer,PubDefault);
+    const [publication,dispatchPublication] = useReducer(PubReducer,{typeID: 1});
+    const [types,setTypes] = useState([]);
+    const [filterFields,setFilterFields] = useState([]);
 
+    //Load all types from the server
+    useEffect(() => {
+        let load = async () => {
+            let loadTypes = await LoadAllTypes();
+            setTypes(loadTypes);
+        }
+        //let loadTypes = async () => setTypes(await LoadAllTypes());
+        load(); //function called to get all types
+    }, []);
+
+    useEffect(() => {
+        // Iterate through every single type of publication and find the one that matches with user's choice
+        if(types.length > 0) console.log(types[0].id, publication.typeID, types[0].id === publication.typeID);
+        let obj = types.find(type => type.id === publication.typeID) || {}; // A single object that the user is currently lookingfor
+
+        /*
+        For testing
+        console.log("Found type object");
+        console.log(obj);
+
+        console.log("\nKeys that are permissible for this type");
+        console.log(Object.keys(obj).filter(key => obj[key] === "opt" || obj[key] === "req" || obj[key] === "gen"))
+        */
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // Now we have the object (which is a type chosen from user in the interface), we need to filter out the fields that we want such as op, req, and gen
+
+        //Break down:
+        // Object.keys(obj).filter(key => obj[key] === "opt" || obj[key] === "req" || obj[key] === "gen") -> Filter out the uncesssary fields (usually has a null value)
+        // Now the line of code above is an array that has all needed fields.
+        setFilterFields(Object.keys(obj).filter(key => obj[key] === "opt" || obj[key] === "req" || obj[key] === "gen").map(key => ({key, state: obj[key]})));
+
+
+    }, [publication.typeID]);
 
     return (
         <View style = {styles.container}>
@@ -286,21 +189,47 @@ export default function InsertTab(props){
 
                 <Text style = {styles.section}>
                     Type of publication:
-                    <SelectType placeholder={{label: "Select type", value: ""}} update={theType => dispatchPublication({key: "typeID", payload: IdenfityType(theType)})}/>
                 </Text>
-                {/*
-                    All this point, typeID field should be updated, we can use it to remove fields accordingly to the chosen type
-                */}
-
-                {
-                    cloneArray(PubDefault.typeID)
-                }
 
 
-                <TextInput  style={styles.smallTextInput}
-                            onChangeText={val => dispatchPublication({key: "author", payload: val})}
-                            numberOfLines={1}
-                            placeholder="author"/>
+                    <View style = {styles.ScrollMenu}>
+                        {/* This is for the scroll-menu for choosing type to public */}
+                        <Picker onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}>
+                            <Picker.Item key={-1} label= "" value= ""/>
+                            {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
+                        </Picker>
+                    </View>
+
+                    <Text style = {styles.section}> Publication Details: </Text>
+
+                    <View style = {styles.recordArea}>
+
+                        {types.length > 0 ? (
+                            <View style = {styles.ScrollMenu}>
+
+                                {filterFields.map(field => (
+                                    <View key = {field.key} style = {styles.infoRow}>
+                                        <View style = {{width: '40%'}}>
+                                            <Text style = {styles.fieldName}> {field.key}: </Text>
+                                        </View>
+
+                                        <View style = {{width: '60%'}}>
+                                            <TextInput
+                                                        style = {styles.inputBox}
+                                                        key={field.key}
+                                                        value={publication[field.key] || ""}
+                                                        onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
+                                                        placeholder={`Enter ${field.key}`} />
+                                        </View>
+
+                                    </View>
+
+                                ))}
+                            </View>
+                        ) : (<View/>) }
+                    </View>
+
+
 
                 <View style = {styles.submitArea}>
                     <Button title = "Submit publication"
@@ -324,10 +253,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: 'center',
     },
+
     section: {
         fontSize: 18,
         marginLeft: 60,
         fontWeight: "bold",
+        margin: 5,
+    },
+    ScrollMenu: {
+        marginLeft: 60,
+        width: 350,
     },
     submitArea: {
         marginTop: 25,
@@ -336,6 +271,10 @@ const styles = StyleSheet.create({
         borderColor: Platinum,
         borderTopWidth: 1,
         alignItems: "center",
+    },
+    listFields: {
+        fontWeight: "bold",
+        fontSize: 18,
     },
     smallTextInput: {
         margin: 5,
@@ -347,5 +286,33 @@ const styles = StyleSheet.create({
         borderLeftWidth: 3,
         borderRadius: 5,
         borderColor: 'black',
+        fontWeight: "bold",
+    },
+    fieldName: {
+        color: Gainsboro,
+        minHeight: 25,
+        fontWeight: "bold",
+        fontSize: 15,
+        borderRightColor: InternationalOrange,
+        borderRightWidth: 2,
+        fontWeight: "bold",
+        color: 'black',
+        padding: 5,
+        margin: 5,
+    },
+    infoRow: {
+        flexDirection: "row",
+    },
+    recordArea: {
+        flex:  1,
+        flexDirection: "column",
+    },
+    inputBox: {
+        color: Gainsboro,
+        color: 'black',
+        padding: 5,
+        margin: 5,
+        borderWidth: 1,
+
     },
 });
