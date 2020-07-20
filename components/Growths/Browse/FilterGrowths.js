@@ -4,8 +4,22 @@
     Substrate
 
 Clicking on a specific growth in the browser opens it's SAMPLE details page
+
+Object.keys.filter(key => filter[key] !== "").reduce
+
+filter reducer:
+switch(action.type) {
+    case "set":
+        return {...state, [action.payload.key]: action.payload.value}
+    defualt:
+        return {...state, }
+}
+
+dispatchfilter(type: 'set,', payload: {key: 'system', value: sys})
+
+run yarn before git pull
     */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 const fetch = require('node-fetch');
 import { Ionicons } from '@expo/vector-icons';
@@ -27,40 +41,50 @@ const loadAllGrowths = async (running_list, page, update) => {
 
 }
 
-/*Helper method that allows users to filter growths*/
-// const FilterFx = filter => {
-//     return growth => {
-//         for(var key in filter) if(filter[key] !== "" && growth[key] !== filter[key]) return false;
-//         return true;
-//     };
-// };
+const FilterReducer = (state, action) => {
 
-let filter = {
-    grower: "Rasha El-Jaroudi",
-    substrate: "As"
+    switch(action.type) {
+        case "set":
+            return {...state, [action.payload.key]: action.payload.value}
+
+        default:
+            return state;
+    }
 }
 
-let querystrings = Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "");
+// Function used to filter the displayed items based on the applied constraints
+const FilterFx = filter => {
+    return growth => {
+        for(var key in filter) {
+            if( filter[key] !== ""
+                && record[key] !== filter[key]) return false;
+            }
+        }
+        return true;
+    }
+
+//let querystrings = Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "");
 // This string is "grower=Rasha El-Jaroudi&substrate=As"let url_to_fetch = `${BASE_URL}/growths/Echo?${querystrings}`;
 
 export default function GrowthBrowser(props) {
 
-    let [growths, setGrowths] = useState([{loaded: false, contents: []}]);
-    let [filter, setFilter] = useState({});
-    let [[system, setSystem], [recorder, setRecorder]] = [useState(""), useState("")];
+    const [growths, setGrowths] = useState([{loaded: false, contents: []}]);
+    const [filter, dispatchFilter] = useReducer(FilterReducer, {});
 
 
     useEffect(() => {
         loadAllGrowths([], 0, setGrowths)
     }, []);
 
+    // set it up so that if you scroll to the bottom of the flatlist they load more
+
     /*filters results based on input criteria*/
-    useEffect(() => {
-        setFilter({
-            system,
-            recorder,
-        })
-    }, [system, recorder]);
+    // useEffect(() => {
+    //     setFilter({
+    //         system,
+    //         recorder,
+    //     })
+    // }, [system, recorder]);
 
     return (
         <View style={styles.container}>
@@ -71,8 +95,8 @@ export default function GrowthBrowser(props) {
                     {/*menu options for filtering through growths*/}
                     <View style={styles.filterControls}>
                         <Text>Filter growths:</Text>
-                        <SelectSystem placeholder={{label: "Select System", value: ""}} update={setSystem}/>
-                        <SelectMember placeholder={{label: "Select Grower", value: ""}} update={setRecorder}/>
+                        <SelectSystem placeholder={{label: "Select System", value: ""}} update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}/>
+                        <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}/>
                     </View>
 
                     {/*displays a flatlist of all the growths */}
@@ -81,6 +105,7 @@ export default function GrowthBrowser(props) {
                             style={styles.list}
                             data={growths.contents}
                             keyExtractor={item => item.id.toString()}
+                            initialNumToRender={10}
                             renderItem={({item}) => (
                                 <View style={styles.recordRow}>
                                     <View>

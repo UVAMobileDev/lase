@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions, Linking } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions, Linking, ScrollView } from 'react-native';
 
 //header image
 const membersImage = {
@@ -852,12 +852,10 @@ const YoungScholars = [
 export default function Members(props) {
 
     return (
-        <View style={styles.container}>
-
-            <Text style={styles.header}>Members</Text>
+        <ScrollView style={styles.container}>
             <View
                 style={{ justifyContent: 'center', alignItems: 'center',}}>
-                <Image source={membersImage}/>
+                <Image style={{width: GetDimension(600, 400, true), height: GetDimension(600, 400, false)}} source={membersImage}/>
             </View>
 
             <View>
@@ -1064,76 +1062,74 @@ export default function Members(props) {
                 ))
             }
 
-        </View>
+        </ScrollView>
     );
 }
 
+// Helper method which scales images based on the screen's width.
+const GetDimension = (width, height, getWidth) => {
+    let w = Dimensions.get('window').width;
+    if(getWidth) {
+        return width > w ? w : width;
+    } else {
+        return width > w ? (w / width) * height : height;
+    }
+}
 
 const styles = StyleSheet.create({
-
-    container: {backgroundColor: 'white'},
-
-    header: {
-    color: '#c60',
-    fontSize: 35,
-    padding: 20,
+    container: {
+        backgroundColor: 'white',
+        height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
     },
-
     imageTextContainer: {
-    flexDirection: 'row',
-    padding: 20,
+        flexDirection: 'row',
+        padding: 20,
     },
-
     textContainer: {
         flex: 1,
-      flexDirection: 'column',
+        flexDirection: 'column',
     },
-
     sectionHeader:{
-      fontWeight: "bold",
-      fontSize: 15,
-      marginLeft: 20,
-      paddingTop: 20,
-      paddingBottom: 10,
+        fontWeight: "bold",
+        fontSize: 15,
+        marginLeft: 20,
+        paddingTop: 20,
+        paddingBottom: 10,
     },
-
     infoHeader: {
         fontWeight: "bold",
         paddingTop: 5,
         paddingBottom: 5,
     },
     info: {
-      fontWeight: "normal",
-      paddingTop: 5,
-      paddingBottom: 5,
+        fontWeight: "normal",
+        paddingTop: 5,
+        paddingBottom: 5,
     },
-
     bio: {
-      paddingTop: 10,
-      flexWrap: 'wrap',
-      flexShrink: 1,
-      textAlign: 'left',
+        paddingTop: 10,
+        flexWrap: 'wrap',
+        flexShrink: 1,
+        textAlign: 'left',
     },
-
     link: {
-      color: "#c60",
-      fontWeight: "normal",
+        color: "#c60",
+        fontWeight: "normal",
     },
-
     image: {
-        marginLeft: 50,
-        marginRight: 20,
+        marginLeft: 8,
+        marginRight: 12,
         width: 100,
         height: 150,
     },
-
     separator: {
         borderBottomColor: 'gray',
         borderBottomWidth: 1,
         marginLeft: 20,
         marginRight: 20,
     },
-
-    italic: {fontStyle: 'italic', paddingBottom: 10},
-
+    italic: {
+        fontStyle: 'italic',
+        paddingBottom: 10
+    },
 });

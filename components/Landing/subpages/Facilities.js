@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image,Linking,Platform,Dimensions,FlatList} from 'react-native';
+import { View, Text, StyleSheet, Image,Linking,Platform,Dimensions,FlatList, ScrollView} from 'react-native';
 
 /*
     Parameters: base and power of a text
@@ -524,83 +524,34 @@ export default function Facilities(props) {
 
     return (
         <View style = {styles.container}>
-            <View style = {styles.toCenter}>
-                <Text style = {styles.titleText}> Facilities </Text>
-                <Image
-                  style = {styles.facilitiesPic}
-                  source = {{uri: 'https://lase.mer.utexas.edu/images/facilities_large.jpg' }}
-                />
-            </View>
+            <ScrollView>
+                <View style = {styles.toCenter}>
+                    <Image
+                      style = {styles.facilitiesPic}
+                      source = {{uri: 'https://lase.mer.utexas.edu/images/facilities_large.jpg' }}
+                    />
+                </View>
 
-            {
-                //Use map to render all information about machines to the page
-                machines.map(machine => (
-                    <View key = {machine.id}>
-                        <Text style = {styles.titleIndent}> {machine.title} </Text>
-                            <Text style = {styles.listIndent}> {'\u2022'} {machine.history} </Text>
-                            <Text style = {styles.listIndent}> {'\u2022'} Materials: </Text>
-                                {
-                                    machine.materials.map(material => (
-                                        <View key = {material.Material_id}>
-                                            <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {material.text}
-                                            </Text>
-                                        </View>
+                {
+                    //Use map to render all information about machines to the page
+                    machines.map(machine => (
+                        <View key = {machine.id}>
+                            <Text style = {styles.titleIndent}> {machine.title} </Text>
+                                <Text style = {styles.listIndent}> {'\u2022'} {machine.history} </Text>
+                                <Text style = {styles.listIndent}> {'\u2022'} Materials: </Text>
+                                    {
+                                        machine.materials.map(material => (
+                                            <View key = {material.Material_id}>
+                                                <Text style = {styles.subBullet}>
+                                                    {'\u25E6'} {material.text}
+                                                </Text>
+                                            </View>
 
-                                    ))
-                                }
-                            <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
-                                {
-                                    machine.equipment.map(equip => (
-                                        <View key = {equip.Equip_id}>
-                                            <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {equip.text}
-                                            </Text>
-                                        </View>
-                                    ))
-                                }
-                    </View>
-                ))
-            }
-
-            {
-                //Use map to render all information about Bakeout Structure to the page
-                structure.map(struct => (
-                    <View key = {struct.id}>
-                        <Text style = {styles.titleIndent}> {linkify(struct.title)} </Text>
-                            <Text style = {styles.listIndent}> {'\u2022'} {struct.description} </Text>
-                            <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
-                                {
-                                    struct.equipment.map(equip => (
-                                        <View key = {equip.Equip_id}>
-                                            <Text style = {styles.subBullet}>
-                                                {'\u25E6'} {equip.text}
-                                            </Text>
-                                        </View>
-                                    ))
-                                }
-                    </View>
-                ))
-            }
-
-            {
-                //Use map to render all information about Optical Characterization Setups to the page
-                opticalSetup.map(opt => (
-                    <View key = {opt.id}>
-                        <Text style = {styles.titleIndent}> {opt.title} </Text>
-
-                                {
-                                    opt.setup.map(setUp => (
-                                        <View key = {setUp.Setup_id}>
-                                            <Text style = {styles.listIndent}>
-                                                {'\u2022'} {setUp.text}
-                                            </Text>
-                                        </View>
-                                    ))
-                                }
+                                        ))
+                                    }
                                 <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
                                     {
-                                        opt.Equipment.map(equip => (
+                                        machine.equipment.map(equip => (
                                             <View key = {equip.Equip_id}>
                                                 <Text style = {styles.subBullet}>
                                                     {'\u25E6'} {equip.text}
@@ -608,39 +559,19 @@ export default function Facilities(props) {
                                             </View>
                                         ))
                                     }
-                    </View>
-                ))
-            }
+                        </View>
+                    ))
+                }
 
-            <Text style = {styles.titleIndent}> {linkify(fourier[0].title)} </Text>
-           {
-               //Use map to render all information about Fourier transform infrared spectrometer (FTIR) and IR microscope to the page
-               fourier.map(section => (
-                   <View key = {section.id}>
-                       <Text style = {styles.listIndent}> {'\u2022'} {section.name} </Text>
-
-                               {
-                                   section.options.map(subsection => (
-                                       <View key= {subsection.Opt_id}>
-                                           <Text>
-                                               {superScript(subsection.text,section.name)}
-                                           </Text>
-                                       </View>
-                                   ))
-                               }
-                   </View>
-               ))
-           }
-
-           {
-               //Use map to render all information about different kind of tools to the page
-                tools.map(tool => (
-                    <View key = {tool.id}>
-                        <Text style = {styles.titleIndent}> {tool.title} </Text>
-                                <Text style = {styles.listIndent}> {'\u2022'} {tool.description} </Text>
+                {
+                    //Use map to render all information about Bakeout Structure to the page
+                    structure.map(struct => (
+                        <View key = {struct.id}>
+                            <Text style = {styles.titleIndent}> {linkify(struct.title)} </Text>
+                                <Text style = {styles.listIndent}> {'\u2022'} {struct.description} </Text>
                                 <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
                                     {
-                                        tool.Equipment.map(equip => (
+                                        struct.equipment.map(equip => (
                                             <View key = {equip.Equip_id}>
                                                 <Text style = {styles.subBullet}>
                                                     {'\u25E6'} {equip.text}
@@ -648,76 +579,149 @@ export default function Facilities(props) {
                                             </View>
                                         ))
                                     }
-                    </View>
-                ))
-            }
+                        </View>
+                    ))
+                }
 
-            {
-                //Use map to render all information about Simulations ,Other equipments, and Advanced energetics to the page
-               sim_otherEquip_energeties.map(section => (
-                   <View key = {section.id}>
-                       <Text style = {styles.titleIndent}> {section.title} </Text>
+                {
+                    //Use map to render all information about Optical Characterization Setups to the page
+                    opticalSetup.map(opt => (
+                        <View key = {opt.id}>
+                            <Text style = {styles.titleIndent}> {opt.title} </Text>
+
+                                    {
+                                        opt.setup.map(setUp => (
+                                            <View key = {setUp.Setup_id}>
+                                                <Text style = {styles.listIndent}>
+                                                    {'\u2022'} {setUp.text}
+                                                </Text>
+                                            </View>
+                                        ))
+                                    }
+                                    <Text style = {styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
+                                        {
+                                            opt.Equipment.map(equip => (
+                                                <View key = {equip.Equip_id}>
+                                                    <Text style = {styles.subBullet}>
+                                                        {'\u25E6'} {equip.text}
+                                                    </Text>
+                                                </View>
+                                            ))
+                                        }
+                        </View>
+                    ))
+                }
+
+                <Text style = {styles.titleIndent}> {linkify(fourier[0].title)} </Text>
+               {
+                   //Use map to render all information about Fourier transform infrared spectrometer (FTIR) and IR microscope to the page
+                   fourier.map(section => (
+                       <View key = {section.id}>
+                           <Text style = {styles.listIndent}> {'\u2022'} {section.name} </Text>
+
                                    {
-                                       section.list.map(subsection => (
-                                           <View key = {subsection.List_id}>
-                                               <Text style = {styles.listIndent}>
-                                                   {'\u2022'} {linkify(subsection.text)}
+                                       section.options.map(subsection => (
+                                           <View key= {subsection.Opt_id}>
+                                               <Text>
+                                                   {superScript(subsection.text,section.name)}
                                                </Text>
                                            </View>
                                        ))
                                    }
-                   </View>
-               ))
-           }
+                       </View>
+                   ))
+               }
+
+               {
+                   //Use map to render all information about different kind of tools to the page
+                    tools.map(tool => (
+                        <View key = {tool.id}>
+                            <Text style = {styles.titleIndent}> {tool.title} </Text>
+                                    <Text style = {styles.listIndent}> {'\u2022'} {tool.description} </Text>
+                                    <Text style = {styles.listIndent}> {'\u2022'} Equipment: </Text>
+                                        {
+                                            tool.Equipment.map(equip => (
+                                                <View key = {equip.Equip_id}>
+                                                    <Text style = {styles.subBullet}>
+                                                        {'\u25E6'} {equip.text}
+                                                    </Text>
+                                                </View>
+                                            ))
+                                        }
+                        </View>
+                    ))
+                }
+
+                {
+                    //Use map to render all information about Simulations ,Other equipments, and Advanced energetics to the page
+                   sim_otherEquip_energeties.map(section => (
+                       <View key = {section.id}>
+                           <Text style = {styles.titleIndent}> {section.title} </Text>
+                                       {
+                                           section.list.map(subsection => (
+                                               <View key = {subsection.List_id}>
+                                                   <Text style = {styles.listIndent}>
+                                                       {'\u2022'} {linkify(subsection.text)}
+                                                   </Text>
+                                               </View>
+                                           ))
+                                       }
+                       </View>
+                   ))
+               }
 
 
-            <Text style = {styles.updateDate}> Last Updated 4/22/2020</Text>
+                <Text style = {styles.updateDate}> Last Updated 4/22/2020</Text>
 
-            <View style = {styles.botContainer}>
-                <View style = {styles.contact}>
-                    <Text style = {styles.smallText}> © 2012
-                        <Text style = {styles.mini} onPress= {() => Linking.openURL("http://www.ece.utexas.edu/")}> UT ECE </Text>
-                        <Text> | </Text>
-                        <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.engr.utexas.edu/")}> Cockrell School of Engineering </Text>
-                        <Text> | </Text>
-                        <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.utexas.edu/")}> The University of Texas at Austin {'\n'}</Text>
-                    </Text>
+                <View style = {styles.botContainer}>
+                    <View style = {styles.contact}>
+                        <Text style = {styles.smallText}> © 2012
+                            <Text style = {styles.mini} onPress= {() => Linking.openURL("http://www.ece.utexas.edu/")}> UT ECE </Text>
+                            <Text> | </Text>
+                            <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.engr.utexas.edu/")}> Cockrell School of Engineering </Text>
+                            <Text> | </Text>
+                            <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.utexas.edu/")}> The University of Texas at Austin {'\n'}</Text>
+                        </Text>
 
-                    <Text style = {styles.smallText}>
-                        <Text style = {styles.mini} onPress= {() => Linking.openURL("https://policies.utexas.edu/")}> Private Information </Text>
-                        <Text> | </Text>
-                        <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.utexas.edu/web/guidelines/accessibility.html")}> Resources for Accesibility </Text>
-                    </Text>
+                        <Text style = {styles.smallText}>
+                            <Text style = {styles.mini} onPress= {() => Linking.openURL("https://policies.utexas.edu/")}> Private Information </Text>
+                            <Text> | </Text>
+                            <Text style = {styles.mini} onPress= {() => Linking.openURL("https://www.utexas.edu/web/guidelines/accessibility.html")}> Resources for Accesibility </Text>
+                        </Text>
 
-                    <Text style = {styles.smallText}> Comments:
-                    <Text style = {styles.mini} onPress= {() => Linking.openURL("sbank_at_ece.utexas.edu")}> sbank_at_ece.utexas.edu </Text>
-                    </Text>
+                        <Text style = {styles.smallText}> Comments:
+                        <Text style = {styles.mini} onPress= {() => Linking.openURL("sbank_at_ece.utexas.edu")}> sbank_at_ece.utexas.edu </Text>
+                        </Text>
 
+                    </View>
+                        <View style = {styles.viewLogo}>
+                            <Image style = {styles.logo}
+                              source = {{uri: 'https://lase.mer.utexas.edu/images/footer_logo.jpg' }}
+                            />
+                      </View>
                 </View>
-                    <View style = {styles.viewLogo}>
-                        <Image style = {styles.logo}
-                          source = {{uri: 'https://lase.mer.utexas.edu/images/footer_logo.jpg' }}
-                        />
-                  </View>
-            </View>
+            </ScrollView>
         </View>
-
     );
 
 
 }
 
-
-
-
-
-
+// Helper method which scales images based on the screen's width.
+const GetDimension = (width, height, getWidth) => {
+    let w = Dimensions.get('window').width;
+    if(getWidth) {
+        return width > w ? w : width;
+    } else {
+        return width > w ? (w / width) * height : height;
+    }
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
     backgroundColor: '#FFFFFF',
+    height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
   },
   toCenter: {
     justifyContent: 'center',
@@ -742,11 +746,9 @@ const styles = StyleSheet.create({
       marginLeft: 110,
       marginRight: 20,
   },
-
   facilitiesPic: {
-    width: 550,
-    height: 400,
-
+    width: GetDimension(550, 400, true),
+    height: GetDimension(550, 400, false)
   },
   BoldText: {
     fontWeight: 'bold'

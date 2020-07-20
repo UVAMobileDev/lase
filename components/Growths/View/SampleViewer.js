@@ -12,41 +12,43 @@ import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, 
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API.js';
 
-// //Loads all Echo growths in an array
-// const GetAllEchoGrowths = async () => {
-//     let page = 0;
-//     let echogrowths = []
-//     let parsed = {echogrowths: []};
-//
-//     do {
-//         let response = await fetch(`${BASE_URL}/machine/Echo/growths?page=${page}`);
-//         parsed = await response.json();
-//         echogrowths = echogrowths.concat(parsed.echogrowths);
-//         page++;
-//     } while(parsed.echogrowths.length > 0)
-//     return echogrowths;
-// }
-//
-// //Loads all Bravo growths in an array
-// const GetAllBravoGrowths = async () => {
-//     let page = 0;
-//     let bravogrowths = []
-//     let parsed = {bravogrowths: []};
-//
-//     do {
-//         let response = await fetch(`${BASE_URL}/machine/Bravo/growths?page=${page}`);
-//         parsed = await response.json();
-//         bravogrowths = bravogrowths.concat(parsed.bravogrowths);
-//         page++;
-//     } while(parsed.bravogrowths.length > 0)
-//     return bravogrowths;
-// }
+//gets lists of growths associated with the same sampleID
+const GetBravoSamples = async sampleID => {
+    let response = await fetch(`${BASE_URL}/machine/Bravo/growths?page=${page}`);
+    let parsed = await response.json();
+    return parsed.samples;
+}
+const GetEchoSamples = async sampleID => {
+    let response = await fetch(`${BASE_URL}/machine/Echo/growths?page=${page}`);
+    let parsed = await response.json();
+    return parsed.samples;
+}
+
+//helper functions to determine if the sampleID already exists
+function existsEcho(sampleID) {
+    for (let item = 0; item < GetEchoSamples.length; item++) {
+        if (sampleID === item.sampleID) {
+            return true;
+        }
+        else {return false};
+    }
+}
+function existsBravo(sampleID) {
+    for (let item = 0; item < GetBravoSamples.length; item++) {
+        if (sampleID === item.sampleID) {
+            return true;
+        }
+        else {return false};
+    }
+}
 
 
 export default function SampleViewer(props) {
-  const [text, setText] = useState('');
-  const [echogrowths, setEchoGrowths] = useState({loaded: false, items: []});
-  const [bravogrowths, setBravoGrowths] = useState({loaded: false, items: []});
+  let [text, setText] = useState('');
+
+  // Samples are fetched asynchronously and stored using a hook.
+  let [bravoSamples, setBravoSamples] = useState({loaded: false, items: []});
+  let [echoSamples, setEchoSamples] = useState({loaded: false, items: []});
 
   return (
     <View>
@@ -54,10 +56,10 @@ export default function SampleViewer(props) {
         <TextInput
           style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 300}}
           onSubmitEditing={
-              () => (props.navigation.navigate("Sample Details", {sample: item}))
+              /*(text) => (existsBravo(text) || existsEcho(text)) ? props.navigation.navigate("Sample Details", {sample: text}) : <Text>no</Text>*/
+              (text) => {props.navigation.navigate("Sample Details", {sample: text})}
           }
         />
-
     </View>
   );
 }

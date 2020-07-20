@@ -3,14 +3,14 @@
 
 // Imports
 import React, { useState, useEffect, useReducer } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Platform } from 'react-native';
+import Constants from 'expo-constants';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Platform, Dimensions } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { Ionicons } from '@expo/vector-icons';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import SelectDate from '../../lib/forms/SelectDate';
 import SortingButton from '../../lib/sort/SortingButton';
-
 
 // Helper method which retrieves all the maintenance records from the API. It's not
 //  just as straightforward as a single API call, though, since the results are paginated
@@ -32,23 +32,8 @@ const GetAllRecords = async () => {
 const FilterReducer = (state, action) => {
 
     switch(action.type) {
-        case "recorder":
-            return {...state, recorder: action.payload};
-
-        case "system":
-            return {...state, system: action.payload};
-
-        case "p1":
-            return {...state, p1: action.payload};
-
-        case "p2":
-            return {...state, p1: action.payload};
-
-        case "minDate":
-            return {...state, minDate: action.payload};
-
-        case "maxDate":
-            return {...state, maxDate: action.payload};
+        case "set":
+            return {...state, [action.payload.key]: action.payload.value}
 
         default:
             return state;
@@ -84,7 +69,6 @@ export default function Filter(props) {
     const [records, setRecords] = useState({loaded: false, items: []});
     const [filter, dispatchFilter] = useReducer(FilterReducer, {});
 
-
     useEffect(() => {
         let load = async () => {
             let allRecords = await GetAllRecords();
@@ -118,13 +102,13 @@ export default function Filter(props) {
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>System</Text>
                         <View style={styles.input}>
-                            <SelectSystem placeholder={{label: "", value: ""}} update={sys => dispatchFilter({type: "system", payload: sys})}/>
+                            <SelectSystem placeholder={{label: "Select System", value: ""}} update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}/>
                         </View>
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Recorder</Text>
                         <View style={styles.input}>
-                            <SelectMember placeholder={{label: "", value: ""}} update={rec => dispatchFilter({type: "recorder", payload: rec})}/>
+                            <SelectMember placeholder={{label: "Select Recorder", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}/>
                         </View>
                     </View>
                 </View>
@@ -133,32 +117,34 @@ export default function Filter(props) {
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>P1</Text>
                         <View style={styles.input}>
-                            <SelectMember placeholder={{label: "", value: ""}} update={p1 => dispatchFilter({type: "p1", payload: p1})}/>
+                            <SelectMember placeholder={{label: "Select P1", value: ""}} update={p1 => dispatchFilter({type: "set", payload: {key: "p1", value: p1}})}/>
                         </View>
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>P2</Text>
                         <View style={styles.input}>
-                            <SelectMember placeholder={{label: "", value: ""}} update={p2 => dispatchFilter({type: "p2", payload: p2})}/>
+                            <SelectMember placeholder={{label: "Select P2", value: ""}} update={p2 => dispatchFilter({type: "set", payload: {key: "p2", value: p2}})}/>
                         </View>
                     </View>
                 </View>
 
-                <View style={[styles.filterControlGroup]}>
+                <View style={styles.filterControlGroup}>
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Newer than</Text>
                         <View style={styles.input}>
-                            <SelectDate update={date => dispatchFilter({type: "minDate", payload: date})}/>
+                            <SelectDate minYear={2017}
+                                        update={date => dispatchFilter({type: "set", payload: {key: "minDate", value: date}})}/>
                         </View>
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Older than</Text>
-                        <View style={styles.input}>
-                            <SelectDate initYear={new Date().getFullYear()}
-                                initMonth={new Date().getMonth() + 1}
-                                initDay={new Date().getDate()}
-                                update={date => dispatchFilter({type: "maxDate", payload: date})}/>
+                        <View style={[styles.input, {backgroundColor: "yellow"}]}>
+                            <SelectDate minYear={2017}
+                                        initYear={new Date().getFullYear()}
+                                        initMonth={new Date().getMonth() + 1}
+                                        initDay={new Date().getDate()}
+                                        update={date => dispatchFilter({type: "set", payload: {key: "maxDate", value: date}})}/>
                         </View>
                     </View>
                 </View>
@@ -177,7 +163,7 @@ export default function Filter(props) {
                 {
                     /* FlatLists are easily one of the most power components in React. Learning how to make good use of them is a must! */
                     records.loaded ? (
-                        <ScrollView>
+                        <ScrollView horizontal={Platform.OS !== "web"}>
                             <FlatList   style={styles.list}
                                         data={records.items.filter(FilterFx(filter))}
                                         keyExtractor={item => item.id.toString()}
@@ -245,13 +231,12 @@ const styles = StyleSheet.create({
         color: "black",
     },
     filterControls: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
+        flexDirection: Platform.OS === "web" && Dimensions.get("window").width > 1000 ? "row" : "column",
+        justifyContent: "space-around",
         borderBottomWidth: 2,
         borderColor: "black",
     },
     filterControlGroup: {
-        flex: 1,
         flexDirection: "column",
         padding: 5,
     },
@@ -261,9 +246,12 @@ const styles = StyleSheet.create({
     inputGroup: {
         flexDirection: "row",
         alignItems: "center",
+        margin: 2,
     },
     input: {
         flex: 1,
+        marginLeft: 5,
+        padding: 2,
     },
     sortControls: {
         flexDirection: "row",
