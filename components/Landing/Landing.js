@@ -22,7 +22,7 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function Landing(props) {
     return (
-        <View style={{flex: 1, backgroundColor: "#000"}}>
+        <View style={{flex: 1}}>
             <View style={styles.container}>
                 {
                     // If we're on web, then we have to show a background image since
@@ -86,20 +86,20 @@ const styles = StyleSheet.create({
         marginTop: Platform.OS === "web" ? 10 : 0,
         backgroundColor: "#fff",
         flexDirection: "column",
-        height: "100%",
+        height: Platform.OS === "web" ? "calc(100% - 20px)" : "100%",
         width: GetDimension(754, 0, true),
     },
     headerImage: {
         width: GetDimension(754, 90, true),
         height: GetDimension(754, 90, false),
         paddingBottom: 20,
-        borderColor: "#000000",
+        borderColor: "#000",
         borderBottomWidth: 1,
     },
     backgroundImage: {
         position: "absolute",
-        width: "100%",//842,
-        height: "100%",//652,
+        width: "100%",
+        height: "100%",
         top: 0,
         left: 0,
     },
