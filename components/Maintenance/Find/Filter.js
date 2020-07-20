@@ -139,7 +139,7 @@ export default function Filter(props) {
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Older than</Text>
-                        <View style={[styles.input, {backgroundColor: "yellow"}]}>
+                        <View style={styles.input}>
                             <SelectDate minYear={2017}
                                         initYear={new Date().getFullYear()}
                                         initMonth={new Date().getMonth() + 1}
