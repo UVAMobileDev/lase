@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, Linking, StyleSheet, Image} from 'react-native';
-import { WebView } from "react-native-webview";
+import { Video } from 'expo-av';
+import { View, Text, Linking, StyleSheet, Image, ScrollView } from 'react-native';
 
 // const Books = [
 //     {
@@ -24,13 +24,8 @@ import { WebView } from "react-native-webview";
 
 export default function Classes(props) {
     return (
-        <View>
-            <View>
-                // <Text>
-                //     <Text>This is a single line of text where</Text>
-                //     <Text style={{fontWeight: "bold"}}> this </Text>
-                //     <Text>is bold.</Text>
-                // </Text>
+        <View style={styles.container}>
+            <ScrollView>
                 <Text style={styles.header}>Classes</Text>
                 <Text style={styles.sectionHeader}> EE 383P-6: Optoelectronic Devices (Spring 2007-2015, 2017, 2019, 2021 - Planned) </Text>
                 <Text style={styles.textContainer}> A graduate-level introduction to semiconductor optoelectronic devices for communications, spectroscopy, and other applications. Reviews the requisite physics, device operating principles,a nd pratical strengths/weaknesses of devices. Topics include: </Text>
@@ -100,15 +95,21 @@ export default function Classes(props) {
 
                 <Text style={styles.sectionHeader}> EE 364H/464H: Honors Senior Design (Fall 2010-Present) </Text>
                 <Text style={styles.textContainer}> Mentored senior design teams; supervised projects include a real-time ketone minitor, personal hydration sensor, real-time health monitor, virtual whiteboard system, face-tracking directional audio system, a LED-based solar cell testing system (won 3rd place), and a real-time exercise form monitoring system: </Text>
-                <View style = {styles.Container}>
-                  <WebView
-                    style={styles.WebViewStyle}
-                    source={{ uri: 'https://www.youtube.com/embed/C5i-UnuUKUI'}}
-                    javaScriptEnabled={true}
-                    domStorageEnabled={true}
-                    />
+
+                <View style={styles.videoContainer}>
+                    <Video
+                        source={{
+                          uri:
+                            'https://lase.mer.utexas.edu/images/H1-nuCoach.mp4',
+                        }}
+                        useNativeControls
+                        style={{ maxWidth: "100%"}}
+                        resizeMode="contain"
+                        isMuted
+                        shouldPlay={false}
+                        />
                 </View>
-            </View>
+            </ScrollView>
         </View>
     );
 }
@@ -127,44 +128,43 @@ const robotImage = {
 };
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: 'white'},
-
-  header: {
-  color: '#c60',
-  fontSize: 35,
-  padding: 20,
-  },
-
-  Container: {
-    flex: 1
-  },
-
-  WebViewStyle: {
-    flex: 1,
-    margin: 20,
-    backgroundColor: "blue"
-  },
-
-  textContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    padding: 20,
-  },
-  link: {
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    header: {
+        color: '#c60',
+        fontSize: 35,
+        padding: 20,
+    },
+    WebViewStyle: {
+        flex: 1,
+        margin: 20,
+        backgroundColor: "blue"
+    },
+    textContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        padding: 20,
+    },
+    link: {
       color: "#c60"
-  },
-  listIndent: {
-      fontSize: 14,
-      marginLeft: 60,
-      marginRight: 20,
-  },
-
-  sectionHeader:{
-    fontWeight: "bold",
-    fontSize: 15,
-    marginLeft: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
-
+    },
+    listIndent: {
+        fontSize: 14,
+        marginLeft: 60,
+        marginRight: 20,
+    },
+    sectionHeader:{
+        fontWeight: "bold",
+        fontSize: 15,
+        marginLeft: 20,
+        paddingTop: 20,
+        paddingBottom: 10,
+    },
+    videoContainer: {
+        flex: 1,
+        backgroundColor: "purple",
+        marginBottom: 100,
+    }
 });
