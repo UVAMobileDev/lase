@@ -104,7 +104,7 @@ export default function Classes(props) {
                         }}
                         useNativeControls
                         style={{ maxWidth: "100%"}}
-                        resizeMode="contain"
+                        resizeMode="cover"
                         isMuted
                         shouldPlay={false}
                         />

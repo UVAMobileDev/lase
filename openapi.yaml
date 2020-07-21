@@ -9,7 +9,7 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 servers:
-  - url: "{protocol}://kh10uhxdw5.execute-api.us-east-2.amazonaws.com/{stage}"
+  - url: "{protocol}://api.lase.mer.utexas.edu/{stage}"
     variables:
       protocol:
         enum:
@@ -18,8 +18,8 @@ servers:
         default: https
       stage:
         enum:
-          - production
-        default: production
+          - v1
+        default: v1
 
 tags:
 - name: "Machines"
@@ -232,8 +232,8 @@ paths:
                     type: "array"
                     items:
                       $ref: "#/components/schemas/Recipe"
-  
-  
+
+
   /settings/growers:
     get:
       tags:
@@ -320,8 +320,8 @@ paths:
                     type: "array"
                     items:
                       $ref: "#/components/schemas/Machine"
-  
-  
+
+
   /wafers/sizes:
     get:
       tags:
@@ -463,8 +463,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BasicMessageResponse"
-  
-  
+
+
   /publications:
     get:
       tags:
@@ -547,8 +547,8 @@ paths:
                     type: "array"
                     items:
                       $ref: "#/components/schemas/PublicationDescriptor"
-  
-  
+
+
   /maintenance:
     get:
       tags:
@@ -786,7 +786,7 @@ components:
           type: "string"
         GaP_Flux:
           type: "string"
-    
+
     Publication:
       type: "object"
       properties:
@@ -981,7 +981,7 @@ components:
           $ref: "#/components/schemas/PubEnum"
         revisor:
           $ref: "#/components/schemas/PubEnum"
-        
+
     WaferLog:
       type: "object"
       properties:
@@ -1012,7 +1012,7 @@ components:
           type: "string"
         size:
           type: "integer"
-  
+
     SuccessfulInsertResponse:
       type: "object"
       properties:
@@ -1027,7 +1027,7 @@ components:
           type: "integer"
         message:
           type: "string"
-    
+
     Recipe:
       type: "object"
       properties:
@@ -1048,7 +1048,7 @@ components:
           type: "string"
         Recipe:
           type: "string"
-    
+
     Material:
       type: "object"
       properties:
@@ -1209,7 +1209,7 @@ components:
           type: "string"
         GaTe_temp:
           type: "string"
-    
+
     GrowthSansID:
       type: "object"
       properties:
@@ -1392,10 +1392,10 @@ components:
           type: "integer"
         crk_idle:
           type: "string"
-    
+
     Grower:
       type: "string"
-    
+
     Member:
       type: "object"
       properties:
@@ -1407,10 +1407,10 @@ components:
           type: "boolean"
         grower:
           type: "boolean"
-    
+
     SubstrateSize:
       type: "string"
-    
+
     MaintenanceSource:
       type: "object"
       properties:
@@ -1447,7 +1447,7 @@ components:
           type: "string"
         recorder:
           type: "string"
-    
+
     WaferLogSansID:
       type: "object"
       properties:
@@ -1462,7 +1462,7 @@ components:
           - "growth"
           - "non-growth"
           - "reconcile"
-    
+
     PubUti:
       type: "string"
       enum:
@@ -1477,29 +1477,3 @@ components:
       - "req"
       - "opt"
       - ""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
