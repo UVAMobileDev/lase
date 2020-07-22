@@ -52,10 +52,34 @@ const LoadAllTypes = async () => {
     return container;
 }
 
-//Declare empty object. UseReducer will know to add a field when it does not have one and modify the field when it is already existed
-const PubDefault = {}
 
+/*
+    Param(id): the id type of publication chosen by user
+    Param(key): field of publication
+    Param(types_arr): a list contains all objects of different types
+    Return: this function will return a single string " (required)" to render in input text box if a current field must be filled by user. Otherwise, it returns empty string
+*/
+function checkIfrequire(id,key,types_arr) {
+    let obj = types_arr.find(type => type.id === id) || {}; // return an object with correspodning type
+    let field_require = false;
+    let return_text = '';
+    for (let i of Object.keys(obj)) {
+        if (i === key) {
+            if (obj[i] === "req") {
+                field_require = true;
+            } else {
+                field_require = false;
+            }
+        }
+    }
 
+    if (field_require) {
+        return_text = '(required)';
+    }
+
+    return return_text;
+
+}
 
 /* A function to handle action. This will essentially be passed to reducer
  Parameter (state): a current state
@@ -75,65 +99,68 @@ const PubDefault = {}
 
 
 /*
-const SubmitForm = async (nav, record, sources) => {
-    // Source entries carry an id (required by React). We don't want them here.
-    let clean_sources = sources.map(src => {
-        return {date: src.date,
-        system: src.system,
-        amount: src.amount,
-        source: src.source};
-    });
+    Param 1 - Publication: a new publication that contains information that user input in the text input box
+    Param 2 - filterFields: an array contains all required fields based on publication type that is chosen by user.
+    Purpose - allow user to submit new publication to a database. However, it will stop submitting and prompt user if required field is not filled.
+*/
+const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight) => {
+    let acceptableKeys = filterFields.map(ff => ff.key);  // Ex: acceptableKeys -> [comment, number, month,....]
 
-    // Send PUT request
-    let response = await fetch(`${BASE_URL}/publications`, {
-        method: "PUT",
-        headers: {
-            "x-api-key": process.env.X_API_KEY,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            record,
-            sources: clean_sources
-        })
-    });
-    let parsed = await response.json();
+    let holder = types_arr.find(type => type.id === publication.typeID) || {}; // finding a right type of object that match with user's publication type choice
 
-    // Navigate to the Browse tab, then open the newly created record.
-    nav.navigate("Browse");
-    nav.navigate("Record", {record});
-}*/
+    let required_keys = Object.keys(holder).filter(item => holder[item] === "req"); // this list will contain all required fields that users must enter
+    let allow_submission = true; // this boolean variable will be a signal whether we allow the users to submit the publication or not
 
+    // First loop is to iterate through all properties of a publication that user wants to submit
+    // Second loop is to iterate though all properties of a chosen type
+    for (let i of Object.keys(publication)) {
+        for (let j of Object.keys(required_keys)) {
+            if (i === j) {
+                // If it is equal to empty string, that means user did not enter information on this field yet
+                if (publication[i] === '') {
+                    allow_submission = false; // immediately set signal to false to inform the system that user cannot submit the publication without required field
+                }
+            }
+        }
+    }
 
-
-// Take the current state of the form and prepare it for submission
-const SubmitForm = (publication, filterFields) => {
-    let acceptableKeys = filterFields.map(ff => ff.key);
-
+    /* Example of using object.key:
+        obj = {id: 1, author: Henry, typeID: 2}
+        Object.key(obj) = ["id", "author" ," typeID"]
+    */
     let submission = Object.keys(publication).filter(key => acceptableKeys.includes(key) || key === "typeID" ).reduce((acc, cur) => {
-        acc[cur] = publication[cur];
+        acc[cur] = publication[cur]; // -> this is an object, not an array
         return acc;
-    });
+    },{});
+
 
     console.log(submission);
-    /*
-    // Send PUT request
-    let response = await fetch(`${BASE_URL}/publications`, {
-        method: "PUT",
-        headers: {
-            "x-api-key": process.env.X_API_KEY,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            record,
-            sources: clean_sources
-        })
-    });
-    let parsed = await response.json();
+    console.log(allow_submission);
+    // Only send a put request whenever the requirement is being met
+    if (allow_submission) {
+        // Send PUT request
+        let response = await fetch(`${BASE_URL}/publications`, {
+            method: "PUT",
+            headers: {
+                "x-api-key": process.env.X_API_KEY,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                publication: submission
+            })
+        });
+        let parsed = await response.json();
+        console.log(parsed);
+        // Navigate to View Publication tab, then open the newly created publication.
+        nav.navigate("All publications");
+        nav.navigate("View Tab", {publication});
+    } else {
+        // The user did not enter required information. Set textbox to be red to inform user
+        setHighlight(true);
+    }
 
-    // Navigate to the Browse tab, then open the newly created record.
-    nav.navigate("");
-    nav.navigate("Record", {record});
-    */
+
+
 }
 
 
@@ -141,9 +168,11 @@ export default function InsertTab(props){
 
     // Use reducer to handle changing fields of an object
     // Its first paramter is a function
-    const [publication,dispatchPublication] = useReducer(PubReducer,{typeID: 1});
-    const [types,setTypes] = useState([]);
-    const [filterFields,setFilterFields] = useState([]);
+    //const [publication,dispatchPublication] = useReducer(PubReducer,{typeID: 1});
+    const [publication,dispatchPublication] = useReducer(PubReducer,{});
+    const [types,setTypes] = useState([]); // use to store all types of publication
+    const [filterFields,setFilterFields] = useState([]); //use to only ask users fields corresponding to chosen type
+    const [highlightRequired, setHighlight] = useState(false); // use as a signal to inform user to input required information before submitting
 
     //Load all types from the server
     useEffect(() => {
@@ -160,14 +189,7 @@ export default function InsertTab(props){
         if(types.length > 0) console.log(types[0].id, publication.typeID, types[0].id === publication.typeID);
         let obj = types.find(type => type.id === publication.typeID) || {}; // A single object that the user is currently lookingfor
 
-        /*
-        For testing
-        console.log("Found type object");
-        console.log(obj);
 
-        console.log("\nKeys that are permissible for this type");
-        console.log(Object.keys(obj).filter(key => obj[key] === "opt" || obj[key] === "req" || obj[key] === "gen"))
-        */
         //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // Now we have the object (which is a type chosen from user in the interface), we need to filter out the fields that we want such as op, req, and gen
 
@@ -184,7 +206,7 @@ export default function InsertTab(props){
             <ScrollView>
 
                 <Text style = {styles.title}>
-                    Publication creation:
+                    Create a new publication:
                 </Text>
 
                 <Text style = {styles.section}>
@@ -195,7 +217,7 @@ export default function InsertTab(props){
                     <View style = {styles.ScrollMenu}>
                         {/* This is for the scroll-menu for choosing type to public */}
                         <Picker onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}>
-                            <Picker.Item key={-1} label= "" value= ""/>
+                            <Picker.Item key={-1} label= {'Choose type: '} value= {0}/>
                             {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
                         </Picker>
                     </View>
@@ -213,13 +235,14 @@ export default function InsertTab(props){
                                             <Text style = {styles.fieldName}> {field.key}: </Text>
                                         </View>
 
+
                                         <View style = {{width: '60%'}}>
                                             <TextInput
-                                                        style = {styles.inputBox}
+                                                        style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === "(required)" ? [styles.inputBox, {borderColor: "red", borderWidth: 1}] : styles.inputBox}
                                                         key={field.key}
                                                         value={publication[field.key] || ""}
                                                         onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
-                                                        placeholder={`Enter ${field.key}`} />
+                                                        placeholder={`Enter ${field.key} ${checkIfrequire(publication.typeID,field.key,types)}`} />
                                         </View>
 
                                     </View>
@@ -232,8 +255,12 @@ export default function InsertTab(props){
 
 
                 <View style = {styles.submitArea}>
+                    <Text style = {styles.warnText}> NOTE: You cannot edit your publication once it is submitted. Please carefully review your publication! </Text>
                     <Button title = "Submit publication"
-                            color = {Jet}/>
+                            color = {Jet}
+                            onPress = {() => SubmitForm(props.navigation, publication,filterFields,types, setHighlight)}/>
+                    <Text> {/*console.log(filterFields)*/}</Text>
+
                 </View>
             </ScrollView>
 
@@ -271,6 +298,12 @@ const styles = StyleSheet.create({
         borderColor: Platinum,
         borderTopWidth: 1,
         alignItems: "center",
+    },
+    warnText: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: InternationalOrange,
+        marginBottom: 15,
     },
     listFields: {
         fontWeight: "bold",

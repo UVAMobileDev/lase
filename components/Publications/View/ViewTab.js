@@ -107,10 +107,12 @@ function uniqueYear(arr_year) {
     return obj_arr;
 }
 
+/*
 function uniqueAuthor(arr) {
     let holder = []; //array to only contains the year property for each element in pass-in array
+
     for (let i = 0; i < arr.length; i++) {
-        holder[i] = arr[i].author;
+        holder[i] = arr[i].author; // ASK!!
     }
     let uniqueArr = Array.from(new Set(holder)); //this array holds unique string of author's name
     let unique = [];
@@ -121,24 +123,14 @@ function uniqueAuthor(arr) {
             author: uniqueArr[j],
         });
     }
-    /*
-    let minYear = Math.min(...holder);
-    let maxYear = Math.max(...holder);
-    let unique = [];
-    let i = 1;
-    let currentVal = minYear;
-    unique[0] = minYear;
-    while (currentVal != maxYear) {
-        currentVal = currentVal + 1;
-        unique[i] = currentVal;
-        i = i + 1;
-    }
-    unique.push(maxYear);
-    */
 
     return unique;
-
 }
+*/
+
+
+
+
 // This function is called whenever the payload is activated
 // Param (state): the current state
 // Param (action): action required from user
@@ -321,7 +313,7 @@ export default function ViewTab(props){
 
                                     //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}}); setSignal(true); setMorePage(true); setPage(0);} }
                                     onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}>
-                                        <Picker.Item key={-1} label={'Filter by ID: '} value={0}/>
+                                        <Picker.Item key={-1} label={'All types:'} value={0}/>
                                         {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
                                     </Picker>
 
@@ -333,7 +325,7 @@ export default function ViewTab(props){
                                     style = {styles.Scrollmenu}
                                     onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
                                     >
-                                        <Picker.Item key={-1} label={'Filter by ID: '} value={0}/>
+                                        <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
                                         {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
                                     </Picker>
 
@@ -347,7 +339,7 @@ export default function ViewTab(props){
                                         onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
                                     >
 
-                                        <Picker.Item key={-1} label={'Filter by year:'} value={0}/>
+                                        <Picker.Item key={-1} label={'All years: '} value={0}/>
                                         {
                                             [...Array(new Date().getFullYear() - 1999)].map((_, i) => (
                                             <Picker.Item key={i} label={2000 + i} value={2000 + i} />
@@ -367,17 +359,25 @@ export default function ViewTab(props){
                                 </View>
                             </View>
 
-                            <View>
-                                <Text style = {styles.filterType}> Filter by author: </Text>
-                                {/* Picker for displaying all ID numbers */}
-                                <Picker style = {styles.ScrollmenuLong}
-                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "author", value: val}})}>
-                                >
+                            {
+                                /*
+                                <View style = {{height: '30%',width: '50%'}}>
+                                    <Text style = {styles.filterType}> Filter by author: </Text>
 
-                                <Picker.Item key={-1} label={'Filter by author:'} value={""}/>
-                                    {uniqueAuthor(allPublications.items).map(item => (<Picker.Item key={item.id} label={item.author} value={item.author}/>))}
-                                </Picker>
-                            </View>
+                                    <Picker style = {styles.ScrollmenuLong}
+                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "author", value: val}})}>
+                                    >
+
+
+                                        <Picker.Item key={-1} label={'Filter by author:'} value={''}/>
+                                            {uniqueAuthor(allPublications.items).map(item => (<Picker.Item key={item.id} label={item.author} value={item.author}/>))}
+                                        </Picker>
+
+
+                                </View>
+                                */
+                            }
+
 
                 </View>
 
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     },
     FilterContainer: {
         width: '100%',
-        height: 250,
+        height: 120,
         padding: 5,
         borderBottomWidth: 2,
     },
@@ -548,6 +548,8 @@ const styles = StyleSheet.create({
     },
     ScrollmenuLong: {
         width: '30%',
+        height: '30%',
+        itemStyle: '100%',
         flex: 1,
         borderLeftWidth: 2,
         borderRadius: 5,
