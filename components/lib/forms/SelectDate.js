@@ -77,7 +77,6 @@ const pickerStyle = StyleSheet.create({
         marginHorizontal: 2,
     },
     inputAndroid: { // Covers Android & Web platforms
-        fontSize: 16,
         paddingVertical: 7,
         paddingHorizontal: 5,
         borderWidth: 0.5,

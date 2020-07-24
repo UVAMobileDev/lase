@@ -120,7 +120,6 @@ const pickerStyle = StyleSheet.create({
         paddingRight: 30,
     },
     inputAndroid: { // Covers Android & Web platforms
-        fontSize: 16,
         paddingHorizontal: 5,
         paddingVertical: 7,
         borderWidth: 0.5,
