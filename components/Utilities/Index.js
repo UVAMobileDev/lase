@@ -6,7 +6,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import GrowthCalendar from './GrowthCalendar/GrowthCalendar';
 import STO from './STOGeneration/STOGenerator';
 import WaferLog from './WaferUtils/WaferLog';
-import ExampleComponent from './WaferUtils/ExampleComponent';
+// import ExampleComponent from './WaferUtils/ExampleComponent';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -24,7 +24,7 @@ export default function Utilities(props) {
                             }}>
                 <Tab.Screen name="Growth Calendar" component={GrowthCalendar}/>
                 <Tab.Screen name="STO Generation" component={STO}/>
-                <Tab.Screen name="Wafer Log" component={ExampleComponent}/>
+                <Tab.Screen name="Wafer Log" component={Todo}/>
                 <Tab.Screen name="Delete" component={Todo}/>
             </Tab.Navigator>
         </View>
