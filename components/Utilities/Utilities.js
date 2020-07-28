@@ -15,7 +15,7 @@ function Todo(props) {
 
 export default function Utilities(props) {
     return (
-        <View style={{backgroundColor: "#000"}}>
+        <View style={{flex: 1, backgroundColor: "#0AA"}}>
             <Tab.Navigator  initialRouteName="Browse"
                             style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
                             tabBarOptions={{
