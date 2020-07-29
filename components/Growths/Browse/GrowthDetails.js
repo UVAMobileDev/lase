@@ -6,9 +6,27 @@ import { Jet, Platinum, Gainsboro, InternationalOrange, PurpleNavy } from '../..
 const fetch = require("node-fetch");
 
 export default function GrowthDetails(props) {
+    let growth = props.route.params.growth;
     return (
         <View>
-            <Text>Growth details page</Text>
+
+            <View>
+                <Text>Details for growth {growth.id}:</Text>
+            </View>
+            <View>
+                <Text>Grower: {growth.grower}</Text>
+            </View>
+            <View>
+                <Text>Machine: {growth.machine}</Text>
+            </View>
+            <View>
+                <Text>Substrate: {growth.substrate}</Text>
+            </View>
+            <View>
+                <Text>Description: {growth.Description}</Text>
+            </View>
+
+
         </View>
     )
 }

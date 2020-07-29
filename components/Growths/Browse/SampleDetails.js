@@ -2,55 +2,69 @@
 //  the corresponding sources asynchronously.
 
 // Imports
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { Ionicons } from '@expo/vector-icons';
 import { Jet, Platinum, Gainsboro, InternationalOrange, PurpleNavy } from '../../../constants/Colors.js';
 const fetch = require("node-fetch");
 
-//gets lists of growths associated with the same sampleID
-const GetBravoSamples = async sampleID => {
-    let response = await fetch(`${BASE_URL}/machine/Bravo/growths?page=${page}`);
-    let parsed = await response.json();
-    return parsed.samples;
-}
-const GetEchoSamples = async sampleID => {
-    let response = await fetch(`${BASE_URL}/machine/Echo/growths?page=${page}`);
-    let parsed = await response.json();
-    return parsed.samples;
-}
+import UserContext from './UserContext';
 
 
 export default function SampleDetails(props) {
     // The data for the sample itself is provided via navigation parameters.
-    let sample = props.route.params.sample;
+    let sampleID = props.route.params.sampleID;
+    const [growths, setGrowths] = useState([]);
+    console.log(sampleID);
 
-    // Samples are fetched asynchronously and stored using a hook.
-    let [bravoSamples, setBravoSamples] = useState({loaded: false, items: []});
-    let [echoSamples, setEchoSamples] = useState({loaded: false, items: []});
 
-    if(sample) return (
+
+    //get the list of growths associated with this sample ID
+    useEffect(() => {
+        let load = async () => {
+            let response = []
+            response = await fetch(`${BASE_URL}/machine/Echo/growths?sampleID=${sampleID}`).then(r => r.json());
+            setGrowths(response.results)
+        }
+        load();
+    }, []);
+
+
+    return (
         <View>
-            <Text>The following growths are associated with sample ID {sample.sampleID}:</Text>
+            <Text>The following growths are associated with Sample ID {sampleID}:</Text>
+            <FlatList
+                style={styles.list}
+                data={growths}
+                keyExtractor={item => item.id.toString()}
+                initialNumToRender={10}
+                renderItem={({item}) => (
                     <View style={styles.recordRow}>
-                    <View>
-                        <TouchableOpacity   style={styles.openRecordButton}
-                                            onPress={() => props.navigation.navigate("Growth Details")}>
-                            <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
-                        </TouchableOpacity>
+                        <View>
+                            <TouchableOpacity   style={styles.openRecordButton}
+                                                onPress={() => props.navigation.navigate("Growth Details", {growth: item})}>
+                                <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{width: 75}}>
+                            <Text style={styles.rowText}>{item.sampleID}</Text>
+                        </View>
+                        <View style={{width: 75}}>
+                            <Text style={styles.rowText}>{item.id}</Text>
+                        </View>
+                        <View style={{width: 75}}>
+                            <Text style={styles.rowText}>{item.machine}</Text>
+                        </View>
+                        <View style={{width: 150}}>
+                            <Text style={styles.rowText}>{item.grower}</Text>
+                        </View>
                     </View>
-                    <View style={{width: 75}}>
-                        <Text style={styles.rowText}>{sample.id}</Text>
-                    </View>
-                    <View style={{width: 75}}>
-                        <Text style={styles.rowText}>{sample.machine}</Text>
-                    </View>
-                    <View style={{width: 150}}>
-                        <Text style={styles.rowText}>{sample.grower}</Text>
-                    </View>
-                    </View>
+                )}/>
         </View>
+
+
+
     )
 }
 

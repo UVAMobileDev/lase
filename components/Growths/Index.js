@@ -5,7 +5,7 @@ import Constants from 'expo-constants';
 import { View, StyleSheet, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import GrowthBrowser from './Browse/GrowthBrowser';
-import SampleViewer from './View/SampleViewer';
+import SampleViewer from './Browse/SampleViewer';
 
 //separates the Growth page into two sections: Sample viewer and Growth browser
 const Tab = createMaterialTopTabNavigator();

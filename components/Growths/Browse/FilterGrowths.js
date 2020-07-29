@@ -17,29 +17,22 @@ switch(action.type) {
 
 dispatchfilter(type: 'set,', payload: {key: 'system', value: sys})
 
-run yarn before git pull
+make sure filter controls are outside tab navigator
     */
+
 import React, { useState, useEffect, useReducer } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, ScrollView, Picker } from 'react-native';
 const fetch = require('node-fetch');
 import { Ionicons } from '@expo/vector-icons';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import { BASE_URL } from '../../../constants/API.js';
+import CustomViewer from '../Browse/CustomViewer.js';
 
-/*Loads and displays all growths in the database*/
-const loadAllGrowths = async (running_list, page, update) => {
 
-    let parsedEcho = await fetch(`${BASE_URL}/machine/Echo/growths?page=${page}`).then(r => r.json());
-    let parsedBravo = await fetch(`${BASE_URL}/machine/Bravo/growths?page=${page}`).then(r => r.json());
+import { UserProvider } from './UserContext';
 
-    if(parsedEcho.results.length === 0) update({loaded: true, contents: running_list});
-    else loadAllGrowths(running_list.concat(parsedEcho.results), page + 1, update);
-
-    if(parsedBravo.results.length === 0) update({loaded: true, contents: running_list});
-    else loadAllGrowths(running_list.concat(parsedBravo.results), page + 1, update);
-
-}
 
 const FilterReducer = (state, action) => {
 
@@ -52,95 +45,51 @@ const FilterReducer = (state, action) => {
     }
 }
 
-// Function used to filter the displayed items based on the applied constraints
-const FilterFx = filter => {
-    return growth => {
-        for(var key in filter) {
-            if( filter[key] !== ""
-                && record[key] !== filter[key]) return false;
-            }
-        }
-        return true;
-    }
 
-//let querystrings = Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "");
-// This string is "grower=Rasha El-Jaroudi&substrate=As"let url_to_fetch = `${BASE_URL}/growths/Echo?${querystrings}`;
+const Filtered = async (filter, page) => {
+    let growths = []
+    let parsed = {growths: []};
+    parsed = await fetch(QueryString(filter, page)).then(r => r.json());
+    growths = growths.concat(parsed.growths);
+    return growths;
+}
+
 
 export default function GrowthBrowser(props) {
+    const Tab = createMaterialTopTabNavigator();
 
-    const [growths, setGrowths] = useState([{loaded: false, contents: []}]);
     const [filter, dispatchFilter] = useReducer(FilterReducer, {});
+    const [systems, setSystems] = useState([]);
 
-
+    // Get the list of machines
     useEffect(() => {
-        loadAllGrowths([], 0, setGrowths)
+        let load = async () => {
+            let response = [];
+            response = await fetch(`${BASE_URL}/settings/machines`).then(r => r.json());
+            setSystems(response.machines);
+        }
+        load();
     }, []);
-
-    // set it up so that if you scroll to the bottom of the flatlist they load more
-
-    /*filters results based on input criteria*/
-    // useEffect(() => {
-    //     setFilter({
-    //         system,
-    //         recorder,
-    //     })
-    // }, [system, recorder]);
+    console.log(systems);
 
     return (
-        <View style={styles.container}>
-
-        {
-            growths.loaded ? (
-                <View style={styles.listContainer}>
-                    {/*menu options for filtering through growths*/}
+        <UserProvider value={{systems, filter}}>
+            {systems.length > 0 ? (
+                <ScrollView>
                     <View style={styles.filterControls}>
                         <Text>Filter growths:</Text>
-                        <SelectSystem placeholder={{label: "Select System", value: ""}} update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}/>
-                        <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}/>
+                        <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
                     </View>
 
-                    {/*displays a flatlist of all the growths */}
-                    <ScrollView>
-                        <FlatList
-                            style={styles.list}
-                            data={growths.contents}
-                            keyExtractor={item => item.id.toString()}
-                            initialNumToRender={10}
-                            renderItem={({item}) => (
-                                <View style={styles.recordRow}>
-                                    <View>
-                                        <TouchableOpacity   style={styles.openRecordButton}
-                                                            onPress={() => props.navigation.navigate("Sample Details", {sample: item})}>
-                                            <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={{width: 75}}>
-                                        <Text style={styles.rowText}>{item.sampleID}</Text>
-                                    </View>
-                                    <View style={{width: 75}}>
-                                        <Text style={styles.rowText}>{item.id}</Text>
-                                    </View>
-                                    <View style={{width: 75}}>
-                                        <Text style={styles.rowText}>{item.machine}</Text>
-                                    </View>
-                                    <View style={{width: 150}}>
-                                        <Text style={styles.rowText}>{item.grower}</Text>
-                                    </View>
-                                </View>
-                            )}/>
-                    </ScrollView>
-                </View>
-
-
-            ) : (
-                <View style={{marginTop: 50}}>
-                    <ActivityIndicator size="large" color="#0000ff"/>
-                </View>
-            )
-
-        }
-        </View>
-    )
+                   <Tab.Navigator initialRouteName={systems[0]} screenOptions={filter}>
+                       {systems.map((sys, i) => (
+                           <Tab.Screen key={i} name={sys} component={CustomViewer} initialParams={{sysIndex: i}}/>
+                       ))}
+                   </Tab.Navigator>
+                 </ScrollView>) : (<View/>)
+            }
+        </UserProvider>
+    );
 }
 
 // StyleSheet
@@ -177,6 +126,6 @@ const styles = StyleSheet.create({
 
     },
     filterControls: {
-        backgroundColor: "red",
+        backgroundColor: "gray",
     }
 });
