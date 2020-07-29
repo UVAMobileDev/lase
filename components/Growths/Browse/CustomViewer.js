@@ -31,36 +31,38 @@ export default function CustomViewer(props) {
 
     return (
         <View style={styles.container}>
+        <View style={{padding:20}}>
+            <Text style={{fontSize: 16, fontWeight: '500'}}>Select a growth's ID to view associated items:</Text>
+        </View>
 
         {
             growths.loaded ? (
+
                 <View style={styles.listContainer}>
 
                     {/*displays a flatlist of all the growths */}
                     <ScrollView>
+
                         <FlatList
                             style={styles.list}
                             data={growths.contents}
                             keyExtractor={item => item.id.toString()}
                             initialNumToRender={10}
                             renderItem={({item}) => (
-                                <View style={styles.recordRow}>
-                                    <View>
-                                        <TouchableOpacity   style={styles.openRecordButton}
-                                                            onPress={() => props.navigation.navigate("Sample Details List", {sample: item}, {systems: context.systems})}>
-                                            <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
+                                <View style={styles.growthRow}>
+                                    <View style={{width: 30, marginRight:20}}>
+                                        <TouchableOpacity   style={styles.openGrowthButton}
+                                                        onPress={() => props.navigation.navigate("Sample Details ", {sample: item}, {systems: context.systems})}>
+                                            <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.id}</Text>
                                         </TouchableOpacity>
                                     </View>
-                                    <View style={{width: 75}}>
+                                    <View style= {{marginLeft: 5, marginRight: -20}}>
                                         <Text style={styles.rowText}>{item.sampleID}</Text>
                                     </View>
-                                    <View style={{width: 75}}>
-                                        <Text style={styles.rowText}>{item.id}</Text>
-                                    </View>
-                                    <View style={{width: 75}}>
+                                    <View style= {{margin: -20}}>
                                         <Text style={styles.rowText}>{item.machine}</Text>
                                     </View>
-                                    <View style={{width: 150}}>
+                                    <View style= {{margin: -40}}>
                                         <Text style={styles.rowText}>{item.grower}</Text>
                                     </View>
                                 </View>
@@ -90,21 +92,22 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
+        paddingLeft: 30,
+        marginTop: -20,
     },
     list: {
         margin: 10,
         marginBottom: 30,
     },
-    recordRow: {
+    growthRow: {
         flexDirection: "row",
         alignItems: "center",
-        padding: 10,
+        padding: 9,
         margin: 4,
-        borderRadius: 8,
-        borderLeftWidth: 3,
-        borderColor: "black",
+
     },
-    openRecordButton: {
+
+    openGrowthButton: {
         width: 18,
         margin: 4,
         borderRadius: 5,
@@ -113,9 +116,7 @@ const styles = StyleSheet.create({
     rowText: {
         fontSize: 16,
         color: "black",
+        width: 150,
 
     },
-    filterControls: {
-        backgroundColor: "gray",
-    }
 });

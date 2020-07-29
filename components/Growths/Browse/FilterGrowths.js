@@ -77,7 +77,7 @@ export default function GrowthBrowser(props) {
             {systems.length > 0 ? (
                 <ScrollView>
                     <View style={styles.filterControls}>
-                        <Text>Filter growths:</Text>
+                        <Text style={styles.filterText}>Filter Growths:</Text>
                         <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
                     </View>
 
@@ -94,38 +94,12 @@ export default function GrowthBrowser(props) {
 
 // StyleSheet
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-    },
-    listContainer: {
-        flex: 1,
-    },
-    list: {
-        margin: 10,
-        marginBottom: 30,
-    },
-    recordRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        margin: 4,
-        borderRadius: 8,
-        borderLeftWidth: 3,
-        borderColor: "black",
-    },
-    openRecordButton: {
-        width: 18,
-        margin: 4,
-        borderRadius: 5,
-        backgroundColor: "white",
-    },
-    rowText: {
-        fontSize: 16,
-        color: "black",
-
+    filterText: {
+        fontSize: 20,
+        marginBottom: 10,
     },
     filterControls: {
-        backgroundColor: "gray",
-    }
+        backgroundColor: "white",
+        padding: 10,
+    },
 });

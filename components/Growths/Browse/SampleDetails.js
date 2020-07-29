@@ -32,31 +32,30 @@ export default function SampleDetails(props) {
 
 
     return (
-        <View>
-            <Text>The following growths are associated with Sample ID {sampleID}:</Text>
-            <FlatList
+        <View style={styles.container}>
+        <View style={{paddingLeft: 10, paddingTop: 10, paddingBottom: -20}}>
+            <Text  style={{fontSize: 16, fontWeight: '400', paddingBottom: 15}}>The following growths are associated with Sample ID {sampleID}. Select a growth's ID to view individual growth details.</Text>
+        </View>
+        <FlatList
                 style={styles.list}
                 data={growths}
                 keyExtractor={item => item.id.toString()}
                 initialNumToRender={10}
                 renderItem={({item}) => (
-                    <View style={styles.recordRow}>
-                        <View>
-                            <TouchableOpacity   style={styles.openRecordButton}
-                                                onPress={() => props.navigation.navigate("Growth Details", {growth: item})}>
-                                <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
+                    <View style={styles.growthRow}>
+                        <View style={{width: 30, marginRight:20}}>
+                            <TouchableOpacity   style={styles.openGrowthButton}
+                                            onPress={() => props.navigation.navigate("Growth Details", {growth: item})}>
+                                <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.id}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{width: 75}}>
+                        <View>
                             <Text style={styles.rowText}>{item.sampleID}</Text>
                         </View>
-                        <View style={{width: 75}}>
-                            <Text style={styles.rowText}>{item.id}</Text>
-                        </View>
-                        <View style={{width: 75}}>
+                        <View>
                             <Text style={styles.rowText}>{item.machine}</Text>
                         </View>
-                        <View style={{width: 150}}>
+                        <View>
                             <Text style={styles.rowText}>{item.grower}</Text>
                         </View>
                     </View>
@@ -81,16 +80,13 @@ const styles = StyleSheet.create({
         margin: 10,
         marginBottom: 30,
     },
-    recordRow: {
+    growthRow: {
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
         margin: 4,
-        borderRadius: 8,
-        borderLeftWidth: 3,
-        borderColor: "black",
     },
-    openRecordButton: {
+    openGrowthButton: {
         width: 18,
         margin: 4,
         borderRadius: 5,
@@ -99,6 +95,7 @@ const styles = StyleSheet.create({
     rowText: {
         fontSize: 16,
         color: "black",
+        padding: 10,
 
     },
     filterControls: {

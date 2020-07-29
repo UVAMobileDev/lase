@@ -18,10 +18,10 @@ export default function SampleViewer(props) {
   let [text, setText] = useState('');
 
   return (
-    <View>
-        <Text style={{padding: 15}}>Enter a sample ID to view all growths associated with the sample:</Text>
+    <View style={styles.container}>
+        <Text style={{padding: 40, fontSize: 16, fontWeight: '500'}}>Enter a Sample ID to view all growths associated with the sample:</Text>
         <TextInput
-          style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 300}}
+          style={{ height: 40, borderColor: 'black', borderWidth: 1, width: 300, padding: 15, marginLeft: 40, marginTop: -20}}
           onChangeText={text => setText(text)}
           onSubmitEditing={() => {props.navigation.navigate("Sample Details", {sampleID: text})}
           }
@@ -29,3 +29,13 @@ export default function SampleViewer(props) {
     </View>
   );
 }
+
+// StyleSheet
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "white",
+        alignItems: 'left',
+    },
+
+})
