@@ -2,7 +2,7 @@
 
 // Imports
 import React from 'react';
-import { View, Text, StyleSheet, Platform, Dimensions, FlatList, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
 
 // The paragraphs to render
 const Paragraphs = [
@@ -82,8 +82,7 @@ const GetDimension = (width, height, getWidth) => {
 // StyleSheet
 const styles = StyleSheet.create({
     container: {
-        width: Platform.OS === "web" ? "100%" : Dimensions.get('window').width,
-        height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
+        flex: 1,
         flexDirection: "column",
         backgroundColor: "#fff",
         alignItems: "center",

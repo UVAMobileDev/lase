@@ -93,7 +93,7 @@ export default function Overview(props) {
                         }
                     </View>
                 </View>
-                <View style={styles.section}>
+                <View style={[styles.section, {borderBottomWidth: 0}]}>
                     <View style={{width: Platform.OS === "web" ? "50%" : "100%"}}>
                         <Text>map</Text>
                     </View>
@@ -160,13 +160,16 @@ const GetDimension = (width, height, getWidth) => {
 //  than to come up with a more robust solution.
 const styles = StyleSheet.create({
     container: {
-        width: Platform.OS === "web" ? "100%" : Dimensions.get('window').width,
-        height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
+        flex: 1,
         flexDirection: "column",
         backgroundColor: "#fff",
     },
-    bold: {fontWeight: "bold"},
-    link: {color: "#c60"},
+    bold: {
+        fontWeight: "bold"
+    },
+    link: {
+        color: "#c60"
+    },
     section: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
         alignItems: "center",

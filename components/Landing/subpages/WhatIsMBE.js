@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, Platform, Dimensions, ScrollView, Image } from 
 
 const styles = StyleSheet.create({
     container: {
-        height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
-        backgroundColor: "white",
+        flex: 1,
+        backgroundColor: "#fff",
     },
     scrollview: {
         padding: 10,
