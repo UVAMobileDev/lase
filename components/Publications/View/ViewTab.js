@@ -215,11 +215,7 @@ export default function ViewTab(props){
 
 
 
-    let loadAllPublications = async () => {
-        let loadAll = await AllPublications();
-        setAllPublications({loaded: true, items: loadAll});
-    }
-    loadAllPublications();
+
 
 
     useEffect(() => {
@@ -300,7 +296,7 @@ export default function ViewTab(props){
 
                 <View style = {styles.FilterContainer}>
                     {/* This is for the scroll-menu for choosing type to public */}
-                    <Text style = {styles.filterTitle}> Search by categories: </Text>
+                    <Text style = {styles.filterTitle}> SEARCH BY CATEGORIES: </Text>
 
                         <View style = {{marginBottom: 20}}>
                                 <View style = {{flexDirection: 'row'}}>
@@ -317,17 +313,26 @@ export default function ViewTab(props){
                                         {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
                                     </Picker>
 
+                                    {
+                                        /*
+                                        <Text style = {styles.filterType}> Filter by ID number: </Text>
 
-                                    <Text style = {styles.filterType}> Filter by ID number: </Text>
 
-                                    {/* Picker for displaying all ID numbers */}
-                                    <Picker
-                                    style = {styles.Scrollmenu}
-                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
-                                    >
-                                        <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
-                                        {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
-                                    </Picker>
+                                        <Picker
+                                        style = {styles.Scrollmenu}
+                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
+                                        >
+                                            <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
+                                            {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
+                                        </Picker>
+
+
+                                        */
+
+                                    }
+
+
+
 
                                     <Text style = {styles.filterType}> Filter by year: </Text>
                                     {/* Picker for displaying all authors of publications
@@ -342,7 +347,7 @@ export default function ViewTab(props){
                                         <Picker.Item key={-1} label={'All years: '} value={0}/>
                                         {
                                             [...Array(new Date().getFullYear() - 1999)].map((_, i) => (
-                                            <Picker.Item key={i} label={2000 + i} value={2000 + i} />
+                                            <Picker.Item key={i.toString()} label={(2000 + i).toString()} value={2000 + i} />
                                         ))
                                         /*
                                         [...Array(new Date().getFullYear() - (minYear(allPublications.items)) - 1)].map((_, i) => (
@@ -426,12 +431,12 @@ export default function ViewTab(props){
                                 <View>
                                     <TouchableOpacity   style={styles.openRecordButton}
                                         onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
-                                        <Ionicons name="md-open" size={16} color={'grey'} style={{position: "relative", left: 3, top: 1}}/>
+                                        <Ionicons name="md-list-box" size={16} color={'#00008b'} style={{position: "relative", left: 3, top: 1}}/>
                                     </TouchableOpacity>
                                 </View>
 
                                 {type(item.typeID)}
-                                <View style={{width: "45%"}}>
+                                <View style={{width: "45%"}} selectable = {true}>
                                     <Text style={styles.rowText}>{item.title}</Text>
                                 </View>
                                 <View style={{width: "40%"}}>
@@ -458,20 +463,29 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 22,
         textAlign: 'center',
+        fontFamily: 'Cochin',
+        color: '#00008b',
     },
     title: {
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
+        fontFamily: 'Cochin',
+        color: '#00008b',
+
     },
     author: {
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
+        fontFamily: 'Cochin',
+        color: '#00008b',
     },
     id: {
         fontSize: 22,
         fontWeight: "bold",
+        fontFamily: 'Cochin',
+        color: '#00008b',
     },
     container: {
         flex: 1,
@@ -489,8 +503,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         margin: 4,
-        borderLeftWidth: 3,
-        borderRadius: 5,
         borderColor: 'red',
     },
     top: {
@@ -506,6 +518,7 @@ const styles = StyleSheet.create({
     },
     rowText: {
         fontSize: 16,
+        fontFamily: 'Kailasa',
     },
     tabContainer: {
         flex: 1,
@@ -519,26 +532,30 @@ const styles = StyleSheet.create({
     },
     FilterContainer: {
         width: '100%',
-        height: 120,
+        height: 100,
         padding: 5,
         borderBottomWidth: 2,
+        backgroundColor: '#d3d3d3',
     },
     filterType: {
         fontSize: 16,
         marginLeft: 80,
         fontWeight: 'bold',
+        fontFamily: 'Georgia',
     },
     filterTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginLeft: 50,
-        color: InternationalOrange,
         marginBottom: 20,
+        fontFamily: 'Cochin',
+        color: InternationalOrange,
     },
     filterAuthor: {
         fontSize: 16,
         marginLeft: 130,
         fontWeight: 'bold',
+        fontFamily: 'Courier',
     },
     Scrollmenu: {
         flex: 1,
@@ -549,7 +566,6 @@ const styles = StyleSheet.create({
     ScrollmenuLong: {
         width: '30%',
         height: '30%',
-        itemStyle: '100%',
         flex: 1,
         borderLeftWidth: 2,
         borderRadius: 5,

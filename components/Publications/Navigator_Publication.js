@@ -14,15 +14,13 @@ import StackNavigator from './View/StackNavigator';
 import InsertTab from './Insert/InsertTab';
 
 
-
-
 // Create the tab navigator which separates the Browse and Create sections.
 const Tab = createMaterialTopTabNavigator();
 
 export default function Navigator_Publication(props) {
 
     return (
-        <Tab.Navigator currentBrowser="All publications">
+        <Tab.Navigator currentBrowser="All publications" swipeEnabled = {false}>
             <Tab.Screen name="All publications" component={StackNavigator}/>
             <Tab.Screen name="Insert new" component={InsertTab}/>
         </Tab.Navigator>
