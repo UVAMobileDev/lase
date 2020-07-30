@@ -161,91 +161,94 @@ export default function ViewTab(props){
 
         <View style = {styles.tabContainer}>
 
-            <View style = {styles.FilterContainer}>
-                {/* This is for the scroll-menu for choosing type to public */}
-                <Text style = {styles.filterTitle}> Search by categories: </Text>
+                <View style = {styles.FilterContainer}>
+                    {/* This is for the scroll-menu for choosing type to public */}
+                    <Text style = {styles.filterTitle}> SEARCH BY CATEGORIES: </Text>
 
-                <View style = {{marginBottom: 20}}>
+                    <View style = {{marginBottom: 20}}>
                         <View style = {{flexDirection: 'row'}}>
                             <Text style = {styles.filterType}> Filter by type:  </Text>
                             {/* all pickers should go in here */}
                             {/* Picker for displaying all types */}
-                            <RNPickerSelect style={styles.Scrollmenu}
-                                    placeholder={{label: "", value: 0}}
-                                    InputAccessoryView={() => null}
-                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}
-                                    items={types.map(({label, id}) => (
-                                        {label, value: id}
-                                    ))}/>
 
-                            {/* Picker for displaying all authors of publications */}
+                            <Picker
+                            style = {styles.Scrollmenu}
+
+                            //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}}); setSignal(true); setMorePage(true); setPage(0);} }
+                            onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}>
+                                <Picker.Item key={-1} label={'All types:'} value={0}/>
+                                {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
+                            </Picker>
+
+                            {
+                                /*
+                                <Text style = {styles.filterType}> Filter by ID number: </Text>
+
+
+                                <Picker
+                                style = {styles.Scrollmenu}
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
+                                >
+                                    <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
+                                    {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
+                                </Picker>
+
+
+                                */
+
+                            }
+
+
+
+
                             <Text style = {styles.filterType}> Filter by year: </Text>
-                            <RNPickerSelect style={styles.Scrollmenu}
-                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
-                                    items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => (
-                                        {label: `${2000 + i}`, value: 2000 + i}
-                                    ))}/>
+                            {/* Picker for displaying all authors of publications
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
+                                */}
+                            <RNPickerSelect
+                                style = {styles.Scrollmenu}
+                                InputAccessoryView={() => null}
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
+                                items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => ({label: 2000 + i, value: 2000 + i}))}
+                                />
                         </View>
                     </View>
-            </View>
+                </View>
 
+                <FlatList
 
-            <View style = {styles.top}>
+                        style = {styles.list}
+                        data = {publications.items}
+                        keyExtractor={
+                            /* Functional filter should be applied here */
+                            /* must specify the key to iterate. Otherwise, it will use index*/
+                            /* Since each publication has their own ID, we can use it to iterate*/
 
-                        <View style={{width: "10%"}}>
-                            <Text style = {styles.type}>
-                                Type
-                            </Text>
-                        </View>
+                        item => item.id.toString()}
+                        renderItem = {({item}) => (
+                            <View  style={styles.recordRow}>
 
-                       <View style={{width: "45%"}}>
-                           <Text style = {styles.title}>
-                               Publication Title
-                           </Text>
-                       </View>
+                                <View>
+                                    <TouchableOpacity   style={styles.openRecordButton}
+                                        onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
+                                        <Ionicons name="md-list-box" size={16} color={'#00008b'} style={{position: "relative", left: 3, top: 1}}/>
+                                    </TouchableOpacity>
+                                </View>
 
-
-                       <View style={{width: "40%"}}>
-                           <Text style = {styles.author}>
-                               Author
-                           </Text>
-                       </View>
-
-                       <View style={{width: "5%"}}>
-                           <Text style={styles.id}>
-                               ID
-                           </Text>
-                       </View>
-            </View>
-
-            <FlatList style = {styles.list}
-                    data = {publications.items}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem = {({item}) => (
-                        <View  style={styles.recordRow}>
-
-                            <View>
-                                <TouchableOpacity   style={styles.openRecordButton}
-                                    onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
-                                    <Ionicons name="md-open" size={16} color={'grey'} style={{position: "relative", left: 3, top: 1}}/>
-                                </TouchableOpacity>
+                                {type(item.typeID)}
+                                <View style={{width: "45%"}} selectable = {true}>
+                                    <Text style={styles.rowText}>{item.title}</Text>
+                                </View>
+                                <View style={{width: "40%"}}>
+                                    <Text style={styles.rowText}>{item.author}</Text>
+                                </View>
+                                <View style={{width: "5%"}}>
+                                    <Text style={styles.rowText}>{item.id}</Text>
+                                </View>
                             </View>
-
-                            {type(item.typeID)}
-                            <View style={{width: "45%"}}>
-                                <Text style={styles.rowText}>{item.title}</Text>
-                            </View>
-                            <View style={{width: "40%"}}>
-                                <Text style={styles.rowText}>{item.author}</Text>
-                            </View>
-                            <View style={{width: "5%"}}>
-                                <Text style={styles.rowText}>{item.id}</Text>
-                            </View>
-                        </View>
-
-                )}
-                onEndReached = {ifReach}
-                onEndReachedThreshold = {0.3}/>
+                        )}
+                        onEndReached = {ifReach}
+                        onEndReachedThreshold = {0.3}/>
         </View>
     );
 }
@@ -255,20 +258,29 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 22,
         textAlign: 'center',
+        fontFamily: 'Cochin',
+        color: '#00008b',
     },
     title: {
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
+        fontFamily: 'Cochin',
+        color: '#00008b',
+
     },
     author: {
         fontSize: 22,
         textAlign: 'center',
         fontWeight: "bold",
+        fontFamily: 'Cochin',
+        color: '#00008b',
     },
     id: {
         fontSize: 22,
         fontWeight: "bold",
+        fontFamily: 'Cochin',
+        color: '#00008b',
     },
     list: {
         margin: 10,
@@ -279,8 +291,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         margin: 4,
-        borderLeftWidth: 3,
-        borderRadius: 5,
         borderColor: 'red',
     },
     top: {
@@ -296,6 +306,7 @@ const styles = StyleSheet.create({
     },
     rowText: {
         fontSize: 16,
+        fontFamily: 'Kailasa',
     },
     tabContainer: {
         flex: 1,
@@ -303,21 +314,24 @@ const styles = StyleSheet.create({
     },
     FilterContainer: {
         width: '100%',
-        height: 120,
+        height: 100,
         padding: 5,
         borderBottomWidth: 2,
+        backgroundColor: '#d3d3d3',
     },
     filterType: {
         fontSize: 16,
         marginLeft: 80,
         fontWeight: 'bold',
+        fontFamily: 'Georgia',
     },
     filterTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginLeft: 50,
-        color: InternationalOrange,
         marginBottom: 20,
+        fontFamily: 'Cochin',
+        color: InternationalOrange,
     },
     Scrollmenu: {
         flex: 1,

@@ -15,7 +15,7 @@ import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import { Ionicons } from '@expo/vector-icons';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
-
+//const {API_KEY} = require('../../../keys'); // const API_key = rquire().API_KEY
 import SelectType from '../../Publications/SelectType';
 
 
@@ -112,19 +112,50 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
     let required_keys = Object.keys(holder).filter(item => holder[item] === "req"); // this list will contain all required fields that users must enter
     let allow_submission = true; // this boolean variable will be a signal whether we allow the users to submit the publication or not
 
+    // This is to check if the user already enter all needed information
     // First loop is to iterate through all properties of a publication that user wants to submit
     // Second loop is to iterate though all properties of a chosen type
+    /*
+    for (let j = 0; j < required_keys.length; j++) {
+        if (publication[required_keys[j]] === "") {
+            allow_submission = false;
+            break;
+        }
+    }
+    */
+
+    for(let key of required_keys) {
+        console.log(key);
+        console.log(publication[key]);
+        /*
+        if(typeof publication[key] == "undefined") {
+            allow_submission = false;
+            break;
+        } */
+        if(!publication[key] || publication[key] === "") {
+            allow_submission = false;
+            break;
+        }
+    }
+    console.log(allow_submission);
+
+    /*
+
     for (let i of Object.keys(publication)) {
-        for (let j of Object.keys(required_keys)) {
-            if (i === j) {
+        //console.log(i);
+        for (let j = 0; j < required_keys.length; j++) {
+
+            if (i === required_keys[j]) {
+
                 // If it is equal to empty string, that means user did not enter information on this field yet
-                if (publication[i] === '') {
+                if (publication[i] === "") {
                     allow_submission = false; // immediately set signal to false to inform the system that user cannot submit the publication without required field
                 }
             }
         }
     }
 
+    */
     /* Example of using object.key:
         obj = {id: 1, author: Henry, typeID: 2}
         Object.key(obj) = ["id", "author" ," typeID"]
@@ -134,6 +165,14 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
         return acc;
     },{});
 
+    // Note that typeID is just convential field name. The actual field name is entry_types_id, this is to take care of that.
+    for (let key of Object.keys(submission)) {
+        if (key === "typeID") {
+            let temp = submission[key];
+            delete submission.typeID;
+            submission["entry_types_id"] = temp;
+        }
+    }
 
     console.log(submission);
     console.log(allow_submission);
@@ -159,9 +198,6 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
         // The user did not enter required information. Set textbox to be red to inform user
         setHighlight(true);
     }
-
-
-
 }
 
 
@@ -209,10 +245,13 @@ export default function InsertTab(props){
                 <Text style = {styles.title}>
                     Create a new publication:
                 </Text>
+                <View style = {{flexDirection: 'row'}}>
+                    <Text style = {styles.section}>
+                        Type of publication: </Text>
 
-                <Text style = {styles.section}>
-                    Type of publication:
-                </Text>
+                    <Text style = {styles.asterisk}>Required * </Text>
+                </View>
+
 
 
                     <View style = {styles.ScrollMenu}>
@@ -224,6 +263,7 @@ export default function InsertTab(props){
                                     {label, value: id}
                                 ))}/>
                     </View>
+
 
                     <Text style = {styles.section}> Publication Details: </Text>
 
@@ -238,10 +278,12 @@ export default function InsertTab(props){
                                             <Text style = {styles.fieldName}> {field.key}: </Text>
                                         </View>
 
-
+                                        {/*
+                                            style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' ? [styles.inputBox, {borderColor: "red", borderWidth: 1}] : styles.inputBox}
+                                        */}
                                         <View style = {{width: '60%'}}>
                                             <TextInput
-                                                        style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === "(required)" ? [styles.inputBox, {borderColor: "red", borderWidth: 1}] : styles.inputBox}
+                                                        style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' ? styles.inputBox_require : styles.inputBox}
                                                         key={field.key}
                                                         value={publication[field.key] || ""}
                                                         onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
@@ -276,12 +318,14 @@ export default function InsertTab(props){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Platinum,
+        backgroundColor: '#d3d3d3',
     },
     title: {
         fontSize: 20,
         fontWeight: "bold",
         textAlign: 'center',
+        fontFamily: 'Cochin',
+
     },
 
     section: {
@@ -289,6 +333,16 @@ const styles = StyleSheet.create({
         marginLeft: 60,
         fontWeight: "bold",
         margin: 5,
+        fontFamily: 'Cochin',
+
+    },
+    asterisk: {
+        fontSize: 18,
+        fontWeight: "bold",
+        margin: 5,
+        color: 'red',
+        fontFamily: 'Cochin',
+
     },
     ScrollMenu: {
         marginLeft: 60,
@@ -296,11 +350,11 @@ const styles = StyleSheet.create({
     },
     submitArea: {
         marginTop: 25,
-        margin: 10,
         padding: 20,
-        borderColor: Platinum,
+        borderColor: 'black',
         borderTopWidth: 1,
         alignItems: "center",
+        width: '100%',
     },
     warnText: {
         fontWeight: 'bold',
@@ -323,6 +377,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderColor: 'black',
         fontWeight: "bold",
+        fontFamily: 'Kailasa',
+
     },
     fieldName: {
         color: Gainsboro,
@@ -333,6 +389,7 @@ const styles = StyleSheet.create({
         borderRightWidth: 2,
         fontWeight: "bold",
         color: 'black',
+        fontFamily: 'Cochin',
         padding: 5,
         margin: 5,
     },
@@ -351,4 +408,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
 
     },
+    inputBox_require: {
+        color: Gainsboro,
+        padding: 5,
+        margin: 5,
+        borderWidth: 1,
+        borderColor: 'red',
+    }
 });

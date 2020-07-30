@@ -4491,6 +4491,11 @@ react-native-screens@^2.8.0:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.8.0.tgz#9f989096fc5ccf248e0dfa93a74f1a64057e15f1"
   integrity sha512-fUCIQLZX+5XB0ypWX038P3zso54IFFjTsQUZJWEsjC3pp5rPItAt5SzqtJn+uVjcJaczZ+dpIuvj6IFLqkWLZQ==
 
+react-native-selectable-text@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-selectable-text/-/react-native-selectable-text-1.0.2.tgz#2ac00d13eac3f7419a03d12ecdf15ed72e96619b"
+  integrity sha512-lG3WrWwuEsY5GEeikAoxSMtp+Yol2xq6hA6OmsCZWt0j8/MMDdznlPm99b3tvmMUwbnEsZaKJe6H5DQjVQASgg==
+
 react-native-tab-view@^2.14.2:
   version "2.14.2"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.14.2.tgz#5f1e2063f632ec7f8ab27374ecaf72677788b445"
