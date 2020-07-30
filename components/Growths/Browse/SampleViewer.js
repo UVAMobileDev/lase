@@ -8,10 +8,10 @@ once on the sample details page, users can click on a specific growth and view t
 
 */
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-const fetch = require('node-fetch');
+import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 
+const fetch = require('node-fetch');
 
 
 export default function SampleViewer(props) {
