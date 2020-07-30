@@ -6,7 +6,8 @@
 
 // All imports
 import React, { useState, useEffect, useReducer } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Picker, FlatList, TextInput, ScrollView, ActivityIndicator,FlatLsit } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, TextInput, ScrollView, ActivityIndicator,FlatLsit } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
@@ -255,10 +256,12 @@ export default function InsertTab(props){
 
                     <View style = {styles.ScrollMenu}>
                         {/* This is for the scroll-menu for choosing type to public */}
-                        <Picker onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}>
-                            <Picker.Item key={-1} label= {'Choose type: '} value= {0}/>
-                            {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
-                        </Picker>
+                        <RNPickerSelect InputAccessoryView={() => null}
+                                placeholder={{label: "Choose type", value: 0}}
+                                onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}
+                                items={types.map(({label, id}) => (
+                                    {label, value: id}
+                                ))}/>
                     </View>
 
 

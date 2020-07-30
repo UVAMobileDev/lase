@@ -22,7 +22,7 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function Landing(props) {
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: "#0AA"}}>
             <View style={styles.container}>
                 {
                     // If we're on web, then we have to show a background image since

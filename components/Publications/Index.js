@@ -5,14 +5,26 @@
 // Insert: add new publication and scroll list is provided to let user choose which catergories of new publication will be
 
 // All imports
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator,FlatLsit } from 'react-native';
+import React from 'react';
+import Constants from 'expo-constants';
+import { View, StyleSheet, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-const fetch = require('node-fetch');
+import { createStackNavigator } from '@react-navigation/stack';
 
-import StackNavigator from './View/StackNavigator';
 import InsertTab from './Insert/InsertTab';
+import ViewPublication from './View/ViewPublication.js';
+import ViewTab from './View/ViewTab.js';
 
+// Create the stack navigator
+const Stack = createStackNavigator();
+function ViewStack(props) {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="View Tab" component={ViewTab} options={{headerShown: false}}/>
+            <Stack.Screen name="Details" component={ViewPublication}/>
+        </Stack.Navigator>
+    )
+}
 
 // Create the tab navigator which separates the Browse and Create sections.
 const Tab = createMaterialTopTabNavigator();
@@ -20,10 +32,12 @@ const Tab = createMaterialTopTabNavigator();
 export default function Navigator_Publication(props) {
 
     return (
-        <Tab.Navigator currentBrowser="All publications" swipeEnabled = {false}>
-            <Tab.Screen name="All publications" component={StackNavigator}/>
-            <Tab.Screen name="Insert new" component={InsertTab}/>
-        </Tab.Navigator>
+        <View style={{flex: 1, backgroundColor: "#0AA"}}>
+            <Tab.Navigator currentBrowser="All publications" style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight}}>
+                <Tab.Screen name="All publications" component={ViewStack}/>
+                <Tab.Screen name="Insert new" component={InsertTab}/>
+            </Tab.Navigator>
+        </View>
     )
 }
 

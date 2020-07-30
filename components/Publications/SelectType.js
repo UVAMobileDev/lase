@@ -1,6 +1,7 @@
 // Imports
 import React from 'react';
-import { View, StyleSheet, Picker } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../constants/API';
 
@@ -61,13 +62,13 @@ export default class SelectType extends React.Component {
     render() {
         return (
             <View>
-                <Picker style={styles.picker}
-                        onValueChange={(value, index) => this.state.update(value)}>
-                    <Picker.Item key={-1} label={this.state.placeholder.label} value={this.state.placeholder.value}/>
-                    {SelectType.types.map((name, index) => (
-                        <Picker.Item key={index} label={name} value={name}/>
-                    ))}
-                </Picker>
+                <RNPickerSelect style={styles.picker}
+                                placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
+                                InputAccessoryView={() => null}
+                                onValueChange={type => this.state.update(type)}
+                                items={SelectType.types.map(type => (
+                                    {label: type, value: type}
+                                ))}/>
             </View>
         );
     }

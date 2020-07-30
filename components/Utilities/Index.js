@@ -6,6 +6,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import GrowthCalendar from './GrowthCalendar/GrowthCalendar';
 import STO from './STOGeneration/STOGenerator';
 import WaferLog from './WaferUtils/WaferLog';
+// import ExampleComponent from './WaferUtils/ExampleComponent';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -15,7 +16,7 @@ function Todo(props) {
 
 export default function Utilities(props) {
     return (
-        <View style={{backgroundColor: "#000"}}>
+        <View style={{flex: 1, backgroundColor: "#0AA"}}>
             <Tab.Navigator  initialRouteName="Browse"
                             style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
                             tabBarOptions={{
@@ -23,7 +24,7 @@ export default function Utilities(props) {
                             }}>
                 <Tab.Screen name="Growth Calendar" component={GrowthCalendar}/>
                 <Tab.Screen name="STO Generation" component={STO}/>
-                <Tab.Screen name="Wafer Log" component={WaferLog}/>
+                <Tab.Screen name="Wafer Log" component={Todo}/>
                 <Tab.Screen name="Delete" component={Todo}/>
             </Tab.Navigator>
         </View>

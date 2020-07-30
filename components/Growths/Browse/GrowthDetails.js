@@ -6,9 +6,37 @@ import { Jet, Platinum, Gainsboro, InternationalOrange, PurpleNavy } from '../..
 const fetch = require("node-fetch");
 
 export default function GrowthDetails(props) {
+    let growth = props.route.params.growth;
     return (
-        <View>
-            <Text>Growth details page</Text>
+        <View style={styles.container}>
+
+            <View style={{paddingBottom: 20}}>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>Details for growth {growth.id}:</Text>
+            </View>
+            <View style={{paddingBottom: 10}}>
+                <Text>Grower: {growth.grower}</Text>
+            </View>
+            <View style={{paddingBottom: 10}}>
+                <Text>Machine: {growth.machine}</Text>
+            </View>
+            <View style={{paddingBottom: 10}}>
+                <Text>Substrate: {growth.substrate}</Text>
+            </View>
+            <View style={{paddingBottom: 10}}>
+                <Text>Description: {growth.Description}</Text>
+            </View>
+
+
         </View>
     )
 }
+
+// StyleSheet
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "white",
+        padding: 30,
+    },
+
+})

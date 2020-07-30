@@ -151,7 +151,7 @@ export default function Filter(props) {
             </View>
 
             <View style={styles.sortControls}>
-                <View style={{width: 95, textAlign: "center"}}>
+                <View style={{width: 95}}>
                     <Text style={{fontSize: 15}}>Sort Records</Text>
                 </View>
                 <View style={{width: 75}}>
