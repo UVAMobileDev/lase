@@ -165,95 +165,54 @@ export default function ViewTab(props){
                     {/* This is for the scroll-menu for choosing type to public */}
                     <Text style = {styles.filterTitle}> SEARCH BY CATEGORIES: </Text>
 
-                        <View style = {{marginBottom: 20}}>
-                                <View style = {{flexDirection: 'row'}}>
-                                    <Text style = {styles.filterType}> Filter by type:  </Text>
-                                    {/* all pickers should go in here */}
-                                    {/* Picker for displaying all types */}
+                    <View style = {{marginBottom: 20}}>
+                        <View style = {{flexDirection: 'row'}}>
+                            <Text style = {styles.filterType}> Filter by type:  </Text>
+                            {/* all pickers should go in here */}
+                            {/* Picker for displaying all types */}
 
-                                    <Picker
-                                    style = {styles.Scrollmenu}
+                            <Picker
+                            style = {styles.Scrollmenu}
 
-                                    //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}}); setSignal(true); setMorePage(true); setPage(0);} }
-                                    onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}>
-                                        <Picker.Item key={-1} label={'All types:'} value={0}/>
-                                        {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
-                                    </Picker>
+                            //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}}); setSignal(true); setMorePage(true); setPage(0);} }
+                            onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}>
+                                <Picker.Item key={-1} label={'All types:'} value={0}/>
+                                {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
+                            </Picker>
 
-                                    {
-                                        /*
-                                        <Text style = {styles.filterType}> Filter by ID number: </Text>
-
-
-                                        <Picker
-                                        style = {styles.Scrollmenu}
-                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
-                                        >
-                                            <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
-                                            {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
-                                        </Picker>
+                            {
+                                /*
+                                <Text style = {styles.filterType}> Filter by ID number: </Text>
 
 
-                                        */
-
-                                    }
-
-
-
-
-                                    <Text style = {styles.filterType}> Filter by year: </Text>
-                                    {/* Picker for displaying all authors of publications
-                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
-                                        */}
-                                    <Picker
-                                        style = {styles.Scrollmenu}
-                                        //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}}); setSignal(true);} }
-                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
-                                    >
-
-                                        <Picker.Item key={-1} label={'All years: '} value={0}/>
-                                        {
-                                            [...Array(new Date().getFullYear() - 1999)].map((_, i) => (
-                                            <Picker.Item key={i.toString()} label={(2000 + i).toString()} value={2000 + i} />
-                                        ))
-                                        /*
-                                        [...Array(new Date().getFullYear() - (minYear(allPublications.items)) - 1)].map((_, i) => (
-                                        <Picker.Item key={i} label={minYear(allPublications.items) + i} value={minYear(allPublications.items) + i} />))
-                                        */
-                                        }
-
-                                        { /*allPublications.items.map(item => (<Picker.Item key={item.id} label={item.year} value={item.id}/>))*/}
-
-                                        {/* onValueChange ={value => setYear({loaded: true, input: parseInt(item.year)})}*/}
+                                <Picker
+                                style = {styles.Scrollmenu}
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
+                                >
+                                    <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
+                                    {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
+                                </Picker>
 
 
-                                    </Picker>
-                                </View>
-                            </View>
+                                */
 
-                            {type(item.typeID)}
-                            <View style={{width: "45%"}}>
-                                <Text style={styles.rowText}>{item.title}</Text>
-                            </View>
-
-                           <View style={{width: "45%"}}>
-                               <Text style = {styles.title}>
-                                   Publication Title
-                               </Text>
-                           </View>
+                            }
 
 
-                           <View style={{width: "40%"}}>
-                               <Text style = {styles.author}>
-                                   Author
-                               </Text>
-                           </View>
 
-                           <View style={{width: "5%"}}>
-                               <Text style={styles.id}>
-                                   ID
-                               </Text>
-                           </View>
+
+                            <Text style = {styles.filterType}> Filter by year: </Text>
+                            {/* Picker for displaying all authors of publications
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
+                                */}
+                            <RNPickerSelect
+                                style = {styles.Scrollmenu}
+                                InputAccessoryView={() => null}
+                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
+                                items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => ({label: 2000 + i, value: 2000 + i}))}
+                                />
+                        </View>
+                    </View>
                 </View>
 
                 <FlatList
@@ -287,14 +246,9 @@ export default function ViewTab(props){
                                     <Text style={styles.rowText}>{item.id}</Text>
                                 </View>
                             </View>
-                            <View style={{width: "5%"}}>
-                                <Text style={styles.rowText}>{item.id}</Text>
-                            </View>
-                        </View>
-
-                )}
-                onEndReached = {ifReach}
-                onEndReachedThreshold = {0.3}/>
+                        )}
+                        onEndReached = {ifReach}
+                        onEndReachedThreshold = {0.3}/>
         </View>
     );
 }
