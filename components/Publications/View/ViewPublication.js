@@ -66,6 +66,7 @@ export default function ViewPublication(props) {
                 detail.push([key,(publication[key])]);
             }
         }
+        detail.push(['Citation',(<Publication key = {publication.id} data = {publication}/>)]); //added citations of publication to the array to render
         return (
             <View style = {styles.container}>
                     <ScrollView>

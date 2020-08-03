@@ -11,13 +11,9 @@ import RNPickerSelect from 'react-native-picker-select';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
-import SelectSystem from '../../lib/forms/SelectSystem';
-import SelectMember from '../../lib/forms/SelectMember';
 import { Ionicons } from '@expo/vector-icons';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
-//const {API_KEY} = require('../../../keys'); // const API_key = rquire().API_KEY
-import SelectType from '../../Publications/SelectType';
-
+const API_KEYS = require('../../../keys').API_KEY;
 
 // Array to contain all types of publication
 const AllTypes = [
@@ -174,15 +170,13 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
         }
     }
 
-    console.log(submission);
-    console.log(allow_submission);
     // Only send a put request whenever the requirement is being met
     if (allow_submission) {
         // Send PUT request
         let response = await fetch(`${BASE_URL}/publications`, {
             method: "PUT",
             headers: {
-                "x-api-key": process.env.X_API_KEY,
+                "x-api-key": API_KEYS,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({

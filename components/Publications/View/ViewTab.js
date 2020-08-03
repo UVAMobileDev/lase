@@ -11,12 +11,9 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
 import { Ionicons } from '@expo/vector-icons';
-import SelectSystem from '../../lib/forms/SelectSystem';
-import SelectMember from '../../lib/forms/SelectMember';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
-import SelectDate from '../../lib/forms/SelectDate';
-
 import RNPickerSelect from 'react-native-picker-select';
+//import SelectableText from 'react-native-selectable-text';
 
 
 // Array to contain all types of publication
@@ -81,7 +78,8 @@ const FilterReducer = (state, action) => {
 }
 
 // A single line of code to handel query string and return URL to fetch based on the user's request
-const QueryString = filter => `${BASE_URL}/publications?${Object.keys(filter).filter(key => filter[key] != "").reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
+const QueryString = filter => `${BASE_URL}/publications?${Object.keys(filter).filter(key => filter[key] !== "").filter(key => filter[key] > 0).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
+
 
 export default function ViewTab(props){
     //--------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,6 +116,8 @@ export default function ViewTab(props){
         let loadFilter = async () => {
 
             if (!loadData.loadMore) return; // don't do anything, we are done loading
+            console.log(filter);
+            console.log(QueryString(filter));
             let response = await fetch(`${QueryString(filter)}&page=${loadData.page}`).then(r => r.json()); //this will return list of objects (publications)
 
             if (loadData.page === 0) {
@@ -165,90 +165,107 @@ export default function ViewTab(props){
                     {/* This is for the scroll-menu for choosing type to public */}
                     <Text style = {styles.filterTitle}> SEARCH BY CATEGORIES: </Text>
 
-                    <View style = {{marginBottom: 20}}>
-                        <View style = {{flexDirection: 'row'}}>
-                            <Text style = {styles.filterType}> Filter by type:  </Text>
-                            {/* all pickers should go in here */}
-                            {/* Picker for displaying all types */}
 
-                            <Picker
-                            style = {styles.Scrollmenu}
-
-                            //onValueChange = {val => { dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}}); setSignal(true); setMorePage(true); setPage(0);} }
-                            onValueChange = {val => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: parseInt(val)}})}>
-                                <Picker.Item key={-1} label={'All types:'} value={0}/>
-                                {types.map(type => (<Picker.Item key={type.id} label={type.label} value={type.id}/>))}
-                            </Picker>
-
-                            {
-                                /*
-                                <Text style = {styles.filterType}> Filter by ID number: </Text>
+                        <View style = {{marginBottom: 20,flexDirection: 'row'}}>
 
 
-                                <Picker
-                                style = {styles.Scrollmenu}
-                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "id", value: parseInt(val)}})}
-                                >
-                                    <Picker.Item key={-1} label={'All ID numbers: '} value={0}/>
-                                    {allPublications.items.map(item => (<Picker.Item key={item.id} label={item.id} value={item.id}/>))}
-                                </Picker>
-
-
-                                */
-
-                            }
+                                        <Text style = {styles.filterType}> Filter by type:  </Text>
 
 
 
+                                        {/* all pickers should go in here */}
+                                        {/* Picker for displaying all types */}
+                                        <View style = {styles.Scrollmenu}>
+                                            <RNPickerSelect
+                                                    InputAccessoryView={() => null}
+                                                    placeholder={{label: "Select type", value: 0}}
+                                                    onValueChange={value => dispatchFilter({type: "set", payload: {key: "entry_types_id", value}})}
+                                                    items={types.map(({label, id}) => (
+                                                        {label, value: id}
+                                            ))}/>
 
-                            <Text style = {styles.filterType}> Filter by year: </Text>
-                            {/* Picker for displaying all authors of publications
-                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
-                                */}
-                            <RNPickerSelect
-                                style = {styles.Scrollmenu}
-                                InputAccessoryView={() => null}
-                                onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
-                                items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => ({label: 2000 + i, value: 2000 + i}))}
-                                />
+                                        </View>
+
+
+                                        <Text style = {styles.filterType}> Filter by year: </Text>
+                                        {/* Picker for displaying all authors of publications
+                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
+                                        */}
+                                        <View style = {styles.Scrollmenu}>
+
+                                            <RNPickerSelect
+                                                InputAccessoryView={() => null}
+                                                placeholder={{label: "Select Year", value: ""}}
+                                                onValueChange = {value => dispatchFilter({type: "set", payload: {key: "year", value}})}
+                                                items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => ({label: 2000 + i, value: 2000 + i}))}
+                                                />
+                                        </View>
+
                         </View>
+
+                </View>
+
+
+                <View style = {{flexDirection: 'row'}}>
+                    <View style={{width: "10%"}}>
+                        <Text style={styles.type} selectable = {true}> Type</Text>
+                    </View>
+                    <View style={{width: "45%"}}>
+                        <Text style={styles.title} selectable> Publication</Text>
+                    </View>
+                    <View style={{width: "40%"}}>
+                        <Text style={styles.author} selectable> Author</Text>
+                    </View>
+                    <View style={{width: "5%"}}>
+                        <Text style={styles.id} selectable> ID</Text>
                     </View>
                 </View>
 
-                <FlatList
+                {
+                    publications.loaded ? (
+                        <FlatList
 
-                        style = {styles.list}
-                        data = {publications.items}
-                        keyExtractor={
-                            /* Functional filter should be applied here */
-                            /* must specify the key to iterate. Otherwise, it will use index*/
-                            /* Since each publication has their own ID, we can use it to iterate*/
+                                style = {styles.list}
+                                data = {publications.items}
+                                keyExtractor={
+                                    /* Functional filter should be applied here */
+                                    /* must specify the key to iterate. Otherwise, it will use index*/
+                                    /* Since each publication has their own ID, we can use it to iterate*/
 
-                        item => item.id.toString()}
-                        renderItem = {({item}) => (
-                            <View  style={styles.recordRow}>
+                                item => item.id.toString()}
+                                renderItem = {({item}) => (
+                                    <View  style={styles.recordRow}>
 
-                                <View>
-                                    <TouchableOpacity   style={styles.openRecordButton}
-                                        onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
-                                        <Ionicons name="md-list-box" size={16} color={'#00008b'} style={{position: "relative", left: 3, top: 1}}/>
-                                    </TouchableOpacity>
-                                </View>
+                                        <View>
+                                            <TouchableOpacity   style={styles.openRecordButton}
+                                                onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
+                                                <Ionicons name="md-list-box" size={16} color={'#00008b'} style={{position: "relative", left: 3, top: 1}}/>
+                                            </TouchableOpacity>
+                                        </View>
 
-                                {type(item.typeID)}
-                                <View style={{width: "45%"}} selectable = {true}>
-                                    <Text style={styles.rowText}>{item.title}</Text>
-                                </View>
-                                <View style={{width: "40%"}}>
-                                    <Text style={styles.rowText}>{item.author}</Text>
-                                </View>
-                                <View style={{width: "5%"}}>
-                                    <Text style={styles.rowText}>{item.id}</Text>
-                                </View>
-                            </View>
-                        )}
-                        onEndReached = {ifReach}
-                        onEndReachedThreshold = {0.3}/>
+                                        {type(item.typeID)}
+                                        <View style={{width: "45%"}}>
+                                            <Text style={styles.rowText}>{item.title}</Text>
+                                        </View>
+                                        <View style={{width: "40%"}}>
+                                            <Text style={styles.rowText}>{item.author}</Text>
+                                        </View>
+                                        <View style={{width: "5%"}}>
+                                            <Text style={styles.rowText_ID}>{item.id}</Text>
+                                        </View>
+                                    </View>
+                                )}
+                                onEndReached = {ifReach}
+                                onEndReachedThreshold = {0.3}/>
+
+                    ) :  (
+                        <View style={{marginTop: 50}}>
+                            <ActivityIndicator size="large" color="#00008b"/>
+                        </View>
+                    )
+
+                }
+
         </View>
     );
 }
@@ -308,6 +325,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'Kailasa',
     },
+    rowText_ID: {
+        fontSize: 16,
+        fontFamily: 'Kailasa',
+        marginLeft: 19,
+    },
     tabContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -325,6 +347,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontFamily: 'Georgia',
     },
+    filterType_year: {
+        fontSize: 16,
+        marginLeft: 300,
+        fontWeight: 'bold',
+        fontFamily: 'Georgia',
+    },
     filterTitle: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -335,8 +363,8 @@ const styles = StyleSheet.create({
     },
     Scrollmenu: {
         flex: 1,
-        borderLeftWidth: 2,
-        borderRadius: 5,
         borderColor: Jet,
+        width: 130,
+
     },
 });
