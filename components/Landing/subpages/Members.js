@@ -861,26 +861,25 @@ export default function Members(props) {
             <View>
                 <Text style={styles.sectionHeader}>Principal Investigator</Text>
             </View>
-
-            {
-            //renders the principal investigator's info in a readable layout
-            PrincipalInvestigator.map(item => (
-                <View key={item.id}>
-                    <View style={styles.imageTextContainer}>
-                        <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.italic}>{item.title}</Text>
-                            <Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>
-                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                            <Text style={styles.infoHeader}>CV: <Text style={styles.link} onPress={() => Linking.openURL(item.cvlink)}>{item.cv}</Text></Text>
-                            <Text style={styles.infoHeader}>Scholar: <Text style={styles.link} onPress={() => Linking.openURL(item.scholarlink)}>{item.scholar}</Text></Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
-                        </View>
+            <View style={{marginBottom: 10}}>
+                <View style={[styles.imageTextContainer, {paddingBottom: 5}]}>
+                    <Image style={{height: 150, width: 100, marginRight: 10}} source="https://lase.mer.utexas.edu/images/Seth_Bank_High.jpg"/>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.infoHeader}>Seth R. Bank</Text>
+                        <Text style={styles.italic}>Cullen Trust for Higher Education Endowed Professorship in Engineering #6</Text>
+                        <Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text></Text>
+                        <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>(512) 471-9669</Text></Text>
+                        <Text style={styles.infoHeader}>CV: <Text style={styles.link} onPress={() => Linking.openURL("https://lase.mer.utexas.edu/documents/SRB_CV.pdf")}>SRB_CV.pdf</Text></Text>
+                        <Text style={styles.infoHeader}>Scholar: <Text style={styles.link} onPress={() => Linking.openURL("http://scholar.google.com/citations?user=Ey4P2ywAAAAJ")}>Profile</Text></Text>
                     </View>
                 </View>
-            ))
-            }
+                <Text style={[styles.bio, {marginHorizontal: 10}]}>
+                    <Text>{"\tSeth Bank received the B.S. degree from the University of Illinois at Urbana-Champaign in 1999 and the M.S. and Ph.D. degrees in 2003 and 2006 from Stanford University, all in electrical engineering. In 2006, he was a post-doctoral scholar at the University of California at Santa Barbara. He joined the faculty of the University of Texas at Austin in 2007, where he is currently a full professor and holder of Cullen Trust for Higher Education Endowed Professorship in Engineering #6.\n"}</Text>
+                    <Text>{"His current research interests are centered on the growth of analog/digital alloy semiconductors (e.g. AlInAsSb) and metal/semiconductor hetero- and nano-structures (e.g. ErAs nanoparticles in GaAs) and their application to plasmonics, silicon-based lasers, avalanche photodiodes, mid-IR lasers, sensors, THz generation and sensing, and high-speed transistors. He has coauthored >350 papers and presentations that have been cited >4500 times, with a Hirsch-Index of 36.\n"}</Text>
+                    <Text>{"\tHis group has received 5 Best Paper Awards and he has received the 2008 Young Investigator Award at the North American MBE Conference (NAMBE), a 2008 Young Faculty Award from DARPA, the 2009 Young Scientist Award from the International Symposium on Compound Semiconductors (ISCS), a Presidential Early Career Award for Scientists and Engineers (PECASE) in 2009 (nominated by ARO), an AFOSR Young Investigator Program (YIP) Award in 2009, an ONR Young Investigator Program (YIP) Award in 2010, a Faculty Early Career Development (CAREER) Program Award from the NSF in 2010, as well as the 2019 Gordon T. Lepley IV Memorial Teaching Award from UT.\n"}</Text>
+                    <Text>{"\tHe has been the Program Chair of the AVS North American MBE meeting (NAMBE), as well as a Program and General Chair for the IEEE/OSA Conference on Lasers and Electro-Optical (CLEO) and the IEEE Device Research Conference (DRC). He is currently a Board Member of IEEE DRC and was a Steering Committee member of OSA/IEEE CLEO; he is an active member of the Electronic Materials Conference (EMC) committee and has helped organize other conferences, including the IEEE Electron Device Meeting (IEDM), InP and Related Materials (IPRM), and the IEEE Photonics Society Annual Meeting (IPC).\n"}</Text>
+                </Text>
+            </View>
 
             <View style={styles.separator}/>
             <View>
