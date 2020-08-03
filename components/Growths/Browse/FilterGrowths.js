@@ -21,17 +21,14 @@ make sure filter controls are outside tab navigator
     */
 
 import React, { useState, useEffect, useReducer } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, ScrollView, Picker } from 'react-native';
-const fetch = require('node-fetch');
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import { BASE_URL } from '../../../constants/API.js';
 import CustomViewer from '../Browse/CustomViewer.js';
-
-
 import { UserProvider } from './UserContext';
+
+const fetch = require('node-fetch');
 
 
 const FilterReducer = (state, action) => {

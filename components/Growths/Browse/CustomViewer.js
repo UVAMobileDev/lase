@@ -1,17 +1,10 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
-import Constants from 'expo-constants';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Platform, Dimensions } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
-const fetch = require('node-fetch');
-import { Ionicons } from '@expo/vector-icons';
-import SelectSystem from '../../lib/forms/SelectSystem';
-import SelectMember from '../../lib/forms/SelectMember';
-
 import UserContext from './UserContext';
 
-//none of the filtering should be in this file, only keep QueryString
-
 const QueryString = filter => `${Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
+const fetch = require('node-fetch');
 
 export default function CustomViewer(props) {
     // Gets the name of the machine we're watching through props.route.params.system
@@ -32,7 +25,7 @@ export default function CustomViewer(props) {
     return (
         <View style={styles.container}>
         <View style={{padding:20}}>
-            <Text style={{fontSize: 16, fontWeight: '500'}}>Select a growth's ID to view associated items:</Text>
+            <Text style={{fontSize: 16, fontWeight: '500'}}>Select a growth's ID to view associated growths and recipes:</Text>
         </View>
 
         {
@@ -52,7 +45,7 @@ export default function CustomViewer(props) {
                                 <View style={styles.growthRow}>
                                     <View style={{width: 30, marginRight:20}}>
                                         <TouchableOpacity   style={styles.openGrowthButton}
-                                                        onPress={() => props.navigation.navigate("Sample Details ", {sample: item}, {systems: context.systems})}>
+                                                        onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
                                             <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.id}</Text>
                                         </TouchableOpacity>
                                     </View>
