@@ -12,6 +12,10 @@ export default function MonthBrowser(props) {
         if(props.onMonthChange) props.onMonthChange(m);
     }, [m]);
 
+    const DayCallback = day => {
+        if(props.onDaySelect) props.onDaySelect(day);
+    }
+
     return (
         <View style={styles.wrapper}>
             <View style={styles.container}>
@@ -50,7 +54,7 @@ export default function MonthBrowser(props) {
                         containerStyle={{borderColor: "#CCC", borderWidth: 1, paddingVertical: 3}}
                         month={m.format("YYYY-MM")}
                         events={props.events || {}}
-                        dayPress={day => console.log(day)}/>
+                        dayPress={DayCallback}/>
             </View>
         </View>
     )

@@ -33,7 +33,7 @@ const EventFormatter = n => {
         <View style={{flexDirection: "row"}}>
             <View style={styles.event}/>
             <View style={styles.event}/>
-            <View style={[styles.event, {borderColor: "#f55"}]}/>
+            <View style={[styles.event, {backgroundColor: "#f55", borderColor: "#f55"}]}/>
         </View>
     )
 
@@ -47,6 +47,7 @@ const EventFormatter = n => {
 // @props.containerStyle => additional styles applied to the container
 export default function MonthView(props) {
     const [state, setState] = useState({});
+    const [selected, select] = useState(null);
 
     // Calculate everything needed to construct the month view.
     useEffect(() => {
@@ -74,7 +75,10 @@ export default function MonthView(props) {
         setState({monthBox, events: props.events || {}});
     }, [props.month, props.events]);
 
-    const callback = day => props.dayPress ? props.dayPress(moment(props.month).date(day)) : null;
+    const callback = day => {
+        select(day === selected ? 0 : day);
+        return props.dayPress ? props.dayPress(day === selected ? {date: () => 0} : moment(props.month).date(day)) : null;
+    }
 
     return (
         <View style={[styles.monthBox, props.containerStyle || {}]}>
@@ -94,7 +98,7 @@ export default function MonthView(props) {
                                             <Text style={styles.dayNumber}>{day}</Text>
                                         </View>
                                     ) : (
-                                        <TouchableOpacity style={styles.day}
+                                        <TouchableOpacity style={[styles.day, day === selected ? styles.selectedDay : {}]}
                                                 onPress={() => callback(day)}>
                                             <Text style={styles.dayNumber}>{day}</Text>
                                             {EventFormatter(state.events[day])}
@@ -113,6 +117,9 @@ export default function MonthView(props) {
 }
 
 const styles = StyleSheet.create({
+    selectedDay: {
+        borderColor: "#00f",
+    },
     dayLabels: {
         flexDirection: "row",
         alignItems: "center",
@@ -125,6 +132,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     event: {
+        backgroundColor: "#0AA",
         borderColor: "#0AA",
         borderWidth: 2,
         borderRadius: 2,
