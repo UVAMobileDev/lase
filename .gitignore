@@ -13,4 +13,7 @@ web-report/
 
 # macOS
 .DS_Store
+
+# Manual additions
 keys.js
+yarn-error.log
