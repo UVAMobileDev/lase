@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-import GrowthCalendar from './GrowthCalendar/GrowthCalendar';
+import GrowthCal from './GrowthCalendar/Index';
 import STO from './STOGeneration/STOGenerator';
 import WaferLog from './WaferUtils/WaferLog';
 // import ExampleComponent from './WaferUtils/ExampleComponent';
@@ -22,7 +22,7 @@ export default function Utilities(props) {
                             tabBarOptions={{
                                 scrollEnabled: Platform.OS !== "web",
                             }}>
-                <Tab.Screen name="Growth Calendar" component={GrowthCalendar}/>
+                <Tab.Screen name="Growth Calendar" component={GrowthCal}/>
                 <Tab.Screen name="STO Generation" component={STO}/>
                 <Tab.Screen name="Wafer Log" component={Todo}/>
                 <Tab.Screen name="Delete" component={Todo}/>
