@@ -6,14 +6,13 @@
 
 // All imports
 import React, { useState, useEffect, useReducer } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Picker } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Picker} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
 import { Ionicons } from '@expo/vector-icons';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
 import RNPickerSelect from 'react-native-picker-select';
-//import SelectableText from 'react-native-selectable-text';
 
 
 // Array to contain all types of publication
@@ -163,6 +162,17 @@ export default function ViewTab(props){
 
                 <View style = {styles.FilterContainer}>
                     {/* This is for the scroll-menu for choosing type to public */}
+                    {
+                        /*
+                        <SelectableText
+                        style = {styles.filterTitle}
+                        value = {'SEARCH BY CATEGORIES:'}
+                        />
+
+                        */
+
+                    }
+
                     <Text style = {styles.filterTitle}> SEARCH BY CATEGORIES: </Text>
 
 

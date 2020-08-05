@@ -13,6 +13,29 @@ import {Table,Row,Rows} from 'react-native-table-component';
 //import {SelectableText} from 'react-native-selectable-text';
 // This function is to get the fetch the URL for getting information based on the sample ID
 
+const AllTypes = [
+            'None',
+            'Article',
+            'Book',
+            'Booklet',
+            'Conference',
+            'electronic',
+            `inbook`,
+            `incollection`,
+            `inproceedings`,
+            `manual`,
+            `mastersthesis`,
+            `misc`,
+            `other`,
+            `patent`,
+            `periodical`,
+            `phdthesis`,
+            `proceedings`,
+            `standard`,
+            `techreport`,
+            `unpublished`
+]
+
 const GetSources = async sampleID => {
     let response = await fetch(`${BASE_URL}/publications/${sampleID}`);
     let parsed = await response.json();
@@ -67,6 +90,15 @@ export default function ViewPublication(props) {
             }
         }
         detail.push(['Citation',(<Publication key = {publication.id} data = {publication}/>)]); //added citations of publication to the array to render
+        console.log(detail);
+        for (let i = 0; i < detail.length; i++) {
+            if (detail[i][0] === 'typeID') {
+                let temp = AllTypes[detail[i][1]]; // Ex: article if typeID is 1
+                detail[i][1] = detail[i][1].toString() + ' (' + temp + ')';
+            }
+        }
+
+
         return (
             <View style = {styles.container}>
                     <ScrollView>

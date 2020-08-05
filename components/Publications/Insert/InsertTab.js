@@ -133,7 +133,6 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
             break;
         }
     }
-    console.log(allow_submission);
 
     /*
 
@@ -277,11 +276,12 @@ export default function InsertTab(props){
                                         */}
                                         <View style = {{width: '60%'}}>
                                             <TextInput
-                                                        style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' ? styles.inputBox_require : styles.inputBox}
+                                                        style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' && !publication[field.key] ? styles.inputBox_require : styles.inputBox}
                                                         key={field.key}
                                                         value={publication[field.key] || ""}
                                                         onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
                                                         placeholder={`Enter ${field.key} ${checkIfrequire(publication.typeID,field.key,types)}`} />
+
                                         </View>
 
                                     </View>
