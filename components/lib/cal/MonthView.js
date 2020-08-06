@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#0AA",
         borderColor: "#0AA",
         borderWidth: 2,
-        borderRadius: 2,
-        margin: .5
+        borderRadius: 1,
+        margin: 1.5
     },
     dayNumber: {
     },
