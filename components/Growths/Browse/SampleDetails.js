@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Button } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 const fetch = require("node-fetch");
 
@@ -31,6 +31,7 @@ export default function SampleDetails(props) {
         }
         load();
     }, [sampleID]);
+    console.log(sampleID)
 
     return (
         <ScrollView>
@@ -82,6 +83,12 @@ export default function SampleDetails(props) {
                         )}/>
 
             </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', paddingBottom: 50, marginTop: -15}}>
+            <Button
+                title="ADD A NEW GROWTH TO THE DATABASE"
+                onPress={() => props.navigation.navigate("Add Growth", {sampleID: sampleID})}
+            />
+            </View>
         </View>
         </ScrollView>
 
@@ -98,7 +105,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     list: {
-        margin: 10,
+        margin:10,
         marginBottom: 30,
         marginTop: -15,
     },
@@ -117,7 +124,7 @@ const styles = StyleSheet.create({
     rowText: {
         fontSize: 16,
         color: "black",
-        padding: 10,
+        paddingLeft: 10,
 
     },
     filterControls: {
