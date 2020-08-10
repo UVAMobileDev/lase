@@ -7,6 +7,7 @@ const fetch = require("node-fetch");
 
 export default function GrowthDetails(props) {
     let growth = props.route.params.growth;
+    let sampleID = props.route.params.sampleID;
     const tableTitle = ["id", "SampleID", "Grower", "Machine","Date", "HolderID","GrowthNum","Substrate", "SubstrateSize",
       "GaTip", "GaBase", "GaFlux", "InTip","InBase", "InFlux", "AlBase", "AlFlux", "Er", "ErFlux", "Si",
       "Be","GaTe","AsSub","AsCrk","AsValve","AsFlux","SbSub","SbCrk","SbValve","SbFlux","NRF","ReflectedRF","NFlow","ForlinePressure","PyroDeox","TCDeox",
@@ -14,7 +15,7 @@ export default function GrowthDetails(props) {
       "In_Base","In_Flux","Al_Base", "Al_Flux","La_Temp","La_Flux","Lu_Temp","Lu_Flux","As_Sub","As_Crk","Chamber_Background","BF_Background",
       "Bi_Temp","Bi_Flux","Bi_Tip","Bi_Base","Gd_Temp","Gd_Flux", "B_Temp","B_Flux","waferTracked", "GaP_Temp", "GaP_Flux"];
 
-      const tableData = [[growth.id], [growth.sampleID], [growth.grower], [growth.machine],[growth.date], [growth.holderID],[growth.growthNum],[growth.ubstrate], [growth.substrateSize],
+      const tableData = [[growth.id], [sampleID], [growth.grower], [growth.machine],[growth.date], [growth.holderID],[growth.growthNum],[growth.substrate], [growth.substrateSize],
         [growth.GaTip], [growth.GaBase], [growth.GaFlux], [growth.InTip], [growth.InBase], [growth.InFlux], [growth.AlBase], [growth.AlFlux], [growth.Er], [growth.ErFlux], [growth.Si],
         [growth.Be],[growth.GaTe],[growth.AsSub],[growth.AsCrk],[growth.AsValve],[growth.AsFlux],[growth.SbSub],[growth.SbCrk],[growth.SbValve],[growth.SbFlux],[growth.NRF],[growth.ReflectedRF],[growth.NFlow],[growth.ForlinePressure],[growth.PyroDeox],[growth.TCDeox],
         [growth.PyroGrowth],[growth.TCGrowth],[growth.GCPressure],[growth.BFBackground],[growth.HVP],[growth.PyroOffset],[growth.Description],[growth.Ga_Tip],[growth.Ga_Base],[growth.Ga_Flux],[growth.In_Tip],
