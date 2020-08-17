@@ -7,8 +7,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import GrowthCalendar from './GrowthCalendar';
-import SampleDetails from '../../Growths/Browse/SampleDetails';
-import GrowthDetails from '../../Growths/Browse/GrowthDetails';
+import SampleDetails from '../../Growths/SampleDetails';
+import GrowthDetails from '../../Growths/GrowthDetails';
 
 // Create the stack navigator
 const Stack = createStackNavigator();

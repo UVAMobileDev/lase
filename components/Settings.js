@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Constants from 'expo-constants';
-import { StyleSheet, Text, View, Platform, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Platform, TouchableOpacity, TextInput, ActivityIndicator, Switch } from 'react-native';
 import { BASE_URL } from '../constants/API';
 import { API_KEY } from '../keys.js';
+import { Entypo, Foundation } from '@expo/vector-icons';
 
 // VALID KEY
 // 2yRALZXus73AaKg5c1wWv7qf4DTSx84naQGIGCCf
@@ -37,6 +38,7 @@ const DestroyToken = async () => {
 export default function Settings(props) {
     const [verifying, setVerifying] = useState(false);
     const [key, setKey] = useState({});
+    const [darkMode, setDarkMode] = useState({loaded: false, value: false});
 
     // On page load, the root component will attempt to preload the key from
     // storage and look for previous verification. Since this side effect won't
@@ -48,9 +50,24 @@ export default function Settings(props) {
                 let key = await AsyncStorage.getItem('lase-api-key');
                 if(key) setKey(JSON.parse(key));
             } catch(e) { console.log("Failed to load stored key from AsyncStorage") }
+            try {
+                let dark = await AsyncStorage.getItem('dark');
+                setDarkMode({loaded: true, value: dark === "true"});
+            } catch(e) { console.log("Failed to load stored dark mode setting from AsyncStorage") }
         }
         read();
     }, []);
+
+    useEffect(() => {
+        if(!darkMode.loaded) return;
+        props.route.params.update({...key, dark: darkMode.value})
+        const toggle = async () => {
+            try {
+                await AsyncStorage.setItem('dark', darkMode.value);
+            } catch(e) { console.log("Failed to update dark mode setting") }
+        }
+        toggle();
+    }, [darkMode.value]);
 
     return (
         <View style={{flex: 1, backgroundColor: "#0AA"}}>
@@ -86,7 +103,14 @@ export default function Settings(props) {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Light and Dark Mode</Text>
                     <Text style={styles.sectionDescription}>Are your eyes on fire from a bright white user experience? Or maybe you're having trouble reading anything with a dark color palette in a bright working environment. Here you can switch between light and dark palettes.</Text>
-                    <Text>Eventually a toggle switch will be here.</Text>
+                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <Foundation name="lightbulb" size={24} color="black" />
+                        <Switch style={{margin: 10}}
+                            value={darkMode.value}
+                            onValueChange={() => setDarkMode({...darkMode, value: !darkMode.value})}
+                            />
+                        <Entypo name="moon" size={24} color="black" />
+                    </View>
                 </View>
             </View>
         </View>

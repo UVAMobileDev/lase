@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator } from 'react-native';
-import { BASE_URL } from '../../../constants/API.js';
-import UserContext from './UserContext';
+import { BASE_URL } from '../../constants/API.js';
+import GrowthContext from './GrowthContext';
 
 const QueryString = filter => `${Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
 const fetch = require('node-fetch');
@@ -10,7 +10,7 @@ export default function CustomViewer(props) {
     // Gets the name of the machine we're watching through props.route.params.system
     // Current filter state is in props.route.params.filter
 
-    const context = useContext(UserContext);
+    const context = useContext(GrowthContext);
     const [growths, setGrowths] = useState({loaded: false, contents: []});
 
 

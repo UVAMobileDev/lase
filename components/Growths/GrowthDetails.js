@@ -24,23 +24,21 @@ export default function GrowthDetails(props) {
 
     return (
         <ScrollView>
-        <View style={styles.container}>
-            <View style={{paddingBottom: 20}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Details for growth {growth.id}:</Text>
+            <View style={styles.container}>
+                <View style={{paddingBottom: 20}}>
+                    <Text style={{fontSize: 16, fontWeight: '500'}}>Details for growth {growth.id}:</Text>
+                </View>
+                <TableWrapper style={styles.wrapper}>
+                    <Table borderStyle={{borderWidth: 1}}>
+                        <Col data={tableTitle}/>
+                    </Table>
+                    <Table borderStyle={{borderWidth: 1}}>
+                    <Col data={tableData}/>
+                    </Table>
+                </TableWrapper>
             </View>
-            <TableWrapper style={styles.wrapper}>
-                <Table borderStyle={{borderWidth: 1}}>
-                    <Col data={tableTitle}/>
-                </Table>
-                <Table borderStyle={{borderWidth: 1}}>
-                <Col data={tableData}/>
-                </Table>
-            </TableWrapper>
-        </View>
         </ScrollView>
-
-
-    )
+    );
 }
 
 // StyleSheet

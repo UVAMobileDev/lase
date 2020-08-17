@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import SelectMember from '../../lib/forms/SelectMember';
-import { BASE_URL } from '../../../constants/API.js';
-import CustomViewer from '../Browse/CustomViewer.js';
-import { UserProvider } from './UserContext';
+import SelectMember from '../lib/forms/SelectMember';
+import { BASE_URL } from '../../constants/API';
+import CustomViewer from './CustomViewer';
+import { GrowthProvider } from './GrowthContext';
 const fetch = require('node-fetch');
 
 const FilterReducer = (state, action) => {
@@ -44,9 +44,9 @@ export default function GrowthBrowser(props) {
         }
         load();
     }, []);
-    
+
     return (
-        <UserProvider value={{systems, filter}}>
+        <GrowthProvider value={{systems, filter}}>
             {systems.length > 0 ? (
                 <ScrollView>
                     <View style={styles.filterControls}>
@@ -61,7 +61,7 @@ export default function GrowthBrowser(props) {
                    </Tab.Navigator>
                  </ScrollView>) : (<View/>)
             }
-        </UserProvider>
+        </GrowthProvider>
     );
 }
 

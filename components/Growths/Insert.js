@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Button, TextInput } from 'react-native';
-import { BASE_URL } from '../../../constants/API.js';
-import SelectSystem from '../../lib/forms/SelectSystem';
-import SelectMember from '../../lib/forms/SelectMember';
-import { API_KEY } from '../../../keys';
+import { BASE_URL } from '../../constants/API.js';
+import SelectSystem from '../lib/forms/SelectSystem';
+import SelectMember from '../lib/forms/SelectMember';
+import { API_KEY } from '../../keys';
 const fetch = require("node-fetch");
 
 //adding a growth should be tied to a sampleID

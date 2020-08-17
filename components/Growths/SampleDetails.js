@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Platform, ActivityIndicator } from 'react-native';
-import { BASE_URL } from '../../../constants/API.js';
+import { BASE_URL } from '../../constants/API.js';
 import { Entypo } from '@expo/vector-icons';
 const fetch = require("node-fetch");
 

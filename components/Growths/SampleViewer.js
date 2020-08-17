@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import { BASE_URL } from '../../../constants/API.js';
+import { BASE_URL } from '../../constants/API.js';
 const fetch = require('node-fetch');
 
 export default function SampleViewer(props) {
