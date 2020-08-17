@@ -37,12 +37,20 @@ const Screens = [
 
 // Top level component for the application.
 export default function App() {
+    const [state, setState] = useState({
+        privileged: false,
+        key: "",
+        dark: false,
+    })
     const [privileged, setPriviledged] = useState(false);
     const [key, setKey] = useState("");
 
-    const update = ({verified, key}) => {
-        setPriviledged(verified);
-        setKey(key);
+    const update = ({verified, key, dark}) => {
+        setState({
+            privileged: verified,
+            key,
+            dark
+        });
     }
 
     const ScreenParams = {
@@ -65,7 +73,7 @@ export default function App() {
 
     // {/* A NavigationContainer is required to wrap the top level navigator. */}
     return (
-        <KeyProvider value={{key}}>
+        <KeyProvider value={{key, dark: state.dark}}>
             <NavigationContainer style={{flex: 1}}>
                 <Drawer.Navigator initialRouteName="Settings"
                             drawerType={Platform.OS === "web" ? "permanent" : "slide"}
