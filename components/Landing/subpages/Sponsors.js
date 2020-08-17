@@ -3,15 +3,17 @@
 
 // Imports
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
+import Footer from '../Footer';
 
 export default function Sponsors(props) {
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View style={{padding: 15}}/>
             <Image  style={styles.img}
                     source={require('../../../assets/Sponsors.jpeg')}/>
-        </View>
+            <Footer />
+        </ScrollView>
     );
 }
 

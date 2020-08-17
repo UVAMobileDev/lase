@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions, Linking, ScrollView } from 'react-native';
+import Footer from '../Footer';
 
 //header image
 const membersImage = {
@@ -1060,7 +1061,7 @@ export default function Members(props) {
                 </View>
                 ))
             }
-
+            <Footer />
         </ScrollView>
     );
 }

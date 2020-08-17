@@ -1,26 +1,12 @@
 import React, { Component } from 'react';
 import { Video } from 'expo-av';
 import { View, Text, Linking, StyleSheet, Image, ScrollView } from 'react-native';
+import Footer from '../Footer';
 
-// const Books = [
-//     {
-//         title: "Warren Piece",
-//         author: "War Andprice",
-//     },
 //     {
 //         title: "Zach's Bees",
 //         author: "Apiarist's Anonymous"
 //     }
-// ]
-
-// {
-//     Books.map(book => (
-//         <View>
-//         <Text>{book.title}</Text>
-//         <Text>{book.author}</Text>
-//         </View>
-//     ))
-// }
 
 export default function Classes(props) {
     return (
@@ -109,22 +95,16 @@ export default function Classes(props) {
                         shouldPlay={false}
                         />
                 </View>
+                <Footer />
             </ScrollView>
         </View>
     );
 }
 
-//Ask questions about the Bold text in the applicable semi conductor
-//Downloading the file?
-//Picture? linking
-//Video?
-//The bottom?
-
-
 const robotImage = {
-  uri: 'https://lase.mer.utexas.edu/images/EE302_Final_Project_small.JPG',
-  width: 600,
-  height: 400,
+    uri: 'https://lase.mer.utexas.edu/images/EE302_Final_Project_small.JPG',
+    width: 600,
+    height: 400,
 };
 
 const styles = StyleSheet.create({

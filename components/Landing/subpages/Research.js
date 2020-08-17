@@ -3,6 +3,7 @@
 // Imports
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
+import Footer from '../Footer';
 
 // The paragraphs to render
 const Paragraphs = [
@@ -64,6 +65,7 @@ export default function Research(props) {
                     ))
                 }
                 <View style={{height: 25}}/>
+                <Footer />
             </ScrollView>
         </View>
     );

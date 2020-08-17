@@ -10,8 +10,9 @@
 
 // Imports
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Linking, ActivityIndicator, Platform, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, Linking, ActivityIndicator, Platform, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import Publication from '../../Publications/Publication.js';
+import Footer from '../Footer';
 import { BASE_URL } from '../../../constants/API.js';
 
 // The number of recent publications to show on the page.
@@ -79,24 +80,27 @@ export default function Overview(props) {
                             //  Map operates on an array and accepts a function which
                             //  tells it how to transform each element. In this case,
                             //  we transform it into an array of JSX elements.
-                            publications.loaded ? (
-                                <View>
-                                    {
-                                        publications.items.map(pub => (<Publication key={pub.id} data={pub}/>))
-                                    }
-                                </View>
-                            ) : (
-                                <ActivityIndicator size="large" color="#00f"/>
-                            )
+                            publications.loaded ? publications.items.map(pub => (<Publication key={pub.id} data={pub}/>))
+                            : (<ActivityIndicator size="large" color="#00f"/>)
                             // If the loading has not completed yet, however, we just
                             //  show an activity indicator (a spinning circle).
                         }
                     </View>
                 </View>
                 <View style={[styles.section, {borderBottomWidth: 0}]}>
-                    <View style={{width: Platform.OS === "web" ? "50%" : "100%"}}>
-                        <Text>map</Text>
-                    </View>
+                    <TouchableOpacity style={styles.map}
+                            onPress={() => Linking.openURL("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911")}>
+                        <Image style={{
+                                padding: 5,
+                                borderColor: "#aaa",
+                                borderWidth: 1,
+                            }}
+                            source={{
+                                uri: "https://i.gyazo.com/46236e2110e11f2e7ae142799e3f02c3.png",
+                                width: 200,
+                                height: 175,
+                            }}/>
+                    </TouchableOpacity>
                     <View style={styles.professorArea}>
                         <Image  style={styles.sethBank}
                                 source={require('../../../assets/Seth_Bank.jpg')}/>
@@ -138,6 +142,7 @@ export default function Overview(props) {
                         </View>
                     </View>
                 </View>
+                <Footer />
             </ScrollView>
         </View>
     );
@@ -172,6 +177,7 @@ const styles = StyleSheet.create({
     },
     section: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
+        justifyContent: "space-around",
         alignItems: "center",
         paddingTop: 20,
         paddingBottom: 20,
@@ -179,6 +185,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         marginRight: Platform.OS === "web" ? 0 : 10,
         marginLeft: Platform.OS === "web" ? 0 : 10,
+        paddingRight: Platform.OS === "web" ? 10 : 0,
     },
     imageMER: {
         marginLeft: 20,
@@ -211,8 +218,8 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
     },
     map: {
-        width: 250,
-        height: 250,
+        margin: 15,
+        alignItems: "center",
     },
     textContainer: {
         flexWrap: "wrap",

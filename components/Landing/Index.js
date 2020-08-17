@@ -20,6 +20,8 @@ import News from './subpages/News.js';
 //  for selecting between the different sub pages.
 const Tab = createMaterialTopTabNavigator();
 
+const onWeb = Platform.OS === "web";
+
 export default function Landing(props) {
     return (
         <View style={{flex: 1, backgroundColor: "#0AA"}}>
@@ -45,8 +47,10 @@ export default function Landing(props) {
                                         style: {
                                             backgroundColor: "#000",
                                         },
-                                        scrollEnabled: Platform.OS !== "web",
-                                    }}>
+                                        scrollEnabled: !onWeb,
+                                    }}
+                                    lazy={true}
+                                    swipeEnabled={Platform.OS !== "web"}>
                         <Tab.Screen name="Overview" component={Overview}/>
                         <Tab.Screen name="Research" component={Research}/>
                         <Tab.Screen name="What is MBE?" component={WhatIsMBE}/>
@@ -80,10 +84,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         flexDirection: "row",
-        marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,
+        marginTop: onWeb ? 0 : Constants.statusBarHeight,
     },
     document: {
-        marginTop: Platform.OS === "web" ? 10 : 0,
+        marginTop: onWeb ? 10 : 0,
         backgroundColor: "#fff",
         flexDirection: "column",
         height: Platform.OS === "web" ? "calc(100% - 20px)" : "100%",
