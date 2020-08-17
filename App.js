@@ -8,6 +8,10 @@
 // Hien (Taylor) Truong
 // Julia Shea
 
+// NOTE: this change must be implemented manually after yarn installation in
+// order for text selection to work as expected on pages with tab navigators.
+// https://github.com/software-mansion/react-native-gesture-handler/pull/1037/commits/fa9835063d0017288539fedc65b0b8d3781a5974
+
 // Import the necessary components
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
@@ -58,10 +62,10 @@ export default function App() {
         read();
     }, []);
 
+    // {/* A NavigationContainer is required to wrap the top level navigator. */}
     return (
         <NavigationContainer style={{flex: 1}}>
-            {/* A NavigationContainer is required to wrap the top level navigator. */}
-            <Drawer.Navigator initialRouteName="Home"
+            <Drawer.Navigator initialRouteName="Settings"
                         drawerType={Platform.OS === "web" ? "permanent" : "slide"}
                         drawerStyle={{backgroundColor: "#0AA"}}
                         drawerContentOptions={{
