@@ -13,12 +13,13 @@
 // https://github.com/software-mansion/react-native-gesture-handler/pull/1037/commits/fa9835063d0017288539fedc65b0b8d3781a5974
 
 // Import the necessary components
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AntDesign } from '@expo/vector-icons';
+import { KeyProvider } from './KeyContext';
 
 
 // Create left side drawer navigator. For this application, this drawer is the
@@ -64,26 +65,28 @@ export default function App() {
 
     // {/* A NavigationContainer is required to wrap the top level navigator. */}
     return (
-        <NavigationContainer style={{flex: 1}}>
-            <Drawer.Navigator initialRouteName="Settings"
-                        drawerType={Platform.OS === "web" ? "permanent" : "slide"}
-                        drawerStyle={{backgroundColor: "#0AA"}}
-                        drawerContentOptions={{
-                            activeTintColor: "#fff",
-                            inactiveTintColor: "#000",
-                        }}>
-                {/* Each screen has a name to appear in the UI and a component which it displays when selected. */}
-                {
-                    Screens.filter(screen => privileged ? true : !screen.privileged)
-                    .map((screen, i) => (
-                        <Drawer.Screen key={i}
-                                name={screen.name}
-                                component={screen.component}
-                                initialParams={ScreenParams[screen.name] || {}}/>
-                    ))
-                }
-            </Drawer.Navigator>
-        </NavigationContainer>
+        <KeyProvider value={{key}}>
+            <NavigationContainer style={{flex: 1}}>
+                <Drawer.Navigator initialRouteName="Settings"
+                            drawerType={Platform.OS === "web" ? "permanent" : "slide"}
+                            drawerStyle={{backgroundColor: "#0AA"}}
+                            drawerContentOptions={{
+                                activeTintColor: "#fff",
+                                inactiveTintColor: "#000",
+                            }}>
+                    {/* Each screen has a name to appear in the UI and a component which it displays when selected. */}
+                    {
+                        Screens.filter(screen => privileged ? true : !screen.privileged)
+                        .map((screen, i) => (
+                            <Drawer.Screen key={i}
+                                    name={screen.name}
+                                    component={screen.component}
+                                    initialParams={ScreenParams[screen.name] || {}}/>
+                        ))
+                    }
+                </Drawer.Navigator>
+            </NavigationContainer>
+        </KeyProvider>
     );
 }
 
