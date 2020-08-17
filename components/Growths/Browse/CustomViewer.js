@@ -24,54 +24,44 @@ export default function CustomViewer(props) {
 
     return (
         <View style={styles.container}>
-        <View style={{padding:20}}>
-            <Text style={{fontSize: 16, fontWeight: '500'}}>Select a growth's ID to view associated growths and recipes:</Text>
-        </View>
+            <Text style={{paddingLeft: 20, paddingTop: 20, fontSize: 16}}>Select a growth's ID to view associated growths and recipes:</Text>
+            {
+                growths.loaded ? (
+                    <View style={styles.listContainer}>
 
-        {
-            growths.loaded ? (
+                        {/*displays a flatlist of all the growths */}
+                        <ScrollView>
 
-                <View style={styles.listContainer}>
-
-                    {/*displays a flatlist of all the growths */}
-                    <ScrollView>
-
-                        <FlatList
-                            style={styles.list}
-                            data={growths.contents}
-                            keyExtractor={item => item.id.toString()}
-                            initialNumToRender={10}
-                            renderItem={({item}) => (
-                                <View style={styles.growthRow}>
-                                    <View style={{width: 30, marginRight:20}}>
-                                        <TouchableOpacity   style={styles.openGrowthButton}
-                                                        onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
-                                            <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.id}</Text>
-                                        </TouchableOpacity>
+                            <FlatList
+                                style={styles.list}
+                                data={growths.contents}
+                                keyExtractor={item => item.id.toString()}
+                                initialNumToRender={10}
+                                renderItem={({item}) => (
+                                    <View style={styles.growthRow}>
+                                        <View style={{width: 30, marginRight:20}}>
+                                            <TouchableOpacity   style={styles.openGrowthButton}
+                                                            onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
+                                                <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.id}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={[styles.rowText, {width: 95}]}>{item.sampleID}</Text>
+                                        <Text style={[styles.rowText, {width: 70}]}>{item.machine}</Text>
+                                        <Text style={[styles.rowText, {width: 150}]}>{item.grower}</Text>
+                                        <Text style={[styles.rowText, {width: 100}]}>{item.substrate}</Text>
+                                        <View style={{flex: 1}}>
+                                            <Text style={styles.rowText}>{item.Description}</Text>
+                                        </View>
                                     </View>
-                                    <View style= {{marginLeft: 5, marginRight: -20}}>
-                                        <Text style={styles.rowText}>{item.sampleID}</Text>
-                                    </View>
-                                    <View style= {{margin: -20}}>
-                                        <Text style={styles.rowText}>{item.machine}</Text>
-                                    </View>
-                                    <View style= {{margin: -40}}>
-                                        <Text style={styles.rowText}>{item.grower}</Text>
-                                    </View>
-                                </View>
-                            )}/>
-                    </ScrollView>
-                </View>
-
-
-            ) : (
-                <View style={{marginTop: 50}}>
-                    <ActivityIndicator size="large" color="#0000ff"/>
-                </View>
-            )
-
-        }
-
+                                )}/>
+                        </ScrollView>
+                    </View>
+                ) : (
+                    <View style={{marginTop: 50}}>
+                        <ActivityIndicator size="large" color="#0000ff"/>
+                    </View>
+                )
+            }
         </View>
     )
 }
@@ -86,7 +76,6 @@ const styles = StyleSheet.create({
     listContainer: {
         flex: 1,
         paddingLeft: 30,
-        marginTop: -20,
     },
     list: {
         margin: 10,
@@ -99,7 +88,6 @@ const styles = StyleSheet.create({
         margin: 4,
 
     },
-
     openGrowthButton: {
         width: 18,
         margin: 4,
@@ -109,7 +97,5 @@ const styles = StyleSheet.create({
     rowText: {
         fontSize: 16,
         color: "black",
-        width: 150,
-
     },
 });

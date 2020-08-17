@@ -1,24 +1,4 @@
-/*this tab allows users to sort through existing growths based on the following criteria:
-    Machine
-    Researcher who grew it
-    Substrate
 
-Clicking on a specific growth in the browser opens it's SAMPLE details page
-
-Object.keys.filter(key => filter[key] !== "").reduce
-
-filter reducer:
-switch(action.type) {
-    case "set":
-        return {...state, [action.payload.key]: action.payload.value}
-    defualt:
-        return {...state, }
-}
-
-dispatchfilter(type: 'set,', payload: {key: 'system', value: sys})
-
-make sure filter controls are outside tab navigator
-    */
 
 import React, { useState, useEffect, useReducer } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
@@ -27,9 +7,7 @@ import SelectMember from '../../lib/forms/SelectMember';
 import { BASE_URL } from '../../../constants/API.js';
 import CustomViewer from '../Browse/CustomViewer.js';
 import { UserProvider } from './UserContext';
-
 const fetch = require('node-fetch');
-
 
 const FilterReducer = (state, action) => {
 
@@ -41,7 +19,6 @@ const FilterReducer = (state, action) => {
             return state;
     }
 }
-
 
 const Filtered = async (filter, page) => {
     let growths = []
@@ -67,8 +44,7 @@ export default function GrowthBrowser(props) {
         }
         load();
     }, []);
-    console.log(systems);
-
+    
     return (
         <UserProvider value={{systems, filter}}>
             {systems.length > 0 ? (
