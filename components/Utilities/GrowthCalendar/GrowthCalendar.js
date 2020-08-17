@@ -22,10 +22,6 @@ export default function GrowthCalendar(props) {
     const [day, setDay] = useState(0);
 
     useEffect(() => {
-        console.log(day);
-    }, [day]);
-
-    useEffect(() => {
         const load = async () => {
             let resp = await fetch(`${BASE_URL}/settings/machines`).then(r => r.json());
             setSystems(resp.machines || []);
@@ -77,8 +73,8 @@ export default function GrowthCalendar(props) {
                 <ScrollView horizontal={true}>
                     <View>
                         {growths[day] ? growths[day].map(growth => (
-                            <View style={{alignItems: "center"}}>
-                                <View key={growth.id.toString()} style={styles.growthRow}>
+                            <View key={growth.id.toString()} style={{alignItems: "center"}}>
+                                <View style={styles.growthRow}>
                                     <TouchableOpacity style={[styles.rowItem, {width: 55}]}
                                             onPress={() => props.navigation.navigate("Growth Details", {growth})}>
                                         <MaterialCommunityIcons style={styles.icon} name="file-document-box-outline" size={18} color="black" />
