@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, ScrollView } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import moment from 'moment';
+import { createStackNavigator } from '@react-navigation/stack';
 import { Entypo } from '@expo/vector-icons';
+import LogHistory from './LogHistory';
 
 // all substrates https://api.lase.mer.utexas.edu/v1/settings/substrates
 // wafer log https://api.lase.mer.utexas.edu/v1/wafers/${sub}
@@ -13,7 +15,7 @@ const SubstrateRow = (id, name, size, count, extraStyles, blockStyles) => (
         <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{size}</Text>
         <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{count}</Text>
     </View>
-)
+);
 
 const WEEKS = 8;
 const PREDICTIONS = [2, 4, 8];
@@ -25,7 +27,18 @@ const LOW_STOCK = {
 
 const onWeb = Platform.OS === "web";
 
+const Stack = createStackNavigator();
+
 export default function WaferLog(props) {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Overview" component={WaferLogOverview} options={{headerShown: false}}/>
+            <Stack.Screen name="Full Log History" component={LogHistory}/>
+        </Stack.Navigator>
+    );
+}
+
+function WaferLogOverview(props) {
     // The set of substrates available in the database
     const [substrates, setSubstrates] = useState([]);
     // The substrate the user is currently viewing the details of
@@ -197,7 +210,7 @@ export default function WaferLog(props) {
                     {fullyLoaded ? (<View/>) : (
                         <View style={{flex: 1}}>
                             <TouchableOpacity style={styles.loadAllButton} onPress={loadAllWafers}>
-                                <Text style={{color: "white", fontSize: 16}}>Load all wafers</Text>
+                                <Text style={styles.buttonLabel}>Load all wafers</Text>
                             </TouchableOpacity>
                             <Text style={{margin: 4}}>If you need to view all wafer counts at once, click this button to load all wafer data immediately and avoid clicking each substrate individually.</Text>
                         </View>
@@ -241,14 +254,20 @@ export default function WaferLog(props) {
                                     <Text style={styles.detailHeader}>Weekly Usage Stats</Text>
                                     {substrate.weeks.map((delta, i) => (<Text key={i}>Week {i + 1}: {delta}</Text>))}
                                 </View>
-                                <View style={[styles.detailSection, {borderWidth: 0, marginBottom: 140}]}>
+                                <View style={styles.detailSection}>
                                     <Text style={styles.detailHeader}>Supply Predictor</Text>
                                     {
                                         substrate.usagePrediction.map(([num, duration], i) => <Text key={i}>{num}-week rate: {duration}</Text>)
                                     }
                                 </View>
+                                <View style={[styles.detailSection, {borderWidth: 0, marginBottom: 140}]}>
+                                    <TouchableOpacity style={styles.fullLogButton}
+                                            onPress={() => props.navigation.navigate("Full Log History", {substrate: selected})}>
+                                        <Text style={styles.buttonLabel}>View Full {selected} Log</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        ) : (<ActivityIndicator style={{marginBottom: 140}}/>) : (<View style={[styles.detailHeader, {marginBottom: 140}]}/>)}
+                        ) : (<ActivityIndicator style={{marginBottom: 140}}/>) : (<View style={{marginBottom: 140}}/>)}
                         <View style={{position: "absolute", left: 0, bottom: 0}}>
                             <Text style={styles.detailSubheader}>Supply calculation based on delta since most recent wafer reconciliation, or initial count of zero.</Text>
                             <Text style={styles.detailSubheader}>Weekly usage figures based on negative wafer transactions during the given week.</Text>
@@ -262,6 +281,16 @@ export default function WaferLog(props) {
 }
 
 const styles = StyleSheet.create({
+    buttonLabel: {
+        color: "white",
+        fontSize: 16
+    },
+    fullLogButton: {
+        backgroundColor: "#44F",
+        margin: 5,
+        padding: 10,
+        alignItems: "center",
+    },
     loadAllButton: {
         backgroundColor: "#44F",
         padding: 10,
