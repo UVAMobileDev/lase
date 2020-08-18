@@ -1,11 +1,9 @@
-
-
 import React, { useState, useEffect, useReducer } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SelectMember from '../lib/forms/SelectMember';
 import { BASE_URL } from '../../constants/API';
-import CustomViewer from './CustomViewer';
+import SystemViewer from './SystemViewer';
 import { GrowthProvider } from './GrowthContext';
 const fetch = require('node-fetch');
 
@@ -14,23 +12,14 @@ const FilterReducer = (state, action) => {
     switch(action.type) {
         case "set":
             return {...state, [action.payload.key]: action.payload.value}
-
         default:
             return state;
     }
 }
 
-const Filtered = async (filter, page) => {
-    let growths = []
-    let parsed = {growths: []};
-    parsed = await fetch(QueryString(filter, page)).then(r => r.json());
-    growths = growths.concat(parsed.growths);
-    return growths;
-}
-
+const Tab = createMaterialTopTabNavigator();
 
 export default function GrowthBrowser(props) {
-    const Tab = createMaterialTopTabNavigator();
 
     const [filter, dispatchFilter] = useReducer(FilterReducer, {});
     const [systems, setSystems] = useState([]);
@@ -47,20 +36,19 @@ export default function GrowthBrowser(props) {
 
     return (
         <GrowthProvider value={{systems, filter}}>
-            {systems.length > 0 ? (
-                <ScrollView>
-                    <View style={styles.filterControls}>
-                        <Text style={styles.filterText}>Filter Growths:</Text>
-                        <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
-                    </View>
-
+            <ScrollView>
+                <View style={styles.filterControls}>
+                    <Text style={styles.filterText}>Filter Growths:</Text>
+                    <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
+                </View>
+                {systems.length > 0 ? (
                    <Tab.Navigator initialRouteName={systems[0]} screenOptions={filter}>
                        {systems.map((sys, i) => (
-                           <Tab.Screen key={i} name={sys} component={CustomViewer} initialParams={{sysIndex: i}}/>
+                           <Tab.Screen key={i} name={sys} component={SystemViewer} initialParams={{sysIndex: i}}/>
                        ))}
-                   </Tab.Navigator>
-                 </ScrollView>) : (<View/>)
-            }
+                   </Tab.Navigator>) : (<View />)
+                }
+            </ScrollView>
         </GrowthProvider>
     );
 }

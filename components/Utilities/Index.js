@@ -9,16 +9,12 @@ import WaferLog from './WaferUtils/WaferLog';
 import DeleteManager from './DeleteManager';
 const Tab = createMaterialTopTabNavigator();
 
-function Todo(props) {
-    return (<View><Text>This component has not yet been implemented.</Text></View>);
-}
-
 let onWeb = Platform.OS === "web";
 
 export default function Utilities(props) {
 
     return (
-        <View style={{flex: 1, backgroundColor: "#0AA"}}>
+        <View style={styles.container}>
             <Tab.Navigator  initialRouteName="Browse"
                             style={{marginTop: onWeb ? 0 : Constants.statusBarHeight,}}
                             tabBarOptions={{
@@ -36,6 +32,7 @@ export default function Utilities(props) {
 
 const styles = StyleSheet.create({
     container: {
-
+        flex: 1,
+        backgroundColor: "#0AA",
     }
 });

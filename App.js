@@ -81,7 +81,8 @@ export default function App() {
                             drawerContentOptions={{
                                 activeTintColor: "#fff",
                                 inactiveTintColor: "#000",
-                            }}>
+                            }}
+                            lazy={true}>
                     {/* Each screen has a name to appear in the UI and a component which it displays when selected. */}
                     {
                         Screens.filter(screen => privileged ? true : !screen.privileged)
