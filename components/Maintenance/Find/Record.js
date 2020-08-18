@@ -7,6 +7,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator
 import { BASE_URL } from '../../../constants/API.js';
 import { Jet, Platinum, Gainsboro, InternationalOrange, PurpleNavy } from '../../../constants/Colors.js';
 const fetch = require("node-fetch");
+import { FontAwesome } from '@expo/vector-icons';
 
 // Helper method which fetches the list of sources associated with a given
 //  record id.
@@ -117,6 +118,21 @@ export default function Record(props) {
                         <ActivityIndicator size="large" color="#0000ff"/>
                     )
                 }
+                <TouchableOpacity onPress={() => props.navigation.navigate("Utilities", {
+                            screen: "Delete",
+                            params: {
+                                toDelete: {
+                                    type: "MaintenanceRecord",
+                                    id: record.id,
+                                }
+                            }
+                        })
+                        }>
+                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <FontAwesome name="trash-o" size={24} color="black" />
+                        <Text>Delete Record</Text>
+                    </View>
+                </TouchableOpacity>
             </ScrollView>
         </View>
     )

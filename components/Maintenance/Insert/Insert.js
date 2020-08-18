@@ -120,8 +120,10 @@ const SubmitForm = async (nav, record, sources) => {
     let parsed = await response.json();
 
     // Navigate to the Browse tab, then open the newly created record.
-    nav.navigate("Browse");
-    nav.navigate("Record", {record});
+    nav.navigate("Browse", {
+        screen: "Record",
+        params: {record}
+    });
 }
 
 export default function Insert(props) {
