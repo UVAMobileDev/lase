@@ -15,6 +15,8 @@ import InsertTab from './Insert/InsertTab';
 import ViewPublication from './View/ViewPublication.js';
 import ViewTab from './View/ViewTab.js';
 
+const onWeb = Platform.OS === "web";
+
 // Create the stack navigator
 const Stack = createStackNavigator();
 function ViewStack(props) {
@@ -32,8 +34,11 @@ const Tab = createMaterialTopTabNavigator();
 export default function Navigator_Publication(props) {
 
     return (
-        <View style={{flex: 1, backgroundColor: "#0AA"}}>
-            <Tab.Navigator currentBrowser="All publications" style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight}}>
+        <View style={styles.container}>
+            <Tab.Navigator
+                    style={styles.tabNavigator}
+                    currentBrowser="All publications"
+                    swipeEnabled={!onWeb}>
                 <Tab.Screen name="All publications" component={ViewStack}/>
                 <Tab.Screen name="Insert new" component={InsertTab}/>
             </Tab.Navigator>
@@ -41,72 +46,12 @@ export default function Navigator_Publication(props) {
     )
 }
 
-
-
-
-
-
-
 const styles = StyleSheet.create({
-    title: {
-        width: 500,
-        fontSize: 22,
-        textAlign: 'center',
-        fontWeight: "bold",
-
-    },
-    author: {
-        width: 600,
-        fontSize: 22,
-        textAlign: 'center',
-        fontWeight: "bold",
-    },
-    id: {
-        fontSize: 22,
-        textAlign: 'center',
-        fontWeight: "bold",
+    tabNavigator: {
+        marginTop: onWeb ? 0 : Constants.statusBarHeight,
     },
     container: {
         flex: 1,
-        backgroundColor: 'blue',
+        backgroundColor: "#0AA",
     },
-    listContainer: {
-        flex: 1,
-    },
-    list: {
-        margin: 10,
-        marginBottom: 30,
-    },
-    recordRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        margin: 4,
-        borderRadius: 8,
-        borderLeftWidth: 3,
-    },
-    top: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        margin: 4,
-    },
-    openRecordButton: {
-        width: 18,
-        margin: 4,
-        borderRadius: 5,
-    },
-    rowText: {
-        fontSize: 16,
-    },
-    tabContainer: {
-        flex: 1,
-        justifyContent: 'center',
-
-    },
-    publicTab: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-    }
 });

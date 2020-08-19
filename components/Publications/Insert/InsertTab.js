@@ -15,30 +15,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
 const API_KEYS = require('../../../keys').API_KEY;
 
-// Array to contain all types of publication
-const AllTypes = [
-            'None',
-            'Article',
-            'Book',
-            'Booklet',
-            'Conference',
-            'electronic',
-            `inbook`,
-            `incollection`,
-            `inproceedings`,
-            `manual`,
-            `mastersthesis`,
-            `misc`,
-            `other`,
-            `patent`,
-            `periodical`,
-            `phdthesis`,
-            `proceedings`,
-            `standard`,
-            `techreport`,
-            `unpublished`
-]
-
 const LoadAllTypes = async () => {
     //Get all types from API
     let container = []

@@ -6,67 +6,15 @@
 
 // All imports
 import React, { useState, useEffect, useReducer } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Picker} from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, TextInput} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Entypo, Feather, SimpleLineIcons, MaterialIcons } from '@expo/vector-icons';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
 import RNPickerSelect from 'react-native-picker-select';
+import SelectType from '../../lib/forms/SelectType';
 
-
-// Array to contain all types of publication
-const AllTypes = [
-            'None',
-            'Article',
-            'Book',
-            'Booklet',
-            'Conference',
-            'electronic',
-            `inbook`,
-            `incollection`,
-            `inproceedings`,
-            `manual`,
-            `mastersthesis`,
-            `misc`,
-            `other`,
-            `patent`,
-            `periodical`,
-            `phdthesis`,
-            `proceedings`,
-            `standard`,
-            `techreport`,
-            `unpublished`
-]
-
-const minYear = arr => Math.min(...arr.map(obj => parseInt(obj.year)));
-
-/*
-    A function to load all types for users to select in the filter area
-*/
-const LoadAllTypes = async () => {
-    let parsed = await fetch(`${BASE_URL}/publications/types/`).then(r => r.json());
-    return parsed.types.sort();
-}
-
-function type(id) {
-    let theID = parseInt(id);
-    for (let i = 0; i < AllTypes.length; i++) {
-        if (theID === i) {
-            return (
-                <View style={{width: "10%"}}>
-                    <Text style={styles.rowText}>{AllTypes[i]}</Text>
-                </View>
-            )
-        }
-    }
-
-}
-
-// This function is called whenever the payload is activated
-// Param (state): the current state
-// Param (action): action required from user
-// Return an object to filter
 const FilterReducer = (state, action) => {
     switch(action.type) {
         case "set":
@@ -76,305 +24,237 @@ const FilterReducer = (state, action) => {
     }
 }
 
+const PublicationReducer = (state, actions) => {
+    let nextState = Object.assign({}, state);
+    let loaded = true;
+    actions.forEach(({key, value}) => {
+        switch(key) {
+            case "items":
+                if(value === "empty") nextState.items = [];
+                else nextState.items = state.items.concat(value);
+                break;
+
+            case "page":
+                loaded = false;
+                if(value === "increment") nextState.page++;
+                else if(value === "reset") nextState.page = 0;
+                break;
+
+            default:
+                nextState[key] = value;
+        }
+    });
+    nextState.loaded = loaded;
+    return nextState;
+}
+
+const ICONS = {
+    default: (<Ionicons name="md-list-box" size={24} color={'#F44'}/>),
+    1: (<Entypo name="news" size={24} color="#44F" />),
+    2: (<Feather name="book" size={24} color="#44F" />),
+    3: (<SimpleLineIcons name="notebook" size={24} color="#44F" />),
+    4: (<MaterialIcons name="group" size={24} color="#44F" />),
+}
+
 // A single line of code to handel query string and return URL to fetch based on the user's request
 const QueryString = filter => `${BASE_URL}/publications?${Object.keys(filter).filter(key => filter[key] !== "").filter(key => filter[key] > 0).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
 
 
 export default function ViewTab(props){
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------
-    // useState and useReducer area
+    const [publications, dispatchPublications] = useReducer(PublicationReducer, {
+        loaded: false,
+        items: [],
+        page: 0,
+        more: true,
+    });
 
-    // To render all publications by page
-    const [publications, setPublications] = useState({loaded: false, items: []});
-
-    //To keep track and upload publications from new page.
-    const [page,setPage] = useState(0);
-
-    //To make sure that we are not requesting any more data if we reach the end
-    const [morePage,setMorePage] = useState(true);
-
-    // To keep track of types and display all types option for users to select in filter area
-    const [types,setTypes] = useState([]);
+    const [force, incForce] = useReducer(state => state + 1, 0);
 
     // To filter publications based on users' choice
-    const [filter,dispatchFilter] = useReducer(FilterReducer,{});
+    const [filter,dispatchFilter] = useReducer(FilterReducer, {});
 
-    const [signal,setSignal] = useState(false);
-
-    const [loadData, setLoadData] = useState({page: 0, loadMore: true});
-
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------
-
+    // Reset load data when the filter changes
     useEffect(() => {
-        //Each time filter changes, this will set the default. (load from beginning and load more pages)
-        setLoadData({page: 0, loadMore: true});
-    },[filter]);
+        // If we're on the first page and not all have been loaded, we need to force a reload.
+        if(publications.page === 0 && publications.more) incForce();
+        dispatchPublications([
+            {key: "items", value: "empty"},
+            {key: "page", value: "reset"},
+            {key: "more", value: true},
+        ]);
+    }, [filter]);
 
+    // Load more publications when the page is advanced
     useEffect(() => {
-        // This useEffect is only called whenever the number of page changes
+        if (!force || !publications.more) return; // don't do anything, we are done loading
+
         let loadFilter = async () => {
+            let response = await fetch(`${QueryString(filter)}&page=${publications.page}`).then(r => r.json());
 
-            if (!loadData.loadMore) return; // don't do anything, we are done loading
-            console.log(filter);
-            console.log(QueryString(filter));
-            let response = await fetch(`${QueryString(filter)}&page=${loadData.page}`).then(r => r.json()); //this will return list of objects (publications)
-
-            if (loadData.page === 0) {
-                setPublications({loaded:true, items: response.publications});
-            } else {
-                if (response.publications.length > 0) {
-
-                    // Continue to load more
-                    setPublications({loaded: true, items:publications.items.concat(response.publications)}); // keep loading while there are still publications
-                } else {
-                    setLoadData({page: loadData.page,loadMore: false}); // no more publications, we are done
-
-                }
-            }
-
+            // console.log(response.publications.length);
+            if (response.publications && response.publications.length > 0) dispatchPublications([
+                {key: "items", value: response.publications},
+            ]);
+            else dispatchPublications([
+                {key: "more", value: false}
+            ]);
         }
         loadFilter();
+    }, [publications.page, publications.more, force]);
 
-    },[loadData.page,filter]);
-
-
-    function ifReach() {
-        if (loadData.loadMore) {
-            setLoadData({page: loadData.page + 1, loadMore: true});
-        }
-    }
-
-
-    // First useEffect: Load all types from the server
-    useEffect(() => {
-
-        let load = async () => {
-            let loadTypes = await LoadAllTypes();
-            setTypes(loadTypes);
-        }
-        //let loadTypes = async () => setTypes(await LoadAllTypes());
-        load(); //function called to get all types
-    }, []);
+    const nextPage = () => publications.more ? dispatchPublications([
+        {key: "page", value: "increment"}
+    ]) : null;
 
     return (
-
-        <View style = {styles.tabContainer}>
-
-                <View style = {styles.FilterContainer}>
-                    {/* This is for the scroll-menu for choosing type to public */}
-                    {
-                        /*
-                        <SelectableText
-                        style = {styles.filterTitle}
-                        value = {'SEARCH BY CATEGORIES:'}
-                        />
-
-                        */
-
-                    }
-
-                    <Text style = {styles.filterTitle}> SEARCH BY CATEGORIES: </Text>
-
-
-                        <View style = {{marginBottom: 20,flexDirection: 'row'}}>
-
-
-                                        <Text style = {styles.filterType}> Filter by type:  </Text>
-
-
-
-                                        {/* all pickers should go in here */}
-                                        {/* Picker for displaying all types */}
-                                        <View style = {styles.Scrollmenu}>
-                                            <RNPickerSelect
-                                                    InputAccessoryView={() => null}
-                                                    placeholder={{label: "Select type", value: 0}}
-                                                    onValueChange={value => dispatchFilter({type: "set", payload: {key: "entry_types_id", value}})}
-                                                    items={types.map(({label, id}) => (
-                                                        {label, value: id}
-                                            ))}/>
-
-                                        </View>
-
-
-                                        <Text style = {styles.filterType}> Filter by year: </Text>
-                                        {/* Picker for displaying all authors of publications
-                                        onValueChange = {val => dispatchFilter({type: "set", payload: {key: "year", value: parseInt(val)}})}
-                                        */}
-                                        <View style = {styles.Scrollmenu}>
-
-                                            <RNPickerSelect
-                                                InputAccessoryView={() => null}
-                                                placeholder={{label: "Select Year", value: ""}}
-                                                onValueChange = {value => dispatchFilter({type: "set", payload: {key: "year", value}})}
-                                                items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => ({label: 2000 + i, value: 2000 + i}))}
-                                                />
-                                        </View>
-
-                        </View>
-
-                </View>
-
-
-                <View style = {{flexDirection: 'row'}}>
-                    <View style={{width: "10%"}}>
-                        <Text style={styles.type} selectable = {true}> Type</Text>
-                    </View>
-                    <View style={{width: "45%"}}>
-                        <Text style={styles.title} selectable> Publication</Text>
-                    </View>
-                    <View style={{width: "40%"}}>
-                        <Text style={styles.author} selectable> Author</Text>
-                    </View>
-                    <View style={{width: "5%"}}>
-                        <Text style={styles.id} selectable> ID</Text>
+        <View style={styles.container}>
+            <Text style={styles.filterTitle}>Filter Publication Results</Text>
+            <View style={styles.filterControls}>
+                {/* This is for the scroll-menu for choosing type to public */}
+                <View style={styles.filterGroup}>
+                    <Text style={styles.inputLabel}>Type</Text>
+                    <View style={{flex: 1}}>
+                        <SelectType
+                            placeholder={{label: "Select type", value: 0}}
+                            update={({id}) => dispatchFilter({type: "set", payload: {key: "entry_types_id", value: id}})}/>
                     </View>
                 </View>
 
-                {
-                    publications.loaded ? (
-                        <FlatList
+                <View style={styles.filterGroup}>
+                    <Text style={styles.inputLabel}>Year</Text>
+                    <View style={{flex: 1}}>
+                        <RNPickerSelect
+                            InputAccessoryView={() => null}
+                            placeholder={{label: "Select Year", value: ""}}
+                            onValueChange = {value => dispatchFilter({type: "set", payload: {key: "year", value}})}
+                            items={[...Array(new Date().getFullYear() - 1999)].map((_, i) => ({label: (2000 + i).toString(), value: 2000 + i}))}
+                            />
+                    </View>
+                </View>
 
-                                style = {styles.list}
-                                data = {publications.items}
-                                keyExtractor={
-                                    /* Functional filter should be applied here */
-                                    /* must specify the key to iterate. Otherwise, it will use index*/
-                                    /* Since each publication has their own ID, we can use it to iterate*/
+                <View style={styles.filterGroup}>
+                    <Text style={styles.inputLabel}>Keyword(s)</Text>
+                    <View style={{flex: 1}}>
+                        <TextInput
+                            placeholder="Keywords"
+                            />
+                        <Text>Keywords can appear anywhere in the publication. Use it to search for an author, title, or other detail.</Text>
+                    </View>
+                </View>
 
-                                item => item.id.toString()}
-                                renderItem = {({item}) => (
-                                    <View  style={styles.recordRow}>
+                <View style={styles.filterGroup}>
+                    <View style={{flex: 1}}>
+                        <TouchableOpacity style={styles.loadAllButton}>
+                            <Text>Load all Matches</Text>
+                        </TouchableOpacity>
+                        <Text>Loading all matching publications may take a little while. If you're making a bibliography and need to select everything from your search, you may want to use this button.</Text>
+                    </View>
+                </View>
+            </View>
 
-                                        <View>
-                                            <TouchableOpacity   style={styles.openRecordButton}
-                                                onPress = {() =>  props.navigation.navigate("Details",{publication: item})}>
-                                                <Ionicons name="md-list-box" size={16} color={'#00008b'} style={{position: "relative", left: 3, top: 1}}/>
-                                            </TouchableOpacity>
-                                        </View>
+            <View style={{flexDirection: 'row'}}>
+                <View>
+                    <Text style={styles.tableHeader}>Type</Text>
+                </View>
+                <View style={{width: "45%"}}>
+                    <Text style={styles.tableHeader}>Publication</Text>
+                </View>
+                <View style={{width: "40%"}}>
+                    <Text style={styles.tableHeader}>Author</Text>
+                </View>
+            </View>
 
-                                        {type(item.typeID)}
-                                        <View style={{width: "45%"}}>
-                                            <Text style={styles.rowText}>{item.title}</Text>
-                                        </View>
-                                        <View style={{width: "40%"}}>
-                                            <Text style={styles.rowText}>{item.author}</Text>
-                                        </View>
-                                        <View style={{width: "5%"}}>
-                                            <Text style={styles.rowText_ID}>{item.id}</Text>
-                                        </View>
-                                    </View>
-                                )}
-                                onEndReached = {ifReach}
-                                onEndReachedThreshold = {0.3}/>
+            {publications.items.length === 0 && !publications.loaded ? (
+                <ActivityIndicator
+                    size="large" />
+            ) : (
+                <FlatList style={styles.list}
+                    data={publications.items}
+                    keyExtractor={item => item.id.toString()}
+                    onEndReached={nextPage}
+                    onEndReachedThreshold={0.3}
+                    renderItem={({item, index}) => (
+                        <View style={{alignItems: "center"}}>
+                            <View style={styles.recordRow}>
+                                <TouchableOpacity style={styles.openRecordButton}
+                                        onPress={() =>  props.navigation.navigate("Details",{publication: item})}>
+                                    {ICONS[item.typeID] || ICONS.default}
+                                </TouchableOpacity>
 
-                    ) :  (
-                        <View style={{marginTop: 50}}>
-                            <ActivityIndicator size="large" color="#00008b"/>
+                                <View style={{width: "47%"}}>
+                                    <Text style={styles.rowText}>{item.title}</Text>
+                                </View>
+                                <View style={{width: "47%"}}>
+                                    <Text style={styles.rowText}>{item.author}</Text>
+                                </View>
+                            </View>
+                            <View style={styles.splitter}/>
+                            {index === publications.items.length - 1 && !publications.loaded ? (
+                                <ActivityIndicator
+                                    size="large"
+                                    color="#00008b"/>
+                            ) : (
+                                <View/>
+                            )}
                         </View>
-                    )
-
-                }
-
+                    )}/>
+            )}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    type: {
-        fontWeight: "bold",
-        fontSize: 22,
-        textAlign: 'center',
-        fontFamily: 'Cochin',
-        color: '#00008b',
-    },
-    title: {
-        fontSize: 22,
-        textAlign: 'center',
-        fontWeight: "bold",
-        fontFamily: 'Cochin',
-        color: '#00008b',
-
-    },
-    author: {
-        fontSize: 22,
-        textAlign: 'center',
-        fontWeight: "bold",
-        fontFamily: 'Cochin',
-        color: '#00008b',
-    },
-    id: {
-        fontSize: 22,
-        fontWeight: "bold",
-        fontFamily: 'Cochin',
-        color: '#00008b',
-    },
-    list: {
-        margin: 10,
-        marginBottom: 30,
-    },
-    recordRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        margin: 4,
-        borderColor: 'red',
-    },
-    top: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        margin: 4,
+    splitter: {
+        borderBottomWidth: 1,
+        borderColor: "#CCC",
+        width: "95%",
     },
     openRecordButton: {
-        width: 18,
-        margin: 4,
-        borderRadius: 5,
+        margin: 10,
+    },
+    loadAllButton: {
+        padding: 10,
+        margin: 5,
+        alignItems: "center",
     },
     rowText: {
+        marginHorizontal: 8,
+    },
+    recordRow: {
+        width: "100%",
+        flexDirection: "row",
+        marginVertical: 10,
+        marginHorizontal: 10,
+    },
+    tableHeader: {
+        marginHorizontal: 5,
+        fontSize: 20,
+        color: "#0AA",
+    },
+    inputLabel: {
         fontSize: 16,
-        fontFamily: 'Kailasa',
-    },
-    rowText_ID: {
-        fontSize: 16,
-        fontFamily: 'Kailasa',
-        marginLeft: 19,
-    },
-    tabContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    FilterContainer: {
-        width: '100%',
-        height: 100,
-        padding: 5,
-        borderBottomWidth: 2,
-        backgroundColor: '#d3d3d3',
-    },
-    filterType: {
-        fontSize: 16,
-        marginLeft: 80,
-        fontWeight: 'bold',
-        fontFamily: 'Georgia',
-    },
-    filterType_year: {
-        fontSize: 16,
-        marginLeft: 300,
-        fontWeight: 'bold',
-        fontFamily: 'Georgia',
+        marginRight: 10,
     },
     filterTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginLeft: 50,
         marginBottom: 20,
-        fontFamily: 'Cochin',
-        color: InternationalOrange,
     },
-    Scrollmenu: {
+    filterGroup: {
+        flexDirection: "row",
+        margin: 5,
+        width: "47%",
+    },
+    filterControls: {
+        padding: 5,
+        borderBottomWidth: 2,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignContent: "space-around",
+    },
+    container: {
         flex: 1,
-        borderColor: Jet,
-        width: 130,
-
+        backgroundColor: "#FFF",
     },
 });
