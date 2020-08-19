@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SelectMember from '../lib/forms/SelectMember';
 import { BASE_URL } from '../../constants/API';
 import SystemViewer from './SystemViewer';
 import { GrowthProvider } from './GrowthContext';
 const fetch = require('node-fetch');
+
+const onWeb = Platform.OS === "web";
 
 const FilterReducer = (state, action) => {
 
@@ -36,19 +38,20 @@ export default function GrowthBrowser(props) {
 
     return (
         <GrowthProvider value={{systems, filter}}>
-            <ScrollView>
-                <View style={styles.filterControls}>
-                    <Text style={styles.filterText}>Filter Growths:</Text>
-                    <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
-                </View>
-                {systems.length > 0 ? (
-                   <Tab.Navigator initialRouteName={systems[0]} screenOptions={filter}>
-                       {systems.map((sys, i) => (
-                           <Tab.Screen key={i} name={sys} component={SystemViewer} initialParams={{sysIndex: i}}/>
-                       ))}
-                   </Tab.Navigator>) : (<View />)
-                }
-            </ScrollView>
+            <View style={styles.filterControls}>
+                <Text style={styles.filterText}>Filter Growths:</Text>
+                <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
+            </View>
+            {systems.length > 0 ? (
+                <Tab.Navigator
+                        initialRouteName={systems[0]}
+                        screenOptions={filter}
+                        swipeEnabled={!onWeb}>
+                   {systems.map((sys, i) => (
+                       <Tab.Screen key={i} name={sys} component={SystemViewer} initialParams={{sysIndex: i}}/>
+                   ))}
+                </Tab.Navigator>) : (<View />)
+            }
         </GrowthProvider>
     );
 }

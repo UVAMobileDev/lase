@@ -5,12 +5,14 @@ import Constants from 'expo-constants';
 import { View, StyleSheet, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import SampleViewer from './SampleViewer';
 
+import SampleViewer from './SampleViewer';
 import SampleDetails from './SampleDetails';
 import FilterGrowths from './Filter';
 import GrowthDetails from './GrowthDetails';
 import AddGrowth from './Insert';
+
+const onWeb = Platform.OS === "web";
 
 //separates the Growth page into two sections: Sample viewer and Growth browser
 const Tab = createMaterialTopTabNavigator();
@@ -46,7 +48,10 @@ function ViewerStack(props) {
 export default function Growths(props) {
     return (
         <View style={{flex: 1, backgroundColor: "#0AA"}}>
-            <Tab.Navigator initialRouteName="Browse Growths" style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}>
+            <Tab.Navigator
+                    initialRouteName="Browse Growths"
+                    style={{marginTop: onWeb ? 0 : Constants.statusBarHeight}}
+                    swipeEnabled={!onWeb}>
                 <Tab.Screen name="Browse Growths" component={GrowthStack}/>
                 <Tab.Screen name="View Sample" component={ViewerStack}/>
             </Tab.Navigator>

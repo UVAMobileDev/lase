@@ -9,12 +9,17 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Browse from './Find/Browse';
 import Insert from './Insert/Insert';
 
+const onWeb = Platform.OS === "web";
+
 // Create the tab navigator which separates the Browse and Create sections.
 const Tab = createMaterialTopTabNavigator();
 
 export default function Maintenance(props) {
     return (
-        <Tab.Navigator initialRouteName="Browse" style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}>
+        <Tab.Navigator
+                style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
+                initialRouteName="Browse"
+                swipeEnabled={!onWeb}>
             <Tab.Screen name="Browse" component={Browse}/>
             <Tab.Screen name="Create" component={Insert}/>
         </Tab.Navigator>

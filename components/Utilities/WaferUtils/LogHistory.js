@@ -4,7 +4,7 @@ import { BASE_URL } from '../../../constants/API.js';
 
 export default function LogHistory({ route }) {
 
-    const [entryData, appendEntries] = useReducer(({entries, page}, new_items) => ({entries: entries.concat(new_items), page: page + 1}), {entries: [{id: "ID", timestamp: (<Text style={{fontFamily: "sans-serif"}}>Timestamp</Text>), notes: (<Text style={{fontFamily: "sans-serif"}}>Reason</Text>), wafersAdded: (<Text style={{fontFamily: "sans-serif"}}>Wafer Delta</Text>)}], page: 0});
+    const [entryData, appendEntries] = useReducer(({entries, page}, new_items) => ({entries: entries.concat(new_items), page: page + 1}), {entries: [{id: "ID", timestamp: (<Text style={styles.sp}>Timestamp</Text>), notes: (<Text style={styles.sp}>Reason</Text>), wafersAdded: (<Text style={styles.sp}>Wafer Delta</Text>)}], page: 0});
     const [moreToFetch, setMore] = useState(true);
 
     const fetchMore = async () => {
@@ -34,6 +34,9 @@ export default function LogHistory({ route }) {
 }
 
 const styles = StyleSheet.create({
+    sp: {
+        fontFamily: Platform.OS === "ios" ? "Verdana" : "sans-serif",
+    },
     mono: {
         fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
     },

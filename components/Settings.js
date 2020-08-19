@@ -24,7 +24,7 @@ const AttemptActivation = async (key, update, setVerifying, setKey) => {
         await AsyncStorage.setItem('lase-api-key', JSON.stringify(store));
     } catch(e) { console.log(e); }
 
-    update(store);
+    if(update) update(store);
     setKey(store);
     setVerifying(false);
 }
@@ -60,10 +60,10 @@ export default function Settings(props) {
 
     useEffect(() => {
         if(!darkMode.loaded) return;
-        props.route.params.update({...key, dark: darkMode.value})
+        if(props.route.params.update) props.route.params.update({...key, dark: darkMode.value});
         const toggle = async () => {
             try {
-                await AsyncStorage.setItem('dark', darkMode.value);
+                await AsyncStorage.setItem('dark', darkMode.value ? "true" : "false");
             } catch(e) { console.log("Failed to update dark mode setting") }
         }
         toggle();
@@ -78,7 +78,7 @@ export default function Settings(props) {
                     <View style={{flexDirection: "row", alignItems: "center"}}>
                         <Text style={styles.inputLabel}>Key: </Text>
                         <TextInput style={styles.input}
-                                value={key.key}
+                                value={key.key || ""}
                                 onChangeText={val => setKey({verified: key.verified, key: val})}/>
                     </View>
 
