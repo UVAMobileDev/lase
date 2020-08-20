@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import Constants from 'expo-constants';
 import { StyleSheet, Text, View, Platform, TouchableOpacity, TextInput, ActivityIndicator, Switch } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { BASE_URL } from '../constants/API';
-import { API_KEY } from '../keys.js';
 import { Entypo, Foundation } from '@expo/vector-icons';
 
-// VALID KEY
-// 2yRALZXus73AaKg5c1wWv7qf4DTSx84naQGIGCCf
-
-import AsyncStorage from '@react-native-community/async-storage';
+import { LightStyles, DarkStyles, Colors } from '../constants/globalStyle';
 
 const AttemptActivation = async (key, update, setVerifying, setKey) => {
     setVerifying(true);
@@ -40,6 +37,9 @@ export default function Settings(props) {
     const [key, setKey] = useState({});
     const [darkMode, setDarkMode] = useState({loaded: false, value: false});
 
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(darkMode.value ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [darkMode.value]);
+
     // On page load, the root component will attempt to preload the key from
     // storage and look for previous verification. Since this side effect won't
     // run until the Settings tab is selected, we don't need to worry about propagating
@@ -70,8 +70,8 @@ export default function Settings(props) {
     }, [darkMode.value]);
 
     return (
-        <View style={{flex: 1, backgroundColor: "#0AA"}}>
-            <View style={styles.container}>
+        <View style={styles.screenContainer}>
+            <View style={styles.mainBackground}>
                 <View style={[styles.section, {borderTopWidth: 0}]}>
                     <Text style={styles.sectionTitle}>Access Key</Text>
                     <Text style={styles.sectionDescription}>Entering a valid access key will reveal additional features.</Text>
@@ -117,7 +117,7 @@ export default function Settings(props) {
     );
 }
 
-const styles = StyleSheet.create({
+const LocalStyles = {
     buttonRow: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
         justifyContent: "center",
@@ -164,4 +164,4 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,
     }
-});
+};

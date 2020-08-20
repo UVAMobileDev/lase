@@ -1,8 +1,13 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Platform } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 
 export default function LogHistory({ route }) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
 
     const [entryData, appendEntries] = useReducer(({entries, page}, new_items) => ({entries: entries.concat(new_items), page: page + 1}), {entries: [{id: "ID", timestamp: (<Text style={styles.sp}>Timestamp</Text>), notes: (<Text style={styles.sp}>Reason</Text>), wafersAdded: (<Text style={styles.sp}>Wafer Delta</Text>)}], page: 0});
     const [moreToFetch, setMore] = useState(true);
@@ -15,7 +20,7 @@ export default function LogHistory({ route }) {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={styles.mainBackground}>
             <FlatList
                 data={entryData.entries}
                 keyExtractor={entry => entry.id.toString()}
@@ -33,7 +38,7 @@ export default function LogHistory({ route }) {
     );
 }
 
-const styles = StyleSheet.create({
+const LocalStyles = {
     sp: {
         fontFamily: Platform.OS === "ios" ? "Verdana" : "sans-serif",
     },
@@ -48,9 +53,5 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         margin: 3,
         maxWidth: 450,
-    },
-    container: {
-        flex: 1,
-        backgroundColor: "#FFF",
     }
-});
+};

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect, useReducer, useContext } from 'react';
 import Constants from 'expo-constants';
-import { StyleSheet, Text, View, Platform } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+import KeyContext from '../../KeyContext';
+import { LightStyles, DarkStyles } from '../../constants/globalStyle';
 
 import GrowthCal from './GrowthCalendar/Index';
 import STO from './STOGeneration/STOGenerator';
@@ -12,11 +15,13 @@ const Tab = createMaterialTopTabNavigator();
 let onWeb = Platform.OS === "web";
 
 export default function Utilities(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create(dark ? DarkStyles : LightStyles), {});
+    useEffect(updateStyles, [dark]);
 
     return (
-        <View style={styles.container}>
+        <View style={styles.screenContainer}>
             <Tab.Navigator  initialRouteName="Browse"
-                            style={{marginTop: onWeb ? 0 : Constants.statusBarHeight,}}
                             tabBarOptions={{
                                 scrollEnabled: !onWeb,
                             }}
@@ -29,10 +34,3 @@ export default function Utilities(props) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#0AA",
-    }
-});

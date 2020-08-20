@@ -3,11 +3,13 @@
 
 // Imports
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { Jet, Platinum, Gainsboro, InternationalOrange, PurpleNavy } from '../../../constants/Colors.js';
 const fetch = require("node-fetch");
 import { FontAwesome } from '@expo/vector-icons';
+
+const onWeb = Platform.OS === "web";
 
 // Helper method which fetches the list of sources associated with a given
 //  record id.
@@ -150,7 +152,7 @@ export default function Record(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Jet,
+        backgroundColor: "#FFF",
         padding: 5,
         flexDirection: "column",
     },
@@ -168,7 +170,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     fieldName: {
-        color: Gainsboro,
         minHeight: 25,
         width: 85,
         marginRight: 15,
@@ -177,14 +178,12 @@ const styles = StyleSheet.create({
         borderRightWidth: 2,
     },
     fieldData: {
-        color: Gainsboro,
         padding: 5,
     },
     sourcesHeader: {
         fontSize: 18,
         fontWeight: "bold",
         marginTop: 10,
-        color: Gainsboro,
     },
     sourcesWrapper: {
         flex: 1,
@@ -207,9 +206,7 @@ const styles = StyleSheet.create({
         borderRightColor: InternationalOrange,
         borderRightWidth: 1,
         marginRight: 5,
-        color: Gainsboro,
     },
     sourceAmount: {
-        color: Gainsboro,
     }
 });

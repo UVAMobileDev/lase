@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, ScrollView } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 import moment from 'moment';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Entypo } from '@expo/vector-icons';
@@ -9,13 +11,6 @@ import LogHistory from './LogHistory';
 // all substrates https://api.lase.mer.utexas.edu/v1/settings/substrates
 // wafer log https://api.lase.mer.utexas.edu/v1/wafers/${sub}
 
-const SubstrateRow = (id, name, size, count, extraStyles, blockStyles) => (
-    <View style={[styles.substrateRow, blockStyles]} key={id}>
-        <Text style={[styles.rowItem, {width: 125}, extraStyles]}>{name}</Text>
-        <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{size}</Text>
-        <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{count}</Text>
-    </View>
-);
 
 const WEEKS = 8;
 const PREDICTIONS = [2, 4, 8];
@@ -39,6 +34,10 @@ export default function WaferLog(props) {
 }
 
 function WaferLogOverview(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     // The set of substrates available in the database
     const [substrates, setSubstrates] = useState([]);
     // The substrate the user is currently viewing the details of
@@ -49,6 +48,14 @@ function WaferLogOverview(props) {
 
     // Whether the logs for all substrates has been loaded.
     const [fullyLoaded, setLoaded] = useState(false);
+
+    const SubstrateRow = (id, name, size, count, extraStyles, blockStyles) => (
+        <View style={[styles.substrateRow, blockStyles]} key={id}>
+        <Text style={[styles.rowItem, {width: 125}, extraStyles]}>{name}</Text>
+        <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{size}</Text>
+        <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{count}</Text>
+        </View>
+    );
 
     // Fetches the list of substrates
     useEffect(() => {
@@ -200,7 +207,7 @@ function WaferLogOverview(props) {
     let stock_alert = substrate && substrate.count < (LOW_STOCK[selected] || LOW_STOCK.default);
 
     return (
-        <View style={styles.container}>
+        <View style={styles.mainBackground}>
             <ScrollView>
                 <View style={styles.headerWrapper}>
                     <View style={{flex: 1}}>
@@ -280,7 +287,7 @@ function WaferLogOverview(props) {
     )
 }
 
-const styles = StyleSheet.create({
+const LocalStyles = {
     buttonLabel: {
         color: "white",
         fontSize: 16
@@ -356,4 +363,4 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "white",
     }
-});
+};

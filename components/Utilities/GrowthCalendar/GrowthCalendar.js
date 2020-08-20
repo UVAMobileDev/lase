@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import MonthBrowser from '../../lib/cal/MonthBrowser';
 import moment from 'moment';
 import { BASE_URL } from '../../../constants/API';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
@@ -16,6 +18,10 @@ const Events = growths => {
 }
 
 export default function GrowthCalendar(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     const [month, setMonth] = useState();
     const [growths, setGrowths] = useState({0: []});
     const [systems, setSystems] = useState([]);
@@ -51,7 +57,7 @@ export default function GrowthCalendar(props) {
     }, [systems, month]);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.mainBackground, {height: "100%", alignItems: "center"}]}>
             <View style={styles.controls}>
                 <MonthBrowser
                         onDaySelect={m => setDay(m.date())}
@@ -100,7 +106,7 @@ export default function GrowthCalendar(props) {
     );
 }
 
-const styles = StyleSheet.create({
+const LocalStyles = {
     divider: {
         width: "90%",
         marginVertical: 5,
@@ -134,9 +140,4 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 10,
     },
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-    },
-});
+};

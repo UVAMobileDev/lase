@@ -33,12 +33,14 @@ function Browse(props) {
 
 export default function Maintenance(props) {
     return (
-        <Tab.Navigator
-                style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
-                initialRouteName="Browse"
-                swipeEnabled={!onWeb}>
-            <Tab.Screen name="Browse" component={Browse}/>
-            <Tab.Screen name="Create" component={Insert}/>
-        </Tab.Navigator>
+        <View style={{flex: 1, backgroundColor: "#0AA"}}>
+            <Tab.Navigator
+                    style={{marginTop: Platform.OS === "web" ? 0 : Constants.statusBarHeight,}}
+                    initialRouteName="Browse"
+                    swipeEnabled={!onWeb}>
+                <Tab.Screen name="Browse" component={Browse}/>
+                <Tab.Screen name="Create" component={Insert}/>
+            </Tab.Navigator>
+        </View>
     )
 }

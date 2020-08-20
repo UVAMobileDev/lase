@@ -98,55 +98,43 @@ export default function Filter(props) {
 
             <View style={styles.filterControls}>
 
-                <View style={styles.filterControlGroup}>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>System</Text>
-                        <View style={styles.input}>
-                            <SelectSystem placeholder={{label: "Select System", value: ""}} update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}/>
-                        </View>
-                    </View>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>Recorder</Text>
-                        <View style={styles.input}>
-                            <SelectMember placeholder={{label: "Select Recorder", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}/>
-                        </View>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>System</Text>
+                    <View style={styles.input}>
+                        <SelectSystem placeholder={{label: "Select System", value: ""}} update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}/>
                     </View>
                 </View>
-
-                <View style={styles.filterControlGroup}>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>P1</Text>
-                        <View style={styles.input}>
-                            <SelectMember placeholder={{label: "Select P1", value: ""}} update={p1 => dispatchFilter({type: "set", payload: {key: "p1", value: p1}})}/>
-                        </View>
-                    </View>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>P2</Text>
-                        <View style={styles.input}>
-                            <SelectMember placeholder={{label: "Select P2", value: ""}} update={p2 => dispatchFilter({type: "set", payload: {key: "p2", value: p2}})}/>
-                        </View>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Recorder</Text>
+                    <View style={styles.input}>
+                        <SelectMember placeholder={{label: "Select Recorder", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}/>
                     </View>
                 </View>
-
-                <View style={styles.filterControlGroup}>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>Newer than</Text>
-                        <View style={styles.input}>
-                            <SelectDate minYear={2017}
-                                        update={date => dispatchFilter({type: "set", payload: {key: "minDate", value: date}})}/>
-                        </View>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>P1</Text>
+                    <View style={styles.input}>
+                        <SelectMember placeholder={{label: "Select P1", value: ""}} update={p1 => dispatchFilter({type: "set", payload: {key: "p1", value: p1}})}/>
                     </View>
-
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>Older than</Text>
-                        <View style={styles.input}>
-                            <SelectDate minYear={2017}
-                                        initYear={new Date().getFullYear()}
-                                        initMonth={new Date().getMonth() + 1}
-                                        initDay={new Date().getDate()}
-                                        update={date => dispatchFilter({type: "set", payload: {key: "maxDate", value: date}})}/>
-                        </View>
+                </View>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>P2</Text>
+                    <View style={styles.input}>
+                        <SelectMember placeholder={{label: "Select P2", value: ""}} update={p2 => dispatchFilter({type: "set", payload: {key: "p2", value: p2}})}/>
                     </View>
+                </View>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Newer than</Text>
+                    <SelectDate minYear={2017}
+                        update={date => dispatchFilter({type: "set", payload: {key: "minDate", value: date}})}/>
+                </View>
+
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Older than</Text>
+                    <SelectDate minYear={2017}
+                        initYear={new Date().getFullYear()}
+                        initMonth={new Date().getMonth() + 1}
+                        initDay={new Date().getDate()}
+                        update={date => dispatchFilter({type: "set", payload: {key: "maxDate", value: date}})}/>
                 </View>
             </View>
 
@@ -160,39 +148,25 @@ export default function Filter(props) {
             </View>
 
             <View style={styles.listContainer}>
-                {
-                    /* FlatLists are easily one of the most power components in React. Learning how to make good use of them is a must! */
-                    records.loaded ? (
-                        <ScrollView horizontal={Platform.OS !== "web"}>
-                            <FlatList   style={styles.list}
-                                        data={records.items.filter(FilterFx(filter))}
-                                        keyExtractor={item => item.id.toString()}
-                                        renderItem={({item}) => (
-                                            <View style={styles.recordRow}>
-                                                <View>
-                                                    <TouchableOpacity   style={styles.openRecordButton}
-                                                                        onPress={() => props.navigation.navigate("Record", {record: item})}>
-                                                        <Ionicons name="md-open" size={16} color="blue" style={{position: "relative", left: 3, top: 1}}/>
-                                                    </TouchableOpacity>
-                                                </View>
-                                                <View style={{width: 60}}>
-                                                    <Text style={styles.rowText}>{item.system}</Text>
-                                                </View>
-                                                <View style={{width: 75}}>
-                                                    <Text style={styles.rowText}>{item.date}</Text>
-                                                </View>
-                                                <View>
-                                                    <Text style={styles.rowText}>{item.summary}</Text>
-                                                </View>
-                                            </View>
-                                        )}/>
-                        </ScrollView>
-                    ) : (
-                        <View style={{marginTop: 50}}>
-                            <ActivityIndicator size="large" color="#0000ff"/>
-                        </View>
-                    )
-                }
+                {records.loaded ? (
+                    <FlatList
+                        data={records.items.filter(FilterFx(filter))}
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={({item}) => (
+                            <TouchableOpacity style={styles.recordRow}
+                                    onPress={() => props.navigation.navigate("Record", {record: item})}>
+                                <Text style={[styles.rowText, {width: 60}]}>{item.system}</Text>
+                                <Text style={[styles.rowText, {width: 75}]}>{item.date}</Text>
+                                <View style={{flex: 1}}>
+                                    <Text>{item.summary}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )}/>
+                ) : (
+                    <View style={{marginTop: 50}}>
+                        <ActivityIndicator size="large" color="#0000ff"/>
+                    </View>
+                )}
             </View>
         </View>
     )
@@ -207,18 +181,14 @@ const styles = StyleSheet.create({
     listContainer: {
         flex: 1,
     },
-    list: {
-        margin: 10,
-        marginBottom: 30,
-    },
     recordRow: {
         flexDirection: "row",
-        alignItems: "center",
         padding: 10,
-        margin: 4,
-        borderRadius: 8,
-        borderLeftWidth: 3,
-        borderColor: "black",
+        marginHorizontal: 5,
+        marginVertical: 7,
+        borderWidth: 1,
+        borderColor: "#44F",
+        borderRadius: 5,
     },
     openRecordButton: {
         width: 18,
@@ -231,14 +201,11 @@ const styles = StyleSheet.create({
         color: "black",
     },
     filterControls: {
-        flexDirection: Platform.OS === "web" && Dimensions.get("window").width > 1000 ? "row" : "column",
+        flexDirection: "row",
+        flexWrap: "wrap",
         justifyContent: "space-around",
         borderBottomWidth: 2,
         borderColor: "black",
-    },
-    filterControlGroup: {
-        flexDirection: "column",
-        padding: 5,
     },
     inputLabel: {
         fontSize: 18,
@@ -246,6 +213,7 @@ const styles = StyleSheet.create({
     inputGroup: {
         flexDirection: "row",
         alignItems: "center",
+        width: 350,
         margin: 2,
     },
     input: {
@@ -257,6 +225,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
+        height: 60,
         borderBottomWidth: 2,
         borderColor: "black",
     },
