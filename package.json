@@ -23,7 +23,7 @@
     "expo": "~37.0.3",
     "expo-av": "8.0.0",
     "moment": "^2.27.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "react": "~16.9.0",
     "react-dom": "^16.13.1",
     "react-lazyload-fadein": "^1.1.0",
