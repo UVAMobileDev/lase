@@ -38,10 +38,9 @@ export default function SystemViewer(props) {
                                     <View style={{width: 30, marginRight:20}}>
                                         <TouchableOpacity   style={styles.openGrowthButton}
                                                         onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
-                                            <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.id}</Text>
+                                            <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.sampleID}</Text>
                                         </TouchableOpacity>
                                     </View>
-                                    <Text style={[styles.rowText, {width: 95}]}>{item.sampleID}</Text>
                                     <Text style={[styles.rowText, {width: 150}]}>{item.grower}</Text>
                                     <Text style={[styles.rowText, {width: 100}]}>{item.substrate}</Text>
                                     <View style={{flex: 1}}>

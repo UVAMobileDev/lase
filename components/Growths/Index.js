@@ -37,7 +37,7 @@ function GrowthStack(props) {
 function ViewerStack(props) {
     return (
         <CreatorStack.Navigator>
-            <CreatorStack.Screen name="View Sample" component={SampleViewer} />
+            <CreatorStack.Screen name="Insert Sample" component={SampleViewer} />
             <CreatorStack.Screen name="Sample Details" component={SampleDetails}/>
             <CreatorStack.Screen name="Growth Details" component={GrowthDetails}/>
             <CreatorStack.Screen name="Add Growth" component={AddGrowth}/>

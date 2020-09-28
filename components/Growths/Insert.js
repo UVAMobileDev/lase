@@ -1,54 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Button, TextInput } from 'react-native';
 import { BASE_URL } from '../../constants/API.js';
 import SelectSystem from '../lib/forms/SelectSystem';
 import SelectMember from '../lib/forms/SelectMember';
 import { API_KEY } from '../../keys';
 const fetch = require("node-fetch");
+const moment = require("moment");
+import { AntDesign, EvilIcons } from '@expo/vector-icons';
 
 //adding a growth should be tied to a sampleID
 
 const Default = {
-    date: "",
-    holderID: "",
-    growthNum: "",
-    substrate: "",
-    substrateSize: "",
-    GaTip: "",
-    GaBase: "",
-    GaFlux: "",
-    InTip: "",
-    InBase: "",
-    InFlux: "",
-    AlBase: "",
-    AlFlux: "",
-    Er: "",
-    ErFlux: "",
-    Si: "",
-    Be: "",
-    GaTe: "",
-    AsSub: "",
-    AsCrk: "",
-    AsValve: "",
-    AsFlux: "",
-    SbSub: "",
-    SbCrk: "",
-    SbValve: "",
-    SbFlux: "",
-    NRF: "",
-    ReflectedRF: "",
-    NFlow: "",
-    ForlinePressure: "",
-    PyroDeox: "",
-    TCDeox: "",
-    PyroGrowth: "",
-    TCGrowth: "",
-    GCPressure: "",
-    BFBackground: "",
-    HVP: "",
-    PyroOffset: "",
-    Description: "",
-    Ga_Tip: "",
+    date: "",               // Reserved
+
+    growthNum: "",          // Sample Description
+    substrate: "",          // Sample Description
+    substrateSize: "",      // Sample Description
+    machine: "",            // Sample Description
+    grower: "",             // Sample Description
+
+
+    PyroDeox: "",           // Deox
+    TCDeox: "",             // Deox
+    PyroGrowth: "",         // Deox
+    TCGrowth: "",           // Deox
+
+
+    HVP: "",                // Deox
+    PyroOffset: "",         // Deox
+
+    Description: "",        // Sample Description
+
+    GCPressure: "",         // STO Temp
+    BFBackground: "",       // STO Temp
+    Ga_Tip: "",             // STO Temp
     Ga_Base: "",
     Ga_Flux: "",
     In_Tip: "",
@@ -70,19 +55,21 @@ const Default = {
     Bi_Base: "",
     Gd_Temp: "",
     Gd_Flux: "",
-    B_Temp: "",
-    B_Flux: "",
-    waferTracked: "",
     GaP_Temp: "",
     GaP_Flux: "",
-    machine: "",
-    grower: "",
+    B_Temp: "",
+    B_Flux: "",             // STO Temp
+
+    waferTracked: "",       // Sample Description
 }
 
-const UpdateGrowthRecord = (state, update, updateDict) => {
-    let new_version = Object.assign({}, state, updateDict);
-    update(new_version);
-    console.log(new_version)
+const MATERIAL_DEFAULTS = {
+    Echo: {
+        Name: "",
+    },
+    Bravo: {
+        Name: "",
+    }
 }
 
 const SubmitForm = async (nav, growthRecord) => {
@@ -102,78 +89,204 @@ const SubmitForm = async (nav, growthRecord) => {
     nav.navigate("Growth Details", {growth: growthRecord});
 }
 
-// const Reducer = (state, action) => {
-//     // action: {
-//     //      key: "the key we want to set"
-//     //      value: "the value of the key"
-//     // }
-//     switch(action.type) {
-//         case "set":
-//             return {...state, [action.key]: action.value}
-//
-//         default:
-//             return state;
-//     }
-// }
-
 export default function AddGrowth(props) {
-    let sampleID = props.route.params.sampleID;
-    const [growthRecord, setGrowthRecord] = useState(Object.assign({}, Default));
-    //const [submission, dispatchSub] = useReducer(Reducer, {sampleID: props.route.params.sampleID});
+    const [machineSources, setMSS] = useState([]);
 
-    // value => dispatchSub({type: "set", key: "changes based on what field this is", value})
+    // The value determines which entry area / material is currently shone
+    const [view, updateView] = useReducer((state, {section, value}) => ({...state, [section]: value}), {
+        top: 0,
+        bottom: -1,
+    });
 
-    return(
-        <ScrollView>
+    const [materials, dispatchMaterials] = useReducer((state, action) => {
+        // Deep copy the current state
+        let nextState = state.concat([]);
+        switch(action.type) {
+            // Update some aspect of a particular material
+            case "update":
+                nextState[action.src][action.key] = action.value;
+                break;
+
+            // Switch the location of a pair of materials
+            case "reorder":
+                let dst = nextState[action.dst];
+                nextState[action.dst] = nextState[action.src];
+                nextState[action.src] = dst;
+                break;
+
+            // Add a new material by inserting the default for the current machine
+            // Random and *hopefully* unique key is generated for managing the layer
+            case "insert":
+                nextState.push(Object.assign({}, MATERIAL_DEFAULTS[action.machine], {
+                    key: parseInt(Math.random() * 10000),
+                }));
+                break;
+
+            case "remove":
+                if(view.bottom >= action.index && !(state.length > 1 && view.bottom === 0 && action.index === 0)) updateView({section: "bottom", value: view.bottom - 1});
+                nextState.splice(action.index, 1);
+                break;
+        }
+        return nextState;
+    }, []);
+
+    const [form, updateForm] = useReducer((state, {key, value}) => ({...state, [key]: value}), {
+        sampleID: props.route.params.sampleID,
+        date: moment().format("YYYY-MM-DD"),
+        machine: "",
+    });
+
+    useEffect(() => {
+        // Set screen title
+        props.navigation.setOptions({
+            title: `Add Growth to ${props.route.params.sampleID}`,
+        });
+
+        const load_sources = async () => {
+            let machines = await fetch(`${BASE_URL}/settings/machines`).then(async r => (await r.json()).machines);
+            let sources = await Promise.all(machines.map(async m => ({
+                machine: m,
+                sources: await fetch(`${BASE_URL}/machine/${m}/sources`).then(async r => (await r.json()).sources),
+            })));
+            setMSS(sources.concat([{
+                machine: "",
+                sources: [],
+            }]));
+        }
+        load_sources();
+
+    }, []);
+
+    return (
         <View style={styles.container}>
-                <Text style={styles.title}>Add a new growth to the database with Sample ID {sampleID}</Text>
-                <Text style={styles.subtitle}>Growth details:</Text>
-                <View style={styles.growthContainer}>
-                    <SelectSystem   update={val => UpdateGrowthRecord(growthRecord, setGrowthRecord, {machine: val})}
-                                    placeholder={{label: "Select a System... (REQUIRED)" , value:  ""}}/>
-                    <SelectMember   update={val => UpdateGrowthRecord(growthRecord, setGrowthRecord, {grower: val})}
-                                    placeholder={{label: "Select a Grower...", value: ""}}/>
-                    <View style={styles.growthRow}>
-                        <View>
-
-                            {
-                                Object.entries(Default).filter(([key, _]) => key !== "machine" && key !== "grower").map(([key, value]) =>
-                                    <Text>{key}:</Text>
-                                )
-                            }
-                        </View>
-                        <View>
-                            {
-                                Object.entries(Default).filter(([key, _]) => key !== "machine" && key !== "grower").map(([key, value]) =>
-                                <TextInput  style={styles.inputBorder}
-                                            placeholder={key}
-                                            onChangeText={val => UpdateGrowthRecord(growthRecord, setGrowthRecord, {[key]: val})}
-                                            />
-
-                                )
-                            }
-                        </View>
+            <ScrollView>
+                {/* Main data entry */}
+                <View style={styles.mainDataEntry}>
+                    <View style={{flexDirection: "row"}}>
+                        <TouchableOpacity style={[styles.tabButton, view.top === 0 ? {backgroundColor: "#ADD"} : {}]}
+                            onPress={() => updateView({section: "top", value: 0})}>
+                            <Text>Sample Description</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.tabButton, view.top === 1 ? {backgroundColor: "#ADD"} : {}]}
+                            onPress={() => updateView({section: "top", value: 1})}>
+                            <Text>STO Temps</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.tabButton, view.top === 2 ? {backgroundColor: "#ADD"} : {}]}
+                            onPress={() => updateView({section: "top", value: 2})}>
+                            <Text>Deox</Text>
+                        </TouchableOpacity>
                     </View>
 
+                    <View style={{display: view.top === 0 ? "" : "none"}}>
+                        <Text>Sample ID: {props.route.params.sampleID}</Text>
+                        <SelectSystem update={value => updateForm({key: "machine", value})}
+                            placeholder={{label: "Select a System..." , value:  ""}}/>
+                        <Text>### Substrate selection</Text>
+                        <Text>### Growth number</Text>
+                        <SelectMember update={value => updateForm({key: "grower", value})}
+                            placeholder={{label: "Select a Grower...", value: ""}}/>
+                        <Text>### Untracked wafer?</Text>
+                        <Text>Date: {form.date}</Text>
+                        <Text>### Description</Text>
+                    </View>
+
+                    <View style={{display: view.top === 1 ? "" : "none"}}>
+                        <Text>STO Temperatures and Fluxes</Text>
+                        {machineSources.length > 0 ? machineSources.find(({machine}) => machine === form.machine).sources.filter(({sto, active}) => sto && active).map(src => (
+                            <View key={src.id}>
+                                <Text>{src.source}</Text>
+                                {src.tip ? (<Text>### Tip: {src.tip_idle || 0}</Text>): (<View/>)}
+                                {src.base ? (<Text>### Base: {src.base_idle || 0}</Text>): (<View/>)}
+                                {src.idle_temp ? (<Text>### Temp: {src.idle_temp}</Text>): (<View/>)}
+                                {src.flux ? (<Text>### BEP: {src.flux_idle || 0}</Text>): (<View/>)}
+                            </View>
+                        )) : (<View/>)}
+                        <Text>Group Vs</Text>
+                        {machineSources.length > 0 ? machineSources.find(({machine}) => machine === form.machine).sources.filter(({crk, valve}) => crk && valve).map(src => (
+                            <View key={src.id}>
+                                <Text>{src.source}</Text>
+                                <Text>### Sublimator Temp: {src.sub_idle || 0}</Text>
+                                <Text>### Cracker Temp: {src.crk_idle || 0}</Text>
+                            </View>
+                        )) : (<View/>)}
+                    </View>
+
+                    <View style={{display: view.top === 2 ? "" : "none"}}>
+                        <Text>### HVP Power</Text>
+                        <Text>### Pyro Current Offset</Text>
+                        <Text>### Pryo Detox</Text>
+                        <Text>### Thermocouple Deox</Text>
+                    </View>
                 </View>
+
+                {/* Layer entry area */}
+                {form.machine !== "" ? (
                 <View>
-                    <Text style={{color: 'red', textAlign: "left", padding: 20}}>Once submitted, a growth cannot be edited.</Text>
+                    <Text>Add new layer material</Text>
+                    <TouchableOpacity
+                        onPress={() => dispatchMaterials({type: "insert", machine: form.machine})}>
+                        <AntDesign name="pluscircleo" size={24} color="black" />
+                    </TouchableOpacity>
+                    <Text>{materials.length}</Text>
+                    <Text>{view.bottom}</Text>
+                    {materials.map((mat, i) => (
+                        <View key={mat.key} style={{flexDirection: "row"}}>
+                            {i > 0 ? (<TouchableOpacity
+                                onPress={() => null}>
+                                <AntDesign name="up" size={24} color="black" />
+                            </TouchableOpacity>): (<View/>)}
+                            {i < materials.length - 1 ? (<TouchableOpacity
+                                onPress={() => null}>
+                                <AntDesign name="down" size={24} color="black" />
+                            </TouchableOpacity>): (<View/>)}
+                            <TouchableOpacity
+                                onPress={() => dispatchMaterials({type: "remove", index: i})}>
+                                <EvilIcons name="trash" size={24} color="black" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => updateView({section: "bottom", value: i})}>
+                                {console.log(mat)}
+                                <TextInput
+                                    placeholder="Layer name"
+                                    onChangeText={name => dispatchMaterials({
+                                        type: "update", key: "Name", value: name, src: i})}
+                                    value={mat.Name}/>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
                 </View>
-                <View style={{alignItems: 'center', paddingBottom: 50}}>
-                    <Button style={{flexDirection: 'row', marginTop: -15, width: 500}}
-                            title="SUBMIT GROWTH"
-                            onPress={() => SubmitForm(props.navigation, growthRecord)}/>
+                ): (
+                <View>
+                    <Text>You must select a system in order to add new layers, since layers are system-dependent.</Text>
+                </View>
+                )}
+            </ScrollView>
 
-                </View>
+            <View style={{alignItems: 'center', paddingBottom: 50}}>
+                <Text style={{color: 'red', textAlign: "left", padding: 20}}>Once submitted, a growth cannot be edited.</Text>
+                <Button style={{flexDirection: 'row', marginTop: -15, width: 500}}
+                    title="SUBMIT GROWTH"
+                    onPress={() => SubmitForm(props.navigation, growthRecord)}/>
+            </View>
         </View>
-
-        </ScrollView>
-
-
     )
 }
 
 const styles = StyleSheet.create({
+    mainDataEntry: {
+        marginHorizontal: 10,
+        marginBottom: 30,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderColor: "#CCC",
+    },
+    tabButton: {
+        flex: 1,
+        backgroundColor: "#44F",
+        padding: 5,
+        margin: 5,
+        borderRadius: 5,
+    },
     container: {
         flex: 1,
         backgroundColor: "white",
@@ -189,13 +302,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 14,
         textAlign: "left",
-    },
-    growthContainer: {
-        margin: 10,
-        padding: 10,
-        borderColor: "black",
-        borderBottomWidth: 1,
-        borderTopWidth: 1,
     },
     growthRow: {
         flexDirection: "row",

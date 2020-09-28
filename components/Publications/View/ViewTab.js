@@ -6,7 +6,7 @@
 
 // All imports
 import React, { useState, useEffect, useReducer } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, TextInput} from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, TextInput, Image} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
@@ -68,15 +68,44 @@ export default function ViewTab(props){
         more: true,
     });
 
+    // Forces a publications reload if modified
     const [force, incForce] = useReducer(state => state + 1, 0);
 
     // To filter publications based on users' choice
     const [filter,dispatchFilter] = useReducer(FilterReducer, {});
 
+    const [selected, dispatchSel] = useReducer(({all, sel}, {action, id}) => {
+        let newset = sel;
+        switch(action) {
+            case "add":
+                sel[id] = true;
+                break;
+
+            case "remove":
+                delete sel[id];
+                all = false;
+                break;
+
+            case "all":
+                id.reduce((_, i) => sel[i] = true, undefined);
+                return {all: true, sel}
+
+            case "notall":
+                return {all: false, sel}
+
+            case "empty":
+                return {all: false, }
+        }
+        return {all, sel};
+    }, {all: false, sel: {}});
+
     // Reset load data when the filter changes
     useEffect(() => {
         // If we're on the first page and not all have been loaded, we need to force a reload.
         if(publications.page === 0 && publications.more) incForce();
+
+        dispatchSel({action: "notall"});
+
         dispatchPublications([
             {key: "items", value: "empty"},
             {key: "page", value: "reset"},
@@ -92,10 +121,12 @@ export default function ViewTab(props){
             let response = await fetch(`${QueryString(filter)}&page=${publications.page}`).then(r => r.json());
 
             // console.log(response.publications.length);
-            if (response.publications && response.publications.length > 0) dispatchPublications([
-                {key: "items", value: response.publications},
-            ]);
-            else dispatchPublications([
+            if (response.publications && response.publications.length > 0) {
+                dispatchSel({action: "notall"});
+                dispatchPublications([
+                    {key: "items", value: response.publications},
+                ]);
+            } else dispatchPublications([
                 {key: "more", value: false}
             ]);
         }
@@ -105,6 +136,20 @@ export default function ViewTab(props){
     const nextPage = () => publications.more ? dispatchPublications([
         {key: "page", value: "increment"}
     ]) : null;
+
+    const loadAllMatches = async () => {
+        if(!publications.more) return;
+        let pg = publications.page;
+        let fetched = [];
+
+        let response = null;
+        do {
+            response = await fetch(`${QueryString(filter)}&page=${publications.page}`).then(r => r.json());
+            pg++;
+        } while(response.publications.length);
+
+
+    }
 
     return (
         <View style={styles.container}>
@@ -136,7 +181,7 @@ export default function ViewTab(props){
                     <Text style={styles.inputLabel}>Keyword(s)</Text>
                     <View style={{flex: 1}}>
                         <TextInput
-                            placeholder="Keywords"
+                            placeholder="Keywords ## TODO ##"
                             />
                         <Text>Keywords can appear anywhere in the publication. Use it to search for an author, title, or other detail.</Text>
                     </View>
@@ -144,22 +189,51 @@ export default function ViewTab(props){
 
                 <View style={styles.filterGroup}>
                     <View style={{flex: 1}}>
-                        <TouchableOpacity style={styles.loadAllButton}>
+                        <TouchableOpacity style={styles.loadAllButton}
+                            onPress={loadAllMatches}>
                             <Text>Load all Matches</Text>
                         </TouchableOpacity>
                         <Text>Loading all matching publications may take a little while. If you're making a bibliography and need to select everything from your search, you may want to use this button.</Text>
+                    </View>
+                </View>
+
+                <View style={styles.filterGroup}>
+                    <Text style={styles.inputLabel}>Select All</Text>
+                    <View style={{flex: 1}}>
+                        {selected.all ? (
+                            <Feather name="check-square" size={24} color="black" />
+                        ) : (
+                            <TouchableOpacity
+                                onPress={() => dispatchSel({action: "all", id: publications.items.map(({id}) => id)})}>
+                                <Feather name="square" size={24} color="black" />
+                            </TouchableOpacity>
+                        )
+                        }
+                    </View>
+                </View>
+
+                <View style={styles.filterGroup}>
+                    <View style={{flex: 1}}>
+                        <TouchableOpacity style={styles.loadAllButton}
+                            onPress={() => null}>
+                            <Text>Cite Selected Publications</Text>
+                        </TouchableOpacity>
+                        <Text>Generates citations for all selected publications and displays them in a format easy to copy/paste.</Text>
                     </View>
                 </View>
             </View>
 
             <View style={{flexDirection: 'row'}}>
                 <View>
+                    <Text style={styles.tableHeader}>Select</Text>
+                </View>
+                <View>
                     <Text style={styles.tableHeader}>Type</Text>
                 </View>
-                <View style={{width: "45%"}}>
+                <View style={{width: "40%"}}>
                     <Text style={styles.tableHeader}>Publication</Text>
                 </View>
-                <View style={{width: "40%"}}>
+                <View style={{width: "35%"}}>
                     <Text style={styles.tableHeader}>Author</Text>
                 </View>
             </View>
@@ -176,15 +250,30 @@ export default function ViewTab(props){
                     renderItem={({item, index}) => (
                         <View style={{alignItems: "center"}}>
                             <View style={styles.recordRow}>
+                                <View>
+                                    {selected.sel[item.id] ? (
+                                        <TouchableOpacity
+                                            onPress={() => dispatchSel({action: "remove", id: item.id})}>
+                                            <Feather name="check-square" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity
+                                            onPress={() => dispatchSel({action: "add", id: item.id})}>
+                                            <Feather name="square" size={24} color="black" />
+                                        </TouchableOpacity>
+                                    )
+                                    }
+                                </View>
+
                                 <TouchableOpacity style={styles.openRecordButton}
                                         onPress={() =>  props.navigation.navigate("Details",{publication: item})}>
                                     {ICONS[item.typeID] || ICONS.default}
                                 </TouchableOpacity>
 
-                                <View style={{width: "47%"}}>
+                                <View style={{width: "43%"}}>
                                     <Text style={styles.rowText}>{item.title}</Text>
                                 </View>
-                                <View style={{width: "47%"}}>
+                                <View style={{width: "43%"}}>
                                     <Text style={styles.rowText}>{item.author}</Text>
                                 </View>
                             </View>

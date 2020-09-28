@@ -41,6 +41,9 @@ export default function GrowthBrowser(props) {
             <View style={styles.filterControls}>
                 <Text style={styles.filterText}>Filter Growths:</Text>
                 <SelectMember placeholder={{label: "Select Grower", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "grower", value: rec}})}/>
+                <Text>SampleID</Text>
+                <Text>Substrate</Text>
+                <Text>Keyword</Text>
             </View>
             {systems.length > 0 ? (
                 <Tab.Navigator
