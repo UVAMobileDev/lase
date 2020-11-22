@@ -15,15 +15,6 @@ import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet
 import RNPickerSelect from 'react-native-picker-select';
 import SelectType from '../../lib/forms/SelectType';
 
-const FilterReducer = (state, action) => {
-    switch(action.type) {
-        case "set":
-            return {...state, [action.payload.key]: action.payload.value};
-        default:
-            return state;
-    }
-}
-
 const PublicationReducer = (state, actions) => {
     let nextState = Object.assign({}, state);
     let loaded = true;
@@ -72,7 +63,14 @@ export default function ViewTab(props){
     const [force, incForce] = useReducer(state => state + 1, 0);
 
     // To filter publications based on users' choice
-    const [filter,dispatchFilter] = useReducer(FilterReducer, {});
+    const [filter,dispatchFilter] = useReducer((state, action) => {
+        switch(action.type) {
+            case "set":
+                return {...state, [action.payload.key]: action.payload.value};
+            default:
+                return state;
+        }
+    }, {});
 
     const [selected, dispatchSel] = useReducer(({all, sel}, {action, id}) => {
         let newset = sel;
@@ -94,7 +92,7 @@ export default function ViewTab(props){
                 return {all: false, sel}
 
             case "empty":
-                return {all: false, }
+                return {all: false, sel: {}}
         }
         return {all, sel};
     }, {all: false, sel: {}});
@@ -139,15 +137,20 @@ export default function ViewTab(props){
 
     const loadAllMatches = async () => {
         if(!publications.more) return;
-        let pg = publications.page;
+        let pg = publications.page + 1;
         let fetched = [];
 
-        let response = null;
+        let resp = null;
         do {
-            response = await fetch(`${QueryString(filter)}&page=${publications.page}`).then(r => r.json());
+            resp = await fetch(`${QueryString(filter)}&page=${pg}`).then(r => r.json());
+            fetched.push(resp.publications);
             pg++;
-        } while(response.publications.length);
+        } while(resp.publications.length);
 
+        dispatchPublications([
+            {key: "items", value: [].concat(...fetched)},
+            {key: "more", value: false}
+        ]);
 
     }
 
@@ -199,7 +202,7 @@ export default function ViewTab(props){
 
                 <View style={styles.filterGroup}>
                     <Text style={styles.inputLabel}>Select All</Text>
-                    <View style={{flex: 1}}>
+                    <View style={{width: 40}}>
                         {selected.all ? (
                             <Feather name="check-square" size={24} color="black" />
                         ) : (
@@ -210,12 +213,16 @@ export default function ViewTab(props){
                         )
                         }
                     </View>
+                    <TouchableOpacity style={{flex: 1}}
+                        onPress={() => dispatchSel({action: "empty"})}>
+                        <Text>Deselect All</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.filterGroup}>
                     <View style={{flex: 1}}>
                         <TouchableOpacity style={styles.loadAllButton}
-                            onPress={() => null}>
+                            onPress={() => props.navigation.navigate("Citations", {ids: selected.sel})}>
                             <Text>Cite Selected Publications</Text>
                         </TouchableOpacity>
                         <Text>Generates citations for all selected publications and displays them in a format easy to copy/paste.</Text>
@@ -250,7 +257,7 @@ export default function ViewTab(props){
                     renderItem={({item, index}) => (
                         <View style={{alignItems: "center"}}>
                             <View style={styles.recordRow}>
-                                <View>
+                                <View style={{alignSelf: "center"}}>
                                     {selected.sel[item.id] ? (
                                         <TouchableOpacity
                                             onPress={() => dispatchSel({action: "remove", id: item.id})}>
@@ -299,7 +306,8 @@ const styles = StyleSheet.create({
         width: "95%",
     },
     openRecordButton: {
-        margin: 10,
+        alignSelf: "center",
+        margin: 4,
     },
     loadAllButton: {
         padding: 10,

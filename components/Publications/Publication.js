@@ -91,7 +91,10 @@ const Formatters = [
     pub => `unpublished`,
 ];
 
-const FormatPublication = pub => Formatters[pub.typeID](pub);
+const FormatPublication = pub => {
+    console.log(pub)
+    return Formatters[pub.typeID](pub);
+}
 
 
 

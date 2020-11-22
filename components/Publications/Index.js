@@ -14,6 +14,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import InsertTab from './Insert/InsertTab';
 import ViewPublication from './View/ViewPublication.js';
 import ViewTab from './View/ViewTab.js';
+import Bibliography from './View/Bibliography';
 
 const onWeb = Platform.OS === "web";
 
@@ -24,6 +25,7 @@ function ViewStack(props) {
         <Stack.Navigator>
             <Stack.Screen name="View Tab" component={ViewTab} options={{headerShown: false}}/>
             <Stack.Screen name="Details" component={ViewPublication}/>
+            <Stack.Screen name="Citations" component={Bibliography} />
         </Stack.Navigator>
     )
 }
