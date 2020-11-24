@@ -2,12 +2,6 @@
 //  It's based on the current default landing page for LASE. This component uses
 //  hooks, so read carefully.
 
-
-
-
-
-
-
 // Imports
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Linking, ActivityIndicator, Platform, Dimensions, ScrollView, TouchableOpacity } from 'react-native';

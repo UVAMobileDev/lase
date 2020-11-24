@@ -14,6 +14,7 @@ import Members from './subpages/Members.js';
 import Classes from './subpages/Classes.js';
 import Sponsors from './subpages/Sponsors.js';
 import Facilities from './subpages/Facilities.js';
+import Publications from './subpages/Publications.js';
 import News from './subpages/News.js';
 
 // Create a tab navigator. On the home page, this is the component which allows
@@ -58,6 +59,7 @@ export default function Landing(props) {
                         <Tab.Screen name="Classes" component={Classes}/>
                         <Tab.Screen name="Sponsors" component={Sponsors}/>
                         <Tab.Screen name="Facilities" component={Facilities}/>
+                        <Tab.Screen name="Publications" component={Publications}/>
                         <Tab.Screen name="News" component={News}/>
                     </Tab.Navigator>
                 </View>
