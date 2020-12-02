@@ -14,26 +14,26 @@ import {Table,Row,Rows} from 'react-native-table-component';
 // This function is to get the fetch the URL for getting information based on the sample ID
 
 const AllTypes = [
-            'None',
-            'Article',
-            'Book',
-            'Booklet',
-            'Conference',
-            'electronic',
-            `inbook`,
-            `incollection`,
-            `inproceedings`,
-            `manual`,
-            `mastersthesis`,
-            `misc`,
-            `other`,
-            `patent`,
-            `periodical`,
-            `phdthesis`,
-            `proceedings`,
-            `standard`,
-            `techreport`,
-            `unpublished`
+    'None',
+    'Article',
+    'Book',
+    'Booklet',
+    'Conference',
+    'electronic',
+    `inbook`,
+    `incollection`,
+    `inproceedings`,
+    `manual`,
+    `mastersthesis`,
+    `misc`,
+    `other`,
+    `patent`,
+    `periodical`,
+    `phdthesis`,
+    `proceedings`,
+    `standard`,
+    `techreport`,
+    `unpublished`
 ]
 
 const GetSources = async sampleID => {
@@ -90,7 +90,6 @@ export default function ViewPublication(props) {
             }
         }
         detail.push(['Citation',(<Publication key = {publication.id} data = {publication}/>)]); //added citations of publication to the array to render
-        console.log(detail);
         for (let i = 0; i < detail.length; i++) {
             if (detail[i][0] === 'typeID') {
                 let temp = AllTypes[detail[i][1]]; // Ex: article if typeID is 1
@@ -101,15 +100,15 @@ export default function ViewPublication(props) {
 
         return (
             <View style = {styles.container}>
-                    <ScrollView>
-                        <View style = {styles.tableContainer}>
-                            <Table borderStyle = {{borderWidth: 0.5, borderColor: '#808080'}}>
-                                <Row data = {top_title} style = {styles.top_table} textStyle = {styles.text_table_title}/>
-                                <Rows data = {detail} textStyle = {styles.text_table}/>
-                            </Table>
-                        </View>
-                    </ScrollView>
-                </View>
+                <ScrollView>
+                    <View style = {styles.tableContainer}>
+                        <Table borderStyle = {{borderWidth: 0.5, borderColor: '#808080'}}>
+                            <Row data = {top_title} style = {styles.top_table} textStyle = {styles.text_table_title}/>
+                            <Rows data = {detail} textStyle = {styles.text_table}/>
+                        </Table>
+                    </View>
+                </ScrollView>
+            </View>
         )
     }
 

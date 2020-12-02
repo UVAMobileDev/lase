@@ -48,8 +48,27 @@ const ICONS = {
 }
 
 // A single line of code to handel query string and return URL to fetch based on the user's request
-const QueryString = filter => `${BASE_URL}/publications?${Object.keys(filter).filter(key => filter[key] !== "").filter(key => filter[key] > 0).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
+const QueryString = filter => `${BASE_URL}/publications?${Object.keys(filter).filter(key => filter[key] !== "").reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
 
+// Decrease how often the keyword input box causes filter updates
+class Cooldown {
+    constructor(trigger, ms_cooldown) {
+        this.trigger = trigger;
+        this.ms_cooldown = ms_cooldown;
+        this.timeout = false;
+        this.value = "";
+    }
+
+    input(value) {
+        this.value = value;
+        if(this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+            this.timeout = false;
+            console.log("run");
+            this.trigger(value);
+        }, this.ms_cooldown);
+    }
+}
 
 export default function ViewTab(props){
     const [publications, dispatchPublications] = useReducer(PublicationReducer, {
@@ -63,7 +82,7 @@ export default function ViewTab(props){
     const [force, incForce] = useReducer(state => state + 1, 0);
 
     // To filter publications based on users' choice
-    const [filter,dispatchFilter] = useReducer((state, action) => {
+    const [filter, dispatchFilter] = useReducer((state, action) => {
         switch(action.type) {
             case "set":
                 return {...state, [action.payload.key]: action.payload.value};
@@ -71,7 +90,6 @@ export default function ViewTab(props){
                 return state;
         }
     }, {});
-
     const [selected, dispatchSel] = useReducer(({all, sel}, {action, id}) => {
         let newset = sel;
         switch(action) {
@@ -96,6 +114,7 @@ export default function ViewTab(props){
         }
         return {all, sel};
     }, {all: false, sel: {}});
+    const [cooldown, scd] = useState(new Cooldown(txt => dispatchFilter({type: "set", payload: {key: "keywords", value: txt}}), 1250));
 
     // Reset load data when the filter changes
     useEffect(() => {
@@ -116,6 +135,7 @@ export default function ViewTab(props){
         if (!force || !publications.more) return; // don't do anything, we are done loading
 
         let loadFilter = async () => {
+            console.log(QueryString(filter));
             let response = await fetch(`${QueryString(filter)}&page=${publications.page}`).then(r => r.json());
 
             // console.log(response.publications.length);
@@ -184,9 +204,20 @@ export default function ViewTab(props){
                     <Text style={styles.inputLabel}>Keyword(s)</Text>
                     <View style={{flex: 1}}>
                         <TextInput
-                            placeholder="Keywords ## TODO ##"
+                            style={styles.keyword_input}
+                            placeholder="Apples and Epitaxy Jane Doe"
+                            onChangeText={txt => cooldown.input(txt)}
                             />
-                        <Text>Keywords can appear anywhere in the publication. Use it to search for an author, title, or other detail.</Text>
+                        {/*
+                            <TouchableOpacity style={{position: "absolute", right: 0, height: "100%", padding: 8}}
+                            onPress={() => {
+                                cooldown.value = "";
+                                dispatchFilter({type: "set", payload: {key: "keywords", value: ""}});
+                            }}>
+                            <Entypo name="cross" size={24} color="black" />
+                            </TouchableOpacity>
+                        */}
+                        <Text>Keywords appear in the title or author field of a publication. Separate keywords with spaces.</Text>
                     </View>
                 </View>
 
@@ -300,6 +331,12 @@ export default function ViewTab(props){
 }
 
 const styles = StyleSheet.create({
+    keyword_input: {
+        margin: 5,
+        padding: 5,
+        borderColor: "#CCC",
+        borderWidth: 2,
+    },
     splitter: {
         borderBottomWidth: 1,
         borderColor: "#CCC",
