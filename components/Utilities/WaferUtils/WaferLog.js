@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, ScrollView, TextInput } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
@@ -7,6 +7,8 @@ import moment from 'moment';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Entypo } from '@expo/vector-icons';
 import LogHistory from './LogHistory';
+import RNPickerSelect from 'react-native-picker-select';
+const fetch = require("node-fetch");
 
 // all substrates https://api.lase.mer.utexas.edu/v1/settings/substrates
 // wafer log https://api.lase.mer.utexas.edu/v1/wafers/${sub}
@@ -19,10 +21,46 @@ const LOW_STOCK = {
     SIGaAs: 30,
     nGaSb: 30,
 };
+const REASONS = [
+    {label: "Add", value: "add"},
+    {label: "Growth", value: "growth"},
+    {label: "Non-growth", value: "non-growth"},
+    {label: "Reconcile", value: "reconcile"}
+];
 
 const onWeb = Platform.OS === "web";
-
 const Stack = createStackNavigator();
+
+const SubmitForm = async (substrate, {reason, amount}, key, setILE) => {
+    if((!reason || !parseFloat(amount)) && parseFloat(amount) !== 0) {
+        window.alert("Select a reason and provide a valid delta.");
+        return;
+    }
+    try {
+        setILE(true);
+        let response = await fetch(`${BASE_URL}/wafers/${substrate}`, {
+            method: "PUT",
+            headers: {
+                "x-api-key": key,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                entry: {
+                    timestamp: new Date(),
+                    wafers_added: amount,
+                    notes: reason
+                }
+            })
+        });
+        let parsed = await response.json();
+        if(parsed.statusCode != 200) throw new Exception();
+    } catch(err) {
+        console.error(err);
+    } finally {
+        setILE(false);
+    }
+    // Navigate to View Publication tab, then open the newly created publication.
+}
 
 export default function WaferLog(props) {
     return (
@@ -34,7 +72,7 @@ export default function WaferLog(props) {
 }
 
 function WaferLogOverview(props) {
-    const { dark } = useContext(KeyContext);
+    const { dark, key } = useContext(KeyContext);
     const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
     useEffect(updateStyles, [dark]);
 
@@ -48,6 +86,16 @@ function WaferLogOverview(props) {
 
     // Whether the logs for all substrates has been loaded.
     const [fullyLoaded, setLoaded] = useState(false);
+
+    const [insertingLogEntry, setILE] = useState(false);
+    const [insertForm, dispatchForm] = useReducer((state, {action, payload}) => {
+        if(action == "reset") return {};
+        if(action == "submit") {
+            SubmitForm(selected, state, key, setILE);
+            return state;
+        }
+        return {...state, [payload.key]: payload.value};
+    }, {reason: "", amount: 0});
 
     const SubstrateRow = (id, name, size, count, extraStyles, blockStyles) => (
         <View style={[styles.substrateRow, blockStyles]} key={id}>
@@ -69,6 +117,7 @@ function WaferLogOverview(props) {
     // If the user has selected a previously unselected substrate,
     // fetch + calculate the data we need to show
     useEffect(() => {
+        dispatchForm({action: "reset"});
         // Do nothing if there is not a selection, or
         // if we've already fetched and calculated this
         // substrate's log, do not do it again.
@@ -267,6 +316,36 @@ function WaferLogOverview(props) {
                                         substrate.usagePrediction.map(([num, duration], i) => <Text key={i}>{num}-week rate: {duration}</Text>)
                                     }
                                 </View>
+                                <View style={styles.detailSection}>
+                                    <Text style={styles.detailHeader}>Add Log Entry</Text>
+                                    <Text>New log entries have two components: reason and amount. Reasons for new entries are 'add', 'growth', 'non-growth', and 'reconcile', corresponding to the addition of new wafers into the system, the usage of wafers for growths, usage of wafers not for growths, and a reconciliation of physical inventory, respectively. Amount refers to the number of new wafers, used wafers, or the actual physical inventory value, depending on reason.</Text>
+                                    {/* reason options: growth, add, reconcile */}
+                                    <View style={styles.labelRow}>
+                                        <Text style={styles.labelText}>Reason</Text>
+                                        <RNPickerSelect
+                                            InputAccessoryView={() => null}
+                                            placeholder={{label: "...", value: ""}}
+                                            items={REASONS}
+                                            value={insertForm.reason}
+                                            onValueChange={val => dispatchForm({action: "set", payload: {key: "reason", value: val}})}
+                                            />
+                                    </View>
+                                    <View style={styles.labelRow}>
+                                        <Text style={styles.labelText}>Amount</Text>
+                                        <TextInput style={styles.textinput}
+                                            placeholder="Enter delta value"
+                                            keyboardType="numeric"
+                                            onChangeText={val => dispatchForm({action: "set", payload: {key: "amount", value: parseFloat(val)}})}
+                                            value={`${insertForm.amount}`}
+                                            />
+                                    </View>
+                                    {insertingLogEntry ? (<ActivityIndicator style={{margin: 25}}/>) : (
+                                        <TouchableOpacity style={styles.submitLogEntry}
+                                            onPress={() => dispatchForm({action: "submit"})}>
+                                            <Text style={styles.buttonLabel}>Submit New Log Entry</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
                                 <View style={[styles.detailSection, {borderWidth: 0, marginBottom: 140}]}>
                                     <TouchableOpacity style={styles.fullLogButton}
                                             onPress={() => props.navigation.navigate("Full Log History", {substrate: selected})}>
@@ -288,6 +367,26 @@ function WaferLogOverview(props) {
 }
 
 const LocalStyles = {
+    labelText: {
+        marginRight: 10,
+    },
+    labelRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        margin: 5,
+    },
+    submitLogEntry: {
+        backgroundColor: "#00FF00",
+        margin: 5,
+        padding: 10,
+        alignItems: "center",
+    },
+    textinput: {
+        margin: 5,
+        padding: 5,
+        borderColor: "#CCC",
+        borderWidth: 2,
+    },
     buttonLabel: {
         color: "white",
         fontSize: 16
