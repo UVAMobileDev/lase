@@ -25,36 +25,34 @@ export default function SystemViewer(props) {
     return (
         <View style={styles.container}>
             <Text style={{paddingLeft: 20, paddingTop: 20, fontSize: 16}}>Select a growth's ID to view associated growths and recipes:</Text>
-            {
-                growths.loaded ? (
-                    <View style={styles.listContainer}>
-                        <FlatList
-                            style={styles.list}
-                            data={growths.contents}
-                            keyExtractor={item => item.id.toString()}
-                            initialNumToRender={10}
-                            renderItem={({item}) => (
-                                <View style={styles.growthRow}>
-                                    <View style={{width: 30, marginRight:20}}>
-                                        <TouchableOpacity style={styles.openGrowthButton}
-                                            onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
-                                            <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.sampleID}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <Text style={[styles.rowText, {width: 150}]}>{item.grower}</Text>
-                                    <Text style={[styles.rowText, {width: 100}]}>{item.substrate}</Text>
-                                    <View style={{flex: 1}}>
-                                        <Text style={styles.rowText}>{item.Description}</Text>
-                                    </View>
+            {growths.loaded ? (
+                <View style={styles.listContainer}>
+                    <FlatList
+                        style={styles.list}
+                        data={growths.contents}
+                        keyExtractor={item => item.id.toString()}
+                        initialNumToRender={10}
+                        renderItem={({item}) => (
+                            <View style={styles.growthRow}>
+                                <View style={{width: 30, marginRight:20}}>
+                                    <TouchableOpacity style={styles.openGrowthButton}
+                                        onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
+                                        <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.sampleID}</Text>
+                                    </TouchableOpacity>
                                 </View>
-                            )}/>
-                    </View>
-                ) : (
-                    <View style={{marginTop: 50}}>
-                        <ActivityIndicator size="large" color="#0000ff"/>
-                    </View>
-                )
-            }
+                                <Text style={[styles.rowText, {width: 150}]}>{item.grower}</Text>
+                                <Text style={[styles.rowText, {width: 100}]}>{item.substrate}</Text>
+                                <View style={{flex: 1}}>
+                                    <Text style={styles.rowText}>{item.Description}</Text>
+                                </View>
+                            </View>
+                        )}/>
+                </View>
+            ) : (
+                <View style={{marginTop: 50}}>
+                    <ActivityIndicator size="large" color="#0000ff"/>
+                </View>
+            )}
         </View>
     )
 }

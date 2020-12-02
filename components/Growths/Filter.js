@@ -7,10 +7,10 @@ import SystemViewer from './SystemViewer';
 import { GrowthProvider } from './GrowthContext';
 const fetch = require('node-fetch');
 
+const Tab = createMaterialTopTabNavigator();
 const onWeb = Platform.OS === "web";
 
 const FilterReducer = (state, action) => {
-
     switch(action.type) {
         case "set":
             return {...state, [action.payload.key]: action.payload.value}
@@ -18,8 +18,6 @@ const FilterReducer = (state, action) => {
             return state;
     }
 }
-
-const Tab = createMaterialTopTabNavigator();
 
 export default function GrowthBrowser(props) {
 
