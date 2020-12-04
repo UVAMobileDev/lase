@@ -91,12 +91,7 @@ const Formatters = [
     pub => `unpublished`,
 ];
 
-const FormatPublication = pub => {
-    console.log(pub)
-    return Formatters[pub.typeID](pub);
-}
-
-
+const FormatPublication = pub => Formatters[pub.typeID](pub);
 
 export default class Publication extends React.Component {
     constructor(props) {

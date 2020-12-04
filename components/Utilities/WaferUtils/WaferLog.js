@@ -31,37 +31,6 @@ const REASONS = [
 const onWeb = Platform.OS === "web";
 const Stack = createStackNavigator();
 
-const SubmitForm = async (substrate, {reason, amount}, key, setILE) => {
-    if((!reason || !parseFloat(amount)) && parseFloat(amount) !== 0) {
-        window.alert("Select a reason and provide a valid delta.");
-        return;
-    }
-    try {
-        setILE(true);
-        let response = await fetch(`${BASE_URL}/wafers/${substrate}`, {
-            method: "PUT",
-            headers: {
-                "x-api-key": key,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                entry: {
-                    timestamp: new Date(),
-                    wafers_added: amount,
-                    notes: reason
-                }
-            })
-        });
-        let parsed = await response.json();
-        if(parsed.statusCode != 200) throw new Exception();
-    } catch(err) {
-        console.error(err);
-    } finally {
-        setILE(false);
-    }
-    // Navigate to View Publication tab, then open the newly created publication.
-}
-
 export default function WaferLog(props) {
     return (
         <Stack.Navigator>
@@ -88,10 +57,41 @@ function WaferLogOverview(props) {
     const [fullyLoaded, setLoaded] = useState(false);
 
     const [insertingLogEntry, setILE] = useState(false);
+    const SubmitForm = async ({reason, amount}) => {
+        if((!reason || !parseFloat(amount)) && parseFloat(amount) !== 0) {
+            window.alert("Select a reason and provide a valid delta.");
+            return;
+        }
+        try {
+            setILE(true);
+            let response = await fetch(`${BASE_URL}/wafers/${selected}`, {
+                method: "PUT",
+                headers: {
+                    "x-api-key": key,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    entry: {
+                        timestamp: new Date(),
+                        wafers_added: amount,
+                        notes: reason
+                    }
+                })
+            });
+            let { statusCode } = await response.json();
+            if(statusCode != 200) throw new Exception();
+        } catch(err) {
+            console.error(err);
+        } finally {
+            setILE(false);
+            // inserted id = parsed.id
+            updateLog({...log, ...(await loadCountAndRecent(selected))});
+        }
+    }
     const [insertForm, dispatchForm] = useReducer((state, {action, payload}) => {
         if(action == "reset") return {};
         if(action == "submit") {
-            SubmitForm(selected, state, key, setILE);
+            SubmitForm(state);
             return state;
         }
         return {...state, [payload.key]: payload.value};
@@ -319,7 +319,6 @@ function WaferLogOverview(props) {
                                 <View style={styles.detailSection}>
                                     <Text style={styles.detailHeader}>Add Log Entry</Text>
                                     <Text>New log entries have two components: reason and amount. Reasons for new entries are 'add', 'growth', 'non-growth', and 'reconcile', corresponding to the addition of new wafers into the system, the usage of wafers for growths, usage of wafers not for growths, and a reconciliation of physical inventory, respectively. Amount refers to the number of new wafers, used wafers, or the actual physical inventory value, depending on reason.</Text>
-                                    {/* reason options: growth, add, reconcile */}
                                     <View style={styles.labelRow}>
                                         <Text style={styles.labelText}>Reason</Text>
                                         <RNPickerSelect
