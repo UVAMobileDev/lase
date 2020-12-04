@@ -75,7 +75,7 @@ export default function App() {
     return (
         <KeyProvider value={{key, dark: state.dark}}>
             <NavigationContainer style={{flex: 1}}>
-                <Drawer.Navigator initialRouteName="Settings"
+                <Drawer.Navigator initialRouteName="Home"
                             drawerType={Platform.OS === "web" ? "permanent" : "slide"}
                             drawerStyle={{backgroundColor: "#0AA"}}
                             drawerContentOptions={{

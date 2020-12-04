@@ -24,7 +24,7 @@ export default function Publications(props) {
                 let aYear = parseInt(a.year) || 0, bYear = parseInt(b.year) || 0;
                 let aMonth = parseInt(a.month) || 0, bMonth = parseInt(b.month) || 0;
                 let aDay = parseInt(a.day) || 0, bDay = parseInt(b.day) || 0;
-                return aYear === bYear ? aMonth === bMonth ? aDay === bDay ? 0 : aDay - bDay : aMonth - bMonth : aYear - bYear;
+                return aYear === bYear ? aMonth === bMonth ? aDay === bDay ? 0 : bDay - aDay : bMonth - aMonth : bYear - aYear;
             }
             setPubs({loaded: true, items: items.sort(sorter)})
         }
