@@ -12,7 +12,7 @@ import WaferLog from './WaferUtils/WaferLog';
 import DeleteManager from './DeleteManager';
 const Tab = createMaterialTopTabNavigator();
 
-let onWeb = Platform.OS === "web";
+const onWeb = Platform.OS === "web";
 
 export default function Utilities(props) {
     const { dark } = useContext(KeyContext);
@@ -21,11 +21,13 @@ export default function Utilities(props) {
 
     return (
         <View style={styles.screenContainer}>
-            <Tab.Navigator  initialRouteName="Browse"
-                            tabBarOptions={{
-                                scrollEnabled: !onWeb,
-                            }}
-                            swipeEnabled={!onWeb}>
+            <Tab.Navigator
+                initialRouteName="Growth Calendar"
+                tabBarOptions={{
+                    scrollEnabled: !onWeb,
+                }}
+                swipeEnabled={!onWeb}
+                >
                 <Tab.Screen name="Growth Calendar" component={GrowthCal}/>
                 <Tab.Screen name="STO Generation" component={STO}/>
                 <Tab.Screen name="Wafer Log" component={WaferLog}/>
