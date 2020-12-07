@@ -379,6 +379,7 @@ const LocalStyles = {
         margin: 5,
         padding: 10,
         alignItems: "center",
+        width: "50%",
     },
     textinput: {
         margin: 5,

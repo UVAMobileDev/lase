@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Platform } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
+import LogEntry from './LogEntry';
 
 export default function LogHistory({ route }) {
     const { dark } = useContext(KeyContext);
@@ -25,12 +26,7 @@ export default function LogHistory({ route }) {
                 data={entryData.entries}
                 keyExtractor={entry => entry.id.toString()}
                 renderItem={({item}) => (
-                    <View style={styles.historyRow}>
-                        <Text style={[styles.rowTextItem, styles.mono]}>{item.id}</Text>
-                        <Text style={[styles.rowTextItem, styles.mono]}>{item.timestamp}</Text>
-                        <Text style={[styles.rowTextItem, styles.mono]}>{item.notes}</Text>
-                        <Text style={[styles.mono, {width: 50, textAlign: "right"}]}>{item.wafersAdded}</Text>
-                    </View>
+                    <LogEntry data={item} />
                 )}
                 onEndReachedThreshold={.3}
                 onEndReached={fetchMore}/>
@@ -39,19 +35,4 @@ export default function LogHistory({ route }) {
 }
 
 const LocalStyles = {
-    sp: {
-        fontFamily: Platform.OS === "ios" ? "Verdana" : "sans-serif",
-    },
-    mono: {
-        fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-    },
-    rowTextItem: {
-        textAlign: "left",
-    },
-    historyRow: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        margin: 3,
-        maxWidth: 450,
-    }
 };
