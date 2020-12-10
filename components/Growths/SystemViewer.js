@@ -34,10 +34,10 @@ export default function SystemViewer(props) {
                         initialNumToRender={10}
                         renderItem={({item}) => (
                             <View style={styles.growthRow}>
-                                <View style={{width: 30, marginRight:20}}>
+                                <View style={{width: 80, marginRight:10}}>
                                     <TouchableOpacity style={styles.openGrowthButton}
                                         onPress={() => props.navigation.navigate("Sample Details", {sampleID: item.sampleID, system: context.systems[props.route.params.sysIndex]})}>
-                                        <Text style={{width: 40, fontSize: 16, color: 'blue'}}>{item.sampleID}</Text>
+                                        <Text style={{width: 80, fontSize: 16, color: 'blue'}}>{item.sampleID}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <Text style={[styles.rowText, {width: 150}]}>{item.grower}</Text>
@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
-        paddingLeft: 30,
     },
     list: {
         margin: 10,
