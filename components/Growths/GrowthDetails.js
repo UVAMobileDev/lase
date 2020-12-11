@@ -1,53 +1,192 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Table, TableWrapper, Col } from 'react-native-table-component';
-
+import React, { useState, useEffect, useContext, useReducer } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import { Table, TableWrapper, Col, Rows } from 'react-native-table-component';
 const fetch = require("node-fetch");
+import { BASE_URL } from '../../constants/API';
+import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
+import KeyContext from '../../KeyContext';
+import { AntDesign } from '@expo/vector-icons';
 
+const tableLabels = ["id", "SampleID", "grower", "machine","date", "holderID","growthNum","substrate", "substrateSize",
+    "GaTip", "GaBase", "GaFlux", "InTip","InBase", "InFlux", "AlBase", "AlFlux", "Er", "ErFlux", "Si",
+    "Be","GaTe","AsSub","AsCrk","AsValve","AsFlux","SbSub","SbCrk","SbValve","SbFlux","NRF","ReflectedRF","NFlow","ForlinePressure","PyroDeox","TCDeox",
+    "PyroGrowth","TCGrowth","GCPressure","BFBackground","HVP","PyroOffset","Description","Ga_Tip","Ga_Base","Ga_Flux","In_Tip",
+    "In_Base","In_Flux","Al_Base", "Al_Flux","La_Temp","La_Flux","Lu_Temp","Lu_Flux","As_Sub","As_Crk","Chamber_Background","BF_Background",
+    "Bi_Temp","Bi_Flux","Bi_Tip","Bi_Base","Gd_Temp","Gd_Flux", "B_Temp","B_Flux","waferTracked", "GaP_Temp", "GaP_Flux"];
+
+const materialLabels = ["id", "mat_name", "mat_description", "GrowthNum", "Name", "GaTe_temp",
+    "AsFlux", "SubstrateTemp", "NShutter", "NPower", "As_flux", "ReflectedRF", "SampleID", "AsShutter",
+    "SbValve", "SubstrateTC", "mat_Rot", "GaTeShutter", "SiTemp", "AsValve", "GaShutter", "mat_TC",
+    "ErShutter", "Si_temp", "BeShutter", "SbShutter", "Description", "BeTemp", "InShutter", "GaTeTemp",
+    "As_valve", "SiShutter", "ForlinePressure", "Be_temp", "mat_pyro", "NFlow", "SbFlux", "AlShutter",
+    "NOptical"];
+
+function Layer({layerData}) {
+
+    const { dark, key } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
+    const [expanded, setExpanded] = useState(false);
+    const [data, setData] = useState(null);
+    useEffect(() => {
+        setData(
+            materialLabels.filter(label => layerData[label] ? true : false)
+            .map(label => [label, layerData[label]])
+        );
+    }, []);
+
+    if(!data) return (<View />);
+    return (
+        <View style={{marginVertical: 5}}>
+            <View>
+                <Text style={styles.layerTitle}>{layerData.mat_name} - {layerData.mat_description}</Text>
+                <TouchableOpacity
+                    onPress={() => setExpanded(!expanded)}
+                    >
+                    {expanded ? (
+                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <AntDesign name="caretup" size={20} color="black" />
+                            <Text> Hide details</Text>
+                        </View>
+                    ) : (
+                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <AntDesign name="caretdown" size={20} color="black" />
+                            <Text> Show details</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
+            </View>
+            {expanded ?
+                (<Table
+                    style={{margin: 5}}
+                    borderStyle={{borderWidth: 1}}>
+                    <Rows data={data} />
+                </Table>) : (<View />)
+            }
+        </View>
+    );
+}
 
 export default function GrowthDetails(props) {
-    let growth = props.route.params.growth;
-    let sampleID = props.route.params.sampleID;
-    const tableTitle = ["id", "SampleID", "Grower", "Machine","Date", "HolderID","GrowthNum","Substrate", "SubstrateSize",
-      "GaTip", "GaBase", "GaFlux", "InTip","InBase", "InFlux", "AlBase", "AlFlux", "Er", "ErFlux", "Si",
-      "Be","GaTe","AsSub","AsCrk","AsValve","AsFlux","SbSub","SbCrk","SbValve","SbFlux","NRF","ReflectedRF","NFlow","ForlinePressure","PyroDeox","TCDeox",
-      "PyroGrowth","TCGrowth","GCPressure","BFBackground","HVP","PyroOffset","Description","Ga_Tip","Ga_Base","Ga_Flux","In_Tip",
-      "In_Base","In_Flux","Al_Base", "Al_Flux","La_Temp","La_Flux","Lu_Temp","Lu_Flux","As_Sub","As_Crk","Chamber_Background","BF_Background",
-      "Bi_Temp","Bi_Flux","Bi_Tip","Bi_Base","Gd_Temp","Gd_Flux", "B_Temp","B_Flux","waferTracked", "GaP_Temp", "GaP_Flux"];
+    const { dark, key } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
 
-      const tableData = [[growth.id], [sampleID], [growth.grower], [growth.machine],[growth.date], [growth.holderID],[growth.growthNum],[growth.substrate], [growth.substrateSize],
-        [growth.GaTip], [growth.GaBase], [growth.GaFlux], [growth.InTip], [growth.InBase], [growth.InFlux], [growth.AlBase], [growth.AlFlux], [growth.Er], [growth.ErFlux], [growth.Si],
-        [growth.Be],[growth.GaTe],[growth.AsSub],[growth.AsCrk],[growth.AsValve],[growth.AsFlux],[growth.SbSub],[growth.SbCrk],[growth.SbValve],[growth.SbFlux],[growth.NRF],[growth.ReflectedRF],[growth.NFlow],[growth.ForlinePressure],[growth.PyroDeox],[growth.TCDeox],
-        [growth.PyroGrowth],[growth.TCGrowth],[growth.GCPressure],[growth.BFBackground],[growth.HVP],[growth.PyroOffset],[growth.Description],[growth.Ga_Tip],[growth.Ga_Base],[growth.Ga_Flux],[growth.In_Tip],
-        [growth.In_Base],[growth.In_Flux],[growth.Al_Base], [growth.Al_Flux],[growth.La_Temp],[growth.La_Flux],[growth.Lu_Temp],[growth.Lu_Flux],[growth.As_Sub],[growth.As_Crk],[growth.Chamber_Background],[growth.BF_Background],
-        [growth.Bi_Temp],[growth.Bi_Flux],[growth.Bi_Tip],[growth.Bi_Base],[growth.Gd_Temp],[growth.Gd_Flux], [growth.B_Temp],[growth.B_Flux], [growth.waferTracked], [growth.GaP_Temp], [growth.GaP_Flux]];
+    const [growth, setGrowth] = useState(null);
+    const [labels, setLabels] = useState(null);
+    const [tableData, setTableData] = useState(null);
+    useEffect(() => {
+        let grw = props.route.params.growth;
+        grw.SampleID = props.route.params.sampleID;
+        let mapping = tableLabels.map(label => grw[label]);
 
+        console.log(tableLabels
+        .filter(label => grw[label] ? true : false)
+        .map(label => [label, grw[label]]));
+
+        setTableData(
+            tableLabels
+            .filter(label => grw[label] ? true : false)
+            .map(label => [label, grw[label]])
+        );
+
+        setLabels(tableLabels.filter((_, i) => mapping[i] ? true : false));
+        setGrowth(mapping.filter(entry => entry ? true : false).map(entry => [entry]));
+    }, []);
+
+    const [layers, setLayers] = useState({loaded: false, data: []});
+    useEffect(() => {
+        async function get() {
+            let { statusCode, materials } = await fetch(`${BASE_URL}/machine/${props.route.params.growth.machine}/materials/${props.route.params.sampleID}`, {
+                headers: {"x-api-key": key}
+            }).then(r => r.json());
+            if(statusCode != 200) setLayers({loaded: true, data: []});
+            else {
+                materials = materials.filter(({GrowthNum}) => GrowthNum === props.route.params.growth.growthNum);
+                setLayers({loaded: true, data: materials});
+            }
+        }
+        get();
+    }, [props.route.params.growth, props.route.params.sampleID]);
+
+    if(!tableData) return (<View/>);
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={{paddingBottom: 20}}>
-                    <Text style={{fontSize: 16, fontWeight: '500'}}>Details for growth {growth.id}:</Text>
-                </View>
-                <TableWrapper style={styles.wrapper}>
-                    <Table borderStyle={{borderWidth: 1}}>
-                        <Col data={tableTitle}/>
+        <View style={[styles.mainContainer, {padding: 3, height: "100%"}]}>
+            <ScrollView>
+                <View style={{width: Platform.OS === "web" ? "50%" : "95%", alignSelf: "center"}}>
+                    <Table
+                        style={styles.titleTable}>
+                        <Rows
+                            textStyle={{fontSize: 16, marginBottom: 4}}
+                            data={[
+                                ["Description", props.route.params.growth.Description],
+                                ["Grower", props.route.params.growth.grower],
+                            ]}
+                            />
                     </Table>
+                </View>
+
+                <View style={{paddingBottom: 20}}>
+                    <Text style={{fontSize: 16, fontWeight: '500'}}>All data for growth {props.route.params.sampleID}-{growth[0][0]}:</Text>
+                </View>
+
+                <TableWrapper style={{}}>
                     <Table borderStyle={{borderWidth: 1}}>
-                    <Col data={tableData}/>
+                        <Rows data={tableData} />
                     </Table>
                 </TableWrapper>
-            </View>
-        </ScrollView>
+
+                <View style={styles.divider} />
+                {layers.loaded && layers.data.length > 0 ? (
+                    <View>
+                        <Text style={styles.layerLabel}>Found {layers.data.length} layer{layers.data.length === 1 ? "" : "s"} associated with this growth.</Text>
+                        {layers.data.map((layerData, i) => (
+                            <Layer
+                                key={i}
+                                layerData={layerData} />))}
+                    </View>
+                ) : layers.loaded && layers.data.length === 0 ? (
+                    <View>
+                        <Text style={styles.layerLabel}>This growth has no layers associated with it.</Text>
+                    </View>
+                ) : (
+                    <View>
+                        <ActivityIndicator />
+                    </View>
+                )}
+                <View style={{height: 45}} />
+            </ScrollView>
+        </View>
     );
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
+const LocalStyles = {
+    titleTable: {
+        marginBottom: 15,
+    },
+    layerTitle: {
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+    layerLabel: {
+        fontSize: 16,
+        textDecorationLine: "underline",
+        alignSelf: "center",
+        marginBottom: 10,
+    },
+    divider: {
+        height: 1,
+        borderColor: "#000",
+        borderWidth: 1,
+        width: "95%",
+        marginVertical: 10,
+        alignSelf: "center",
+    },
     container: {
         flex: 1,
         backgroundColor: "white",
-        padding: 30,
+        padding: 5,
     },
-    wrapper: { flexDirection: 'row', },
-
-})
+}

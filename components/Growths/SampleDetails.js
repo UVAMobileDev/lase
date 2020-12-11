@@ -40,7 +40,7 @@ export default function SampleDetails(props) {
                         state.growths.map(growth => (
                             <View key={growth.id} style={styles.growthRow}>
                                 <TouchableOpacity   style={{paddingLeft: 10}}
-                                        onPress={() => props.navigation.navigate("Growth Details", {growth: growth})}>
+                                        onPress={() => props.navigation.navigate("Growth Details", {growth: growth, sampleID: growth.sampleID})}>
                                     <Text style={styles.firstRowItem}>{growth.id}</Text>
                                 </TouchableOpacity>
                                 <Text style={styles.rowText}>{growth.sampleID}</Text>
