@@ -57,13 +57,11 @@ export default function ViewPublication(props) {
     // This is a variable that contains a single item that passed from ViewTab.js
     let publication = props.route.params.publication;
 
-    let top_title = ['Field name: ', 'Information: '];
-    let detail = [];
-
-
+    const top_title = ['Field name: ', 'Information: '];
 
     // Sources are fetched asynchronously and stored using a hook.
-    let [sources, setSources] = useState({loaded: false, items: []});
+    const [sources, setSources] = useState({loaded: false, items: []});
+    const [details, setDetails] = useState(null);
 
     // This effect functions similarly to many of the other hooks in this project,
     //  aside from the fact that it also sets the title of the navigation tab.
@@ -82,37 +80,38 @@ export default function ViewPublication(props) {
         get();
     }, [publication.id]);
 
-    if (publication) {
-        let key_arr = Object.keys(publication);
-        for (let key of key_arr) {
-            if (publication[key] !== null) {
-                detail.push([key,(publication[key])]);
+    useEffect(() => {
+        let detail = [];
+        if (publication) {
+            let key_arr = Object.keys(publication);
+            for (let key of key_arr) {
+                if (publication[key] !== null) {
+                    detail.push([key,(publication[key])]);
+                }
+            }
+            detail.push(['Citation',(<Publication key = {publication.id} data = {publication}/>)]); //added citations of publication to the array to render
+            for (let i = 0; i < detail.length; i++) {
+                if (detail[i][0] === 'typeID') {
+                    let temp = AllTypes[detail[i][1]]; // Ex: article if typeID is 1
+                    detail[i][1] = detail[i][1].toString() + ' (' + temp + ')';
+                }
             }
         }
-        detail.push(['Citation',(<Publication key = {publication.id} data = {publication}/>)]); //added citations of publication to the array to render
-        for (let i = 0; i < detail.length; i++) {
-            if (detail[i][0] === 'typeID') {
-                let temp = AllTypes[detail[i][1]]; // Ex: article if typeID is 1
-                detail[i][1] = detail[i][1].toString() + ' (' + temp + ')';
-            }
-        }
+        setDetails(detail);
+    }, [publication]);
 
-
-        return (
-            <View style = {styles.container}>
-                <ScrollView>
-                    <View style = {styles.tableContainer}>
-                        <Table borderStyle = {{borderWidth: 0.5, borderColor: '#808080'}}>
-                            <Row data = {top_title} style = {styles.top_table} textStyle = {styles.text_table_title}/>
-                            <Rows data = {detail} textStyle = {styles.text_table}/>
-                        </Table>
-                    </View>
-                </ScrollView>
-            </View>
-        )
-    }
-
-
+    return (
+        <View style = {styles.container}>
+            <ScrollView>
+                <View style = {styles.tableContainer}>
+                    <Table borderStyle = {{borderWidth: 0.5, borderColor: '#808080'}}>
+                        <Row data = {top_title} style = {styles.top_table} textStyle = {styles.text_table_title}/>
+                        <Rows data = {details} textStyle = {styles.text_table}/>
+                    </Table>
+                </View>
+            </ScrollView>
+        </View>
+    )
 
     // Backup return which kicks in if, for some reason, a Record component was
     //  asked to be rendered but was not given a record to load.

@@ -85,52 +85,13 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
     let allow_submission = true; // this boolean variable will be a signal whether we allow the users to submit the publication or not
 
     // This is to check if the user already enter all needed information
-    // First loop is to iterate through all properties of a publication that user wants to submit
-    // Second loop is to iterate though all properties of a chosen type
-    /*
-    for (let j = 0; j < required_keys.length; j++) {
-        if (publication[required_keys[j]] === "") {
-            allow_submission = false;
-            break;
-        }
-    }
-    */
-
     for(let key of required_keys) {
-        console.log(key);
-        console.log(publication[key]);
-        /*
-        if(typeof publication[key] == "undefined") {
-            allow_submission = false;
-            break;
-        } */
         if(!publication[key] || publication[key] === "") {
             allow_submission = false;
             break;
         }
     }
 
-    /*
-
-    for (let i of Object.keys(publication)) {
-        //console.log(i);
-        for (let j = 0; j < required_keys.length; j++) {
-
-            if (i === required_keys[j]) {
-
-                // If it is equal to empty string, that means user did not enter information on this field yet
-                if (publication[i] === "") {
-                    allow_submission = false; // immediately set signal to false to inform the system that user cannot submit the publication without required field
-                }
-            }
-        }
-    }
-
-    */
-    /* Example of using object.key:
-        obj = {id: 1, author: Henry, typeID: 2}
-        Object.key(obj) = ["id", "author" ," typeID"]
-    */
     let submission = Object.keys(publication).filter(key => acceptableKeys.includes(key) || key === "typeID" ).reduce((acc, cur) => {
         acc[cur] = publication[cur]; // -> this is an object, not an array
         return acc;
@@ -159,7 +120,6 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
             })
         });
         let parsed = await response.json();
-        console.log(parsed);
         // Navigate to View Publication tab, then open the newly created publication.
         nav.navigate("All publications");
         nav.navigate("View Tab", {publication});
@@ -170,7 +130,7 @@ const SubmitForm = async (nav,publication, filterFields,types_arr, setHighlight)
 }
 
 
-export default function InsertTab(props){
+export default function InsertTab(props) {
 
     // Use reducer to handle changing fields of an object
     // Its first paramter is a function
@@ -210,79 +170,51 @@ export default function InsertTab(props){
     return (
         <View style = {styles.container}>
             <ScrollView>
-
-                <Text style = {styles.title}>
-                    Create a new publication:
-                </Text>
+                <Text style = {styles.title}>Create a new publication:</Text>
                 <View style = {{flexDirection: 'row'}}>
-                    <Text style = {styles.section}>
-                        Type of publication: </Text>
-
+                    <Text style = {styles.section}>Type of publication: </Text>
                     <Text style = {styles.asterisk}>Required * </Text>
                 </View>
-
-
-
-                    <View style = {styles.ScrollMenu}>
-                        {/* This is for the scroll-menu for choosing type to public */}
-                        <RNPickerSelect InputAccessoryView={() => null}
-                                placeholder={{label: "Choose type", value: 0}}
-                                onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}
-                                items={types.map(({label, id}) => (
-                                    {label, value: id}
-                                ))}/>
-                    </View>
-
-
-                    <Text style = {styles.section}> Publication Details: </Text>
-
-                    <View style = {styles.recordArea}>
-
-                        {types.length > 0 ? (
-                            <View style = {styles.ScrollMenu}>
-
-                                {filterFields.map(field => (
-                                    <View key = {field.key} style = {styles.infoRow}>
-                                        <View style = {{width: '40%'}}>
-                                            <Text style = {styles.fieldName}> {field.key}: </Text>
-                                        </View>
-
-                                        {/*
-                                            style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' ? [styles.inputBox, {borderColor: "red", borderWidth: 1}] : styles.inputBox}
-                                        */}
-                                        <View style = {{width: '60%'}}>
-                                            <TextInput
-                                                        style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' && !publication[field.key] ? styles.inputBox_require : styles.inputBox}
-                                                        key={field.key}
-                                                        value={publication[field.key] || ""}
-                                                        onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
-                                                        placeholder={`Enter ${field.key} ${checkIfrequire(publication.typeID,field.key,types)}`} />
-
-                                        </View>
-
+                <View style = {styles.ScrollMenu}>
+                    {/* This is for the scroll-menu for choosing type to public */}
+                    <RNPickerSelect InputAccessoryView={() => null}
+                            placeholder={{label: "Choose type", value: 0}}
+                            onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}
+                            items={types.map(({label, id}) => (
+                                {label, value: id}
+                            ))}/>
+                </View>
+                <Text style = {styles.section}> Publication Details: </Text>
+                <View style = {styles.recordArea}>
+                    {types.length > 0 ? (
+                        <View style = {styles.ScrollMenu}>
+                            {filterFields.map(field => (
+                                <View key = {field.key} style = {styles.infoRow}>
+                                    <View style = {{width: '40%'}}>
+                                        <Text style = {styles.fieldName}> {field.key}: </Text>
                                     </View>
-
-                                ))}
-                            </View>
-                        ) : (<View/>) }
-                    </View>
-
-
-
+                                    <View style = {{width: '60%'}}>
+                                        <TextInput
+                                                    style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' && !publication[field.key] ? styles.inputBox_require : styles.inputBox}
+                                                    key={field.key}
+                                                    value={publication[field.key] || ""}
+                                                    onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
+                                                    placeholder={`Enter ${field.key} ${checkIfrequire(publication.typeID,field.key,types)}`} />
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    ) : (<View/>) }
+                </View>
                 <View style = {styles.submitArea}>
                     <Text style = {styles.warnText}> NOTE: You cannot edit your publication once it is submitted. Please carefully review your publication! </Text>
                     <Button title = "Submit publication"
                             color = {Jet}
                             onPress = {() => SubmitForm(props.navigation, publication,filterFields,types, setHighlight)}/>
-                    <Text> {/*console.log(filterFields)*/}</Text>
-
                 </View>
             </ScrollView>
-
         </View>
-    )
-
-
+    );
 }
 
 const styles = StyleSheet.create({

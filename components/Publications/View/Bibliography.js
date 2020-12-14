@@ -36,7 +36,7 @@ export default function Bibliography(props) {
         <View style={[styles.mainBackground, {flex: 1}]}>
             <ScrollView style={{flex: 1}}>
                 {citations.loaded ? citations.items : (
-                    <Text>it's loading mate</Text>
+                    <ActivityIndicator />
                 )}
             </ScrollView>
         </View>
