@@ -48,8 +48,13 @@ export default function DeleteManager(props) {
 
     const givenID = props.route.params && props.route.params.toDelete ? props.route.params.toDelete.id : null;
 
+    useEffect(() => {
+        setTarget(props.route.params && props.route.params.toDelete ? ({...DEFAULT_TARGET, ...props.route.params.toDelete}) : DEFAULT_TARGET);
+    }, [givenID]);
+
     // Initialize deletion target based on whether we were navigated here by a delete button from elsewhere.
-    const [deletionTarget, setTarget] = useState(props.route.params && props.route.params.toDelete ? ({...DEFAULT_TARGET, ...props.route.params.toDelete}) : DEFAULT_TARGET);
+    const [deletionTarget, setTarget] = useState(DEFAULT_TARGET);
+    // const [deletionTarget, setTarget] = useState(props.route.params && props.route.params.toDelete ? ({...DEFAULT_TARGET, ...props.route.params.toDelete}) : DEFAULT_TARGET);
     const [previewData, setPreviewData] = useState(null);
     const [waferTypes, setWaferTypes] = useState([]);
     const [machines, setMachines] = useState([]);
@@ -109,8 +114,8 @@ export default function DeleteManager(props) {
         get();
     }, []);
     useEffect(() => {
-        setTarget({...deletionTarget, id: givenID});
-    }, [deletionTarget.type, deletionTarget.table, deletionTarget.machine, givenID]);
+        setTarget({...deletionTarget, id: null});
+    }, [deletionTarget.type, deletionTarget.table, deletionTarget.machine]);
     useEffect(() => {
         if(deletionTarget.id) {
             setPreviewData(null);
