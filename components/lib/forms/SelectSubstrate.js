@@ -1,22 +1,20 @@
-// Form component which allows to select between different available LASE systems.
+// Form component which allows to select between different substrates.
 // To avoid duplicating web requests, the component utilizes static class resources
 // to fetch and store the list of systems ONE time, then use that list whenever it
 // is needed.
 
 // Imports
 import React from 'react';
-import { View, StyleSheet, Picker } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import { BASE_URL } from '../../../constants/API';
 const fetch = require('node-fetch');
+import { BASE_URL } from '../../../constants/API';
 var Semaphore = require('async-mutex').Semaphore;
 
-// All of the comments from SelectMember.js are applicable here as well. From a
-//  technical perspective, this component does the exact same thing.
-export default class SelectSystem extends React.Component {
+export default class SelectSubstrate extends React.Component {
     constructor(props) {
         super(props);
-        SelectSystem.LoadSystems(this);
+        SelectSubstrate.LoadSubstrates(this, SelectSubstrate.loaded);
         this.state = {
             style: props.style || {},
             update: props.update,
@@ -24,33 +22,37 @@ export default class SelectSystem extends React.Component {
         };
     }
 
-    static loaded = false
-    static systems = []
+    // Static class variables
+    static loaded = false;
+    static substrates = [];
     static lock = new Semaphore(1);
-    static LoadSystems = async (instance, alreadyDone) => {
+
+    static LoadSubstrates = async (instance, alreadyDone) => {
         if(alreadyDone) return;
-        const [_, release] = await SelectSystem.lock.acquire();
+        //  the value to an underscore.
+        const [_, release] = await SelectSubstrate.lock.acquire();
         try {
-            if(SelectSystem.loaded) return;
-            let parsed = await fetch(`${BASE_URL}/settings/machines`).then(r => r.json());
-            SelectSystem.systems = parsed.machines;
-            SelectSystem.loaded = true;
+            if(SelectSubstrate.loaded) return;
+            let parsed = await fetch(`${BASE_URL}/settings/substrates`).then(r => r.json());
+            SelectSubstrate.substrates = parsed.substrates.map(({substrate}) => substrate).sort();
+            SelectSubstrate.loaded = true;
         } finally {
             release();
-            instance.setState(Object.assign({_: null}, instance.state));
+            instance.setState(Object.assign({_: true}, instance.state));
         }
     }
 
     render() {
         return (
             <View style={this.state.style}>
-                <RNPickerSelect style={pickerStyle}
-                                placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
-                                InputAccessoryView={() => null}
-                                onValueChange={val => this.state.update(val)}
-                                items={SelectSystem.systems.map(sys => (
-                                    {label: `${sys}`, value: sys}
-                                ))}/>
+                <RNPickerSelect
+                    style={pickerStyle}
+                    placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
+                    InputAccessoryView={() => null}
+                    onValueChange={substrate => this.state.update(substrate)}
+                    items={SelectSubstrate.substrates.map(substrate => (
+                        {label: `${substrate}`, value: substrate}
+                    ))}/>
             </View>
         );
     }

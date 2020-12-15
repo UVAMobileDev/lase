@@ -31,6 +31,7 @@ export default class SelectMember extends React.Component {
         //  component's input field and saves it. The best example would be passing
         //  the update function of a hook.
         this.state = {
+            style: props.style || {},
             update: props.update,
             placeholder: props.placeholder
         };
@@ -93,7 +94,7 @@ export default class SelectMember extends React.Component {
 
     render() {
         return (
-            <View>
+            <View style={this.state.style}>
                 <RNPickerSelect style={pickerStyle}
                                 placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
                                 InputAccessoryView={() => null}

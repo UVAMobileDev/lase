@@ -16,6 +16,7 @@ export default class SelectType extends React.Component {
         SelectType.LoadTypes(this, SelectType.loaded);
 
         this.state = {
+            style: props.style,
             update: props.update,
             placeholder: props.placeholder
         };
@@ -47,7 +48,7 @@ export default class SelectType extends React.Component {
 
     render() {
         return (
-            <View>
+            <View style={this.state.style}>
                 <RNPickerSelect style={StyleSheet.flatten(styles.picker)}
                         placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
                         InputAccessoryView={() => null}
