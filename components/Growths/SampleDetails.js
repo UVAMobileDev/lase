@@ -50,7 +50,7 @@ export default function SampleDetails(props) {
                         ))
                     }
                     <TouchableOpacity style={[styles.growthRow, styles.addButton]}
-                            onPress={() => props.navigation.navigate("Add Growth", {sampleID: sampleID})}>
+                            onPress={() => props.navigation.navigate("Add Growth", {sampleID, machine})}>
                         <View style={{paddingLeft: 10}}>
                             <Entypo name="add-to-list"
                                     size={20}

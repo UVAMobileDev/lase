@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Button,
 import { BASE_URL } from '../../constants/API.js';
 import SelectSystem from '../lib/forms/SelectSystem';
 import SelectMember from '../lib/forms/SelectMember';
+import SelectSubstrate from '../lib/forms/SelectSubstrate';
+import SelectSubstrateSize from '../lib/forms/SelectSubstrateSize';
+import Checkbox from '../lib/forms/Checkbox';
 import { API_KEY } from '../../keys';
 const fetch = require("node-fetch");
 const moment = require("moment");
@@ -72,8 +75,10 @@ const MATERIAL_DEFAULTS = {
     }
 }
 
+const TRACK_BY_DEFAULT = true;
+
 const SubmitForm = async (nav, growthRecord) => {
-    let response = await fetch(`${BASE_URL}/machine/${growthRecord.machine}/growths`, {
+    let response = await fetch(`${BASE_URL}/machine/${growthRecord.Machine}/growths`, {
         method: "PUT",
         headers: {
             "x-api-key": API_KEY,
@@ -86,11 +91,57 @@ const SubmitForm = async (nav, growthRecord) => {
     let parsed = await response.json();
 
     // open the newly created growth record
-    nav.navigate("Growth Details", {growth: growthRecord});
+    // nav.navigate("Growth Details", {growth: growthRecord});
 }
 
 export default function AddGrowth(props) {
+    const [form, updateForm] = useReducer((state, {key, value}) => ({...state, [key]: value}), {
+        SampleID: props.route.params.sampleID,
+        Date: moment().format("YYYY-MM-DD"),
+        Machine: "",
+        SubstrateSize: "",
+    });
+
+    const [substrates, setSubstrates] = useState([]);
+    useEffect(() => {
+        async function load() {
+            let { substrates } = await fetch(`${BASE_URL}/settings/substrates`,
+                { headers: { "x-api-key": "###TODO###" } }).then(r => r.json());
+            setSubstrates(substrates);
+        }
+        load();
+    }, []);
+
     const [machineSources, setMSS] = useState([]);
+    useEffect(() => {
+        // Set screen title
+        props.navigation.setOptions({
+            title: `Add Growth to ${props.route.params.sampleID}`,
+        });
+
+        async function load_sources() {
+            let machines = await fetch(`${BASE_URL}/settings/machines`).then(async r => (await r.json()).machines);
+            let sources = await Promise.all(machines.map(async m => ({
+                machine: m,
+                sources: await fetch(`${BASE_URL}/machine/${m}/sources`).then(async r => (await r.json()).sources),
+            })));
+            setMSS(sources.concat([{
+                machine: "",
+                sources: [],
+            }]));
+        }
+
+        async function get_growth_num() {
+            const resp = await fetch(`${BASE_URL}/machine/${props.route.params.machine}/growths?SampleID=${props.route.params.sampleID}`).then(r => r.json());
+            if(resp.statusCode !== 200) window.alert("Growth number could not be retrieved");
+
+            let num = parseInt(resp.results.reduce((acc, { growthNum }) => growthNum > acc ? growthNum : acc, Number.NEGATIVE_INFINITY)) + 1;
+            updateForm({key: "GrowthNum", value: num ? num : 1});
+        }
+
+        load_sources();
+        get_growth_num();
+    }, []);
 
     // The value determines which entry area / material is currently shone
     const [view, updateView] = useReducer((state, {section, value}) => ({...state, [section]: value}), {
@@ -115,10 +166,10 @@ export default function AddGrowth(props) {
                 break;
 
             // Add a new material by inserting the default for the current machine
-            // Random and *hopefully* unique key is generated for managing the layer
+            // Unique key is generated from the current time
             case "insert":
                 nextState.push(Object.assign({}, MATERIAL_DEFAULTS[action.machine], {
-                    key: parseInt(Math.random() * 10000),
+                    key: moment().valueOf(),
                 }));
                 break;
 
@@ -130,32 +181,27 @@ export default function AddGrowth(props) {
         return nextState;
     }, []);
 
-    const [form, updateForm] = useReducer((state, {key, value}) => ({...state, [key]: value}), {
-        sampleID: props.route.params.sampleID,
-        date: moment().format("YYYY-MM-DD"),
-        machine: "",
-    });
+    const [doTracking, toggleTracking] = useReducer(doTracking => doTracking, TRACK_BY_DEFAULT);
+    async function TrackWafer() {
+        if(!doTracking) return;
 
-    useEffect(() => {
-        // Set screen title
-        props.navigation.setOptions({
-            title: `Add Growth to ${props.route.params.sampleID}`,
-        });
-
-        const load_sources = async () => {
-            let machines = await fetch(`${BASE_URL}/settings/machines`).then(async r => (await r.json()).machines);
-            let sources = await Promise.all(machines.map(async m => ({
-                machine: m,
-                sources: await fetch(`${BASE_URL}/machine/${m}/sources`).then(async r => (await r.json()).sources),
-            })));
-            setMSS(sources.concat([{
-                machine: "",
-                sources: [],
-            }]));
+        // Check wafer validity
+        console.log((substrates.find(({substrate}) => substrate === form.Substrate) || {size: ""}).size);
+        if((substrates.find(({substrate}) => substrate === form.Substrate) || {size: ""}).size === (form.SubstrateSize.indexOf("2 inch") > -1 ? 2 : 3)) {
+            // let resp = await fetch(``, {
+            //     headers: { "x-api-key": "###TODO###" }
+            // }).then(r => r.json());
+            // console.log(resp);
+        } else {
+            // Invalid
+            window.alert("The size and type you selected are incompatible; the wafer log was not updated.");
         }
-        load_sources();
+    }
 
-    }, []);
+    function handleSubmit() {
+        // SubmitForm(props.navigation, form);
+        TrackWafer();
+    }
 
     return (
         <View style={styles.container}>
@@ -178,21 +224,45 @@ export default function AddGrowth(props) {
                     </View>
 
                     <View style={{display: view.top === 0 ? "" : "none"}}>
+                        <Text style={styles.subtitle}>Pre-filled data</Text>
                         <Text>Sample ID: {props.route.params.sampleID}</Text>
-                        <SelectSystem update={value => updateForm({key: "machine", value})}
-                            placeholder={{label: "Select a System..." , value:  ""}}/>
-                        <Text>### Substrate selection</Text>
-                        <Text>### Growth number</Text>
-                        <SelectMember update={value => updateForm({key: "grower", value})}
-                            placeholder={{label: "Select a Grower...", value: ""}}/>
-                        <Text>### Untracked wafer?</Text>
-                        <Text>Date: {form.date}</Text>
-                        <Text>### Description</Text>
+                        <Text>Growth number: {form.GrowthNum || ""}</Text>
+                        <Text>Date: {form.Date}</Text>
+                        <Text style={styles.subtitle}>Manual entry data</Text>
+                        <SelectSystem
+                            style={{margin: 5}}
+                            update={value => updateForm({key: "Machine", value})}
+                            placeholder={{label: "Select system..." , value:  ""}}/>
+                        <SelectMember
+                            style={{margin: 5}}
+                            update={value => updateForm({key: "Grower", value})}
+                            placeholder={{label: "Select grower...", value: ""}}/>
+                        <SelectSubstrate
+                            style={{margin: 5}}
+                            update={value => updateForm({key: "Substrate", value})}
+                            placeholder={{label: "Select substrate...", value: ""}}/>
+                        <SelectSubstrateSize
+                            style={{margin: 5}}
+                            update={value => updateForm({key: "SubstrateSize", value})}
+                            placeholder={{label: "Select size...", value: ""}}/>
+                        <View
+                            style={{flexDirection: "row", alignItems: "center"}}>
+                            <Text style={{marginRight: 10}}>Wafer Tracking</Text>
+                            <Checkbox
+                                startChecked={TRACK_BY_DEFAULT}
+                                onChange={toggleTracking}/>
+                        </View>
+                        <TextInput
+                            placeholder="Growth description"
+                            multiline={true}
+                            numberOfLines={3}
+                            onChangeText={desc => updateForm({key: "Description", value: desc})}
+                            value={form.Description || ""}/>
                     </View>
 
                     <View style={{display: view.top === 1 ? "" : "none"}}>
                         <Text>STO Temperatures and Fluxes</Text>
-                        {machineSources.length > 0 ? machineSources.find(({machine}) => machine === form.machine).sources.filter(({sto, active}) => sto && active).map(src => (
+                        {machineSources.length > 0 ? machineSources.find(({machine}) => machine === form.Machine).sources.filter(({sto, active}) => sto && active).map(src => (
                             <View key={src.id}>
                                 <Text>{src.source}</Text>
                                 {src.tip ? (<Text>### Tip: {src.tip_idle || 0}</Text>): (<View/>)}
@@ -202,7 +272,7 @@ export default function AddGrowth(props) {
                             </View>
                         )) : (<View/>)}
                         <Text>Group Vs</Text>
-                        {machineSources.length > 0 ? machineSources.find(({machine}) => machine === form.machine).sources.filter(({crk, valve}) => crk && valve).map(src => (
+                        {machineSources.length > 0 ? machineSources.find(({machine}) => machine === form.Machine).sources.filter(({crk, valve}) => crk && valve).map(src => (
                             <View key={src.id}>
                                 <Text>{src.source}</Text>
                                 <Text>### Sublimator Temp: {src.sub_idle || 0}</Text>
@@ -227,16 +297,14 @@ export default function AddGrowth(props) {
                         onPress={() => dispatchMaterials({type: "insert", machine: form.machine})}>
                         <AntDesign name="pluscircleo" size={24} color="black" />
                     </TouchableOpacity>
-                    <Text>{materials.length}</Text>
-                    <Text>{view.bottom}</Text>
                     {materials.map((mat, i) => (
                         <View key={mat.key} style={{flexDirection: "row"}}>
                             {i > 0 ? (<TouchableOpacity
-                                onPress={() => null}>
+                                onPress={() => dispatchMaterials({type: "reorder", src: i, dst: i - 1})}>
                                 <AntDesign name="up" size={24} color="black" />
                             </TouchableOpacity>): (<View/>)}
                             {i < materials.length - 1 ? (<TouchableOpacity
-                                onPress={() => null}>
+                                onPress={() => dispatchMaterials({type: "reorder", src: i, dst: i + 1})}>
                                 <AntDesign name="down" size={24} color="black" />
                             </TouchableOpacity>): (<View/>)}
                             <TouchableOpacity
@@ -266,7 +334,7 @@ export default function AddGrowth(props) {
                 <Text style={{color: 'red', textAlign: "left", padding: 20}}>Once submitted, a growth cannot be edited.</Text>
                 <Button style={{flexDirection: 'row', marginTop: -15, width: 500}}
                     title="SUBMIT GROWTH"
-                    onPress={() => SubmitForm(props.navigation, growthRecord)}/>
+                    onPress={handleSubmit}/>
             </View>
         </View>
     )
