@@ -4,10 +4,12 @@
 
 // Imports
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { openURL } from 'expo-linking';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import Publication from '../../Publications/Publication.js';
 import Footer from '../Footer';
 import { BASE_URL } from '../../../constants/API.js';
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Publications(props) {
     const [pubs, setPubs] = useState({loaded: false, items: []});
@@ -33,17 +35,41 @@ export default function Publications(props) {
 
     return (
         <View style={styles.container}>
-            {
-                pubs.loaded ? (
-                    <ScrollView >
-                        <Text>Showing {pubs.items.length} publications.</Text>
-                        <View>
-                            {pubs.items.map(pub => (<Publication key={pub.id} data={pub} />))}
-                        </View>
-                        <Footer />
-                    </ScrollView>
-                ) : (<ActivityIndicator/>)
-            }
+            {pubs.loaded ? (
+                <ScrollView style={{padding: 15}}>
+                    <Text style={{textAlign: "center", fontSize: 20, fontWeight: "bold"}}>Showing {pubs.items.length} publications</Text>
+                    <View>
+                        {pubs.items.map(pub => (
+                            <View
+                                style={{flexDirection: "row", alignItems: "center"}}>
+                                <Publication
+                                    key={pub.id}
+                                    data={pub}
+                                    />
+                                {pub.file ? (
+                                    <TouchableOpacity
+                                        style={{flexDirection: "row", alignItems: "center", margin: 5}}
+                                        onPress={() => Platform.OS === "web" ? window.open(`https://lase.mer.utexas.edu/documents/library/${pub.file.indexOf(":") > -1 ? pub.file.substring(0, pub.file.indexOf(":")) : pub.file}`, "_blank") : openURL(`https://lase.mer.utexas.edu/documents/library/${pub.file.indexOf(":") > -1 ? pub.file.substring(0, pub.file.indexOf(":")) : pub.file}`)}>
+                                        <Entypo name="link" size={24} color="blue" />
+                                        <Text>PDF</Text>
+                                    </TouchableOpacity>
+                                ) : (<View/>)}
+                                {pub.url ? (
+                                    <TouchableOpacity
+                                        style={{flexDirection: "row", alignItems: "center"}}
+                                        onPress={() => Platform.OS === "web" ? window.open(pub.url, "_blank") : openURL(pub.url)}>
+                                        <MaterialCommunityIcons name="file-document-box-check-outline" size={24} color="blue" />
+                                        <Text>DOI</Text>
+                                    </TouchableOpacity>
+                                ) : (<View/>)}
+                            </View>
+                        ))}
+                    </View>
+                    <Footer />
+                </ScrollView>
+            ) : (
+                <ActivityIndicator style={{margin: 25}}/>
+            )}
         </View>
     );
 }

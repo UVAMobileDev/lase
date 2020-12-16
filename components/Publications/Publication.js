@@ -48,8 +48,8 @@ const Formatters = [
             </Text>
         </Text>
     ),
-    pub => `book`,
-    pub => `booklet`,
+    pub => (<Text>No publication renderer for type `book`</Text>),
+    pub => (<Text>No publication renderer for type `booklet`</Text>),
 
     // (Invited) S.R. Bank, "New approaches to the seamless integration of plasmonics, metasurfaces, and dielectric scatters into photonic devices," Materials Research Symposium (MRS) Fall Meeting, Boston, MA, Nov. 2017.
     pub => (
@@ -74,21 +74,21 @@ const Formatters = [
         </Text>
     ),
     // pub => `${pub.note ? `(${pub.note})` : ``} ${pub.author}, "${pub.title}" ${pub.bookTitle}, ${pub.address}, ${pub.month} ${pub.year}.`, //`conference`,
-    pub => `electronic`,
-    pub => `inbook`,
-    pub => `incollection`,
-    pub => `inproceedings`,
-    pub => `manual`,
-    pub => `mastersthesis`,
-    pub => `misc`,
-    pub => `other`,
-    pub => `patent`,
-    pub => `periodical`,
-    pub => `phdthesis`,
-    pub => `proceedings`,
-    pub => `standard`,
-    pub => `techreport`,
-    pub => `unpublished`,
+    pub => (<Text>No publication renderer for type `electronic`</Text>),
+    pub => (<Text>No publication renderer for type `inbook`</Text>),
+    pub => (<Text>No publication renderer for type `incollection`</Text>),
+    pub => (<Text>No publication renderer for type `inproceedings`</Text>),
+    pub => (<Text>No publication renderer for type `manual`</Text>),
+    pub => (<Text>No publication renderer for type `mastersthesis`</Text>),
+    pub => (<Text>No publication renderer for type `misc`</Text>),
+    pub => (<Text>No publication renderer for type `other`</Text>),
+    pub => (<Text>No publication renderer for type `patent`</Text>),
+    pub => (<Text>No publication renderer for type `periodical`</Text>),
+    pub => (<Text>No publication renderer for type `phdthesis`</Text>),
+    pub => (<Text>No publication renderer for type `proceedings`</Text>),
+    pub => (<Text>No publication renderer for type `standard`</Text>),
+    pub => (<Text>No publication renderer for type `techreport`</Text>),
+    pub => (<Text>No publication renderer for type `unpublished`</Text>),
 ];
 
 const FormatPublication = pub => Formatters[pub.typeID](pub);
@@ -126,15 +126,10 @@ export default class Publication extends React.Component {
     render() {
         if(Publication.loadedTypes) return (
             <View>
-                {
-                    FormatPublication(this.state.publication)
-                }
+                {FormatPublication(this.state.publication)}
             </View>
         )
-
-        return (
-            <View/>
-        );
+        return (<View/>);
     }
 }
 
