@@ -10,8 +10,6 @@ const fetch = require("node-fetch");
 const moment = require("moment");
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
 
-//adding a growth should be tied to a sampleID
-
 const Default = {
     date: "",               // Reserved
 
@@ -64,16 +62,39 @@ const Default = {
 
     waferTracked: "",       // Sample Description
 }
-
 const MATERIAL_DEFAULTS = {
     Echo: {
-        Name: "",
+        mat_name: "",
+        mat_description: "",
+        Si_temp: 350,
+        Be_temp: 350,
+        GaTe_temp: 100,
+        As_valve: 0,
+        As_flux: 0,
+        mat_Pyro: 0,
+        mat_TC: 0,
+        mat_Rot: "5 rpm",
     },
     Bravo: {
-        Name: "",
+        mat_name: "",
+        mat_description: "",
+        Si_temp: 350,
+        Be_temp: 350,
+        GaTe_temp: 100,
+        N_RF_power: 0,
+        N_RF_reflected: 0,
+        N_flow: 0,
+        N_foreline_pressure: 0,
+        N_optical: 0,
+        As_valve: 0,
+        As_flux: 0,
+        Sb_valve: 0,
+        Sb_flux: 0,
+        mat_Pyro: 0,
+        mat_TC: 0,
+        mat_Rot: "5 rpm",
     }
 }
-
 const STO_DEFAULTS = {
     Echo: {
         Chamber_Background: "",
@@ -116,18 +137,30 @@ const STO_DEFAULTS = {
         Sb_Crk: 900,
     }
 }
-
 const TRACK_BY_DEFAULT = true;
 
 export default function AddGrowth(props) {
     const key = null;
 
     const [form, updateForm] = useReducer(
-        (state, {key, value}) => ({...state, [key]: value}), {
+        (state, {key, value}) => {
+            if(key === "machine_reset") return {
+                SampleID: state.SampleID,
+                GrowthNum: state.GrowthNum,
+                Date: state.Date,
+                Machine: state.Machine,
+                Grower: state.Grower,
+                Substrate: state.Substrate,
+                SubstrateSize: state.substrateSize,
+                Description: state.Description,
+            }
+            return {...state, [key]: value}
+        }, {
         SampleID: props.route.params.sampleID,
         Date: moment().format("YYYY-MM-DD"),
         Machine: "",
         SubstrateSize: "",
+        Description: "",
     });
     const [substrates, setSubstrates] = useState([]);
     useEffect(() => {
@@ -190,11 +223,14 @@ export default function AddGrowth(props) {
                 let dst = nextState[action.dst];
                 nextState[action.dst] = nextState[action.src];
                 nextState[action.src] = dst;
+                if(action.src === view.bottom) updateView({section: "bottom", value: action.dst});
+                else if(action.dst === view.bottom) updateView({section: "bottom", value: action.src});
                 break;
 
             // Add a new material by inserting the default for the current machine
             // Unique key is generated from the current time
             case "insert":
+                if(!action.machine) return nextState;
                 nextState.push(Object.assign({}, MATERIAL_DEFAULTS[action.machine], {
                     key: moment().valueOf(),
                 }));
@@ -204,9 +240,16 @@ export default function AddGrowth(props) {
                 if(view.bottom >= action.index && !(state.length > 1 && view.bottom === 0 && action.index === 0)) updateView({section: "bottom", value: view.bottom - 1});
                 nextState.splice(action.index, 1);
                 break;
+
+            case "reset":
+                return [];
         }
         return nextState;
     }, []);
+    useEffect(() => {
+        dispatchMaterials({type: "reset"});
+        updateForm({key: "machine_reset"});
+    }, [form.Machine]);
     const [doTracking, toggleTracking] = useReducer(doTracking => doTracking, TRACK_BY_DEFAULT);
     async function TrackWafer() {
         if(!doTracking) return;
@@ -279,7 +322,7 @@ export default function AddGrowth(props) {
                         <Text style={styles.subtitle}>Manual entry data</Text>
                         <Text style={{fontSize: 10, fontWeight: "bold"}}>
                             <Text style={{color: "orange"}}>Caution:</Text>
-                            <Text> Changing the selected machine will erase data in the </Text>
+                            <Text> Changing the selected system will erase data in the </Text>
                             <Text style={{color: "red"}}>STO Temps</Text>
                             <Text> and </Text>
                             <Text style={{color: "red"}}>Deox</Text>
@@ -363,37 +406,63 @@ export default function AddGrowth(props) {
 
                 {/* Layer entry area */}
                 {form.machine !== "" ? (
-                <View>
-                    <Text>Add new layer material</Text>
+                <View style={[styles.mainDataEntry, {borderBottomWidth: 0}]}>
                     <TouchableOpacity
-                        onPress={() => dispatchMaterials({type: "insert", machine: form.machine})}>
+                        style={{flexDirection: "row", alignItems: "center"}}
+                        onPress={() => dispatchMaterials({type: "insert", machine: form.Machine})}>
                         <AntDesign name="pluscircleo" size={24} color="black" />
+                        <Text style={styles.subtitle}>Add new layer material</Text>
                     </TouchableOpacity>
                     {materials.map((mat, i) => (
-                        <View key={mat.key} style={{flexDirection: "row"}}>
-                            {i > 0 ? (<TouchableOpacity
-                                onPress={() => dispatchMaterials({type: "reorder", src: i, dst: i - 1})}>
-                                <AntDesign name="up" size={24} color="black" />
-                            </TouchableOpacity>): (<View/>)}
-                            {i < materials.length - 1 ? (<TouchableOpacity
-                                onPress={() => dispatchMaterials({type: "reorder", src: i, dst: i + 1})}>
-                                <AntDesign name="down" size={24} color="black" />
-                            </TouchableOpacity>): (<View/>)}
+                        <View key={mat.key} style={{flexDirection: "row", marginVertical: 2}}>
                             <TouchableOpacity
+                                style={{borderColor: "#000", borderWidth: 2, borderRadius: 4}}
                                 onPress={() => dispatchMaterials({type: "remove", index: i})}>
-                                <EvilIcons name="trash" size={24} color="black" />
+                                <EvilIcons name="trash" size={24} color="red" />
                             </TouchableOpacity>
+                            <View
+                                style={{flexDirection: "row", width: 48, margin: 3}}>
+                                {i > 0 ? (<TouchableOpacity
+                                    onPress={() => dispatchMaterials({type: "reorder", src: i, dst: i - 1})}>
+                                    <AntDesign name="up" size={24} color="black" />
+                                </TouchableOpacity>): (<View style={{width: 24}}/>)}
+                                {i < materials.length - 1 ? (<TouchableOpacity
+                                    onPress={() => dispatchMaterials({type: "reorder", src: i, dst: i + 1})}>
+                                    <AntDesign name="down" size={24} color="black" />
+                                </TouchableOpacity>): (<View/>)}
+                            </View>
                             <TouchableOpacity
                                 onPress={() => updateView({section: "bottom", value: i})}>
-                                {console.log(mat)}
                                 <TextInput
+                                    style={{height: "100%", marginLeft: 5}}
                                     placeholder="Layer name"
                                     onChangeText={name => dispatchMaterials({
-                                        type: "update", key: "Name", value: name, src: i})}
+                                        type: "update", key: "mat_name", value: name, src: i})}
                                     value={mat.Name}/>
                             </TouchableOpacity>
                         </View>
                     ))}
+                    {view.bottom > -1 && materials[view.bottom] ? (
+                        <View>
+                            <Text style={styles.subtitle}>Edit layer details</Text>
+                            {Object.keys(materials[view.bottom]).map(key => key === "key" ? (<View/>) : (
+                                <View style={{flexDirection: "row", alignItems: "center", marginVertical: 2}}>
+                                    <Text style={{width: 100, marginRight: 10}}>{key}</Text>
+                                    <TextInput
+                                        placeholder={key}
+                                        onChangeText={val => dispatchMaterials({
+                                            type: "update", key, value: val, src: view.bottom
+                                        })}
+                                        value={materials[view.bottom][key]}
+                                        />
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <View>
+                            <Text style={styles.subtitle}>Add a layer and click on its textbox to edit layer details</Text>
+                        </View>
+                    )}
                 </View>
                 ): (
                 <View>
