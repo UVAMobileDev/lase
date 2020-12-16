@@ -6,7 +6,6 @@ import SelectMember from '../lib/forms/SelectMember';
 import SelectSubstrate from '../lib/forms/SelectSubstrate';
 import SelectSubstrateSize from '../lib/forms/SelectSubstrateSize';
 import Checkbox from '../lib/forms/Checkbox';
-import { API_KEY } from '../../keys';
 const fetch = require("node-fetch");
 const moment = require("moment");
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
@@ -75,33 +74,61 @@ const MATERIAL_DEFAULTS = {
     }
 }
 
-const TRACK_BY_DEFAULT = true;
-
-const SubmitForm = async (nav, growthRecord) => {
-    let response = await fetch(`${BASE_URL}/machine/${growthRecord.Machine}/growths`, {
-        method: "PUT",
-        headers: {
-            "x-api-key": API_KEY,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            growthRecord,
-        })
-    });
-    let parsed = await response.json();
-
-    // open the newly created growth record
-    // nav.navigate("Growth Details", {growth: growthRecord});
+const STO_DEFAULTS = {
+    Echo: {
+        Chamber_Background: "",
+        BF_Background: "",
+        Ga_Tip: 350,
+        Ga_Base: "IDLE",
+        Ga_Flux: 0,
+        In_Tip: 350,
+        In_Base: "IDLE",
+        In_Flux: 0,
+        Bi_Tip: "IDLE",
+        Bi_Base: "IDLE",
+        Bi_Flux: 0,
+        B_Temp: "",
+        B_Flux: 0,
+        GaP_Temp: "",
+        GaP_Flux: 0,
+        As_Sub: 28.5,
+        As_Crk: 850,
+    },
+    Bravo: {
+        Chamber_Background: "",
+        BF_Background: "",
+        Ga_Tip: 350,
+        Ga_Base: "IDLE",
+        Ga_Flux: 0,
+        In_Tip: 350,
+        In_Base: "IDLE",
+        In_Flux: 0,
+        Al_Base: 800,
+        Al_Flux: 0,
+        Er_Base: 400,
+        Er_Flux: 0,
+        Bi_Tip: 350,
+        Bi_Base: "IDLE",
+        Bi_Flux: 0,
+        As_Sub: 400,
+        As_Crk: 850,
+        Sb_Sub: 72,
+        Sb_Crk: 900,
+    }
 }
 
+const TRACK_BY_DEFAULT = true;
+
 export default function AddGrowth(props) {
-    const [form, updateForm] = useReducer((state, {key, value}) => ({...state, [key]: value}), {
+    const key = null;
+
+    const [form, updateForm] = useReducer(
+        (state, {key, value}) => ({...state, [key]: value}), {
         SampleID: props.route.params.sampleID,
         Date: moment().format("YYYY-MM-DD"),
         Machine: "",
         SubstrateSize: "",
     });
-
     const [substrates, setSubstrates] = useState([]);
     useEffect(() => {
         async function load() {
@@ -111,7 +138,6 @@ export default function AddGrowth(props) {
         }
         load();
     }, []);
-
     const [machineSources, setMSS] = useState([]);
     useEffect(() => {
         // Set screen title
@@ -144,7 +170,8 @@ export default function AddGrowth(props) {
     }, []);
 
     // The value determines which entry area / material is currently shone
-    const [view, updateView] = useReducer((state, {section, value}) => ({...state, [section]: value}), {
+    const [view, updateView] = useReducer(
+        (state, {section, value}) => ({...state, [section]: value}), {
         top: 0,
         bottom: -1,
     });
@@ -180,7 +207,6 @@ export default function AddGrowth(props) {
         }
         return nextState;
     }, []);
-
     const [doTracking, toggleTracking] = useReducer(doTracking => doTracking, TRACK_BY_DEFAULT);
     async function TrackWafer() {
         if(!doTracking) return;
@@ -188,7 +214,8 @@ export default function AddGrowth(props) {
         // Check wafer validity
         console.log((substrates.find(({substrate}) => substrate === form.Substrate) || {size: ""}).size);
         if((substrates.find(({substrate}) => substrate === form.Substrate) || {size: ""}).size === (form.SubstrateSize.indexOf("2 inch") > -1 ? 2 : 3)) {
-            // let resp = await fetch(``, {
+            // Add wafer log entry
+            // let resp = await fetch(`${BASE_URL}/wafers/${form.Substrate}`, {
             //     headers: { "x-api-key": "###TODO###" }
             // }).then(r => r.json());
             // console.log(resp);
@@ -197,7 +224,28 @@ export default function AddGrowth(props) {
             window.alert("The size and type you selected are incompatible; the wafer log was not updated.");
         }
     }
+    async function SubmitForm() {
+        const resp = await fetch(`${BASE_URL}/machine/${form.Machine}/growths`, {
+            method: "PUT",
+            headers: {
+                "x-api-key": key,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                form,
+            })
+        }).then(r => r.json());
+        if(resp.statusCode !== 200) window.alert("");
+        else {
+            let { growth } = await fetch(`${BASE_URL}/machine/${form.Machine}/growths`,
+                { headers: { "x-api-key": key } })
+                .then(r => r.json());
 
+            // open the newly created growth record
+            if(growth) props.navigation.navigate("Growth Details", { growth });
+            else window.alert("Growth was inserted, but couldn't be navigated to.");
+        }
+    }
     function handleSubmit() {
         // SubmitForm(props.navigation, form);
         TrackWafer();
@@ -229,6 +277,14 @@ export default function AddGrowth(props) {
                         <Text>Growth number: {form.GrowthNum || ""}</Text>
                         <Text>Date: {form.Date}</Text>
                         <Text style={styles.subtitle}>Manual entry data</Text>
+                        <Text style={{fontSize: 10, fontWeight: "bold"}}>
+                            <Text style={{color: "orange"}}>Caution:</Text>
+                            <Text> Changing the selected machine will erase data in the </Text>
+                            <Text style={{color: "red"}}>STO Temps</Text>
+                            <Text> and </Text>
+                            <Text style={{color: "red"}}>Deox</Text>
+                            <Text> areas.</Text>
+                        </Text>
                         <SelectSystem
                             style={{margin: 5}}
                             update={value => updateForm({key: "Machine", value})}
@@ -282,10 +338,26 @@ export default function AddGrowth(props) {
                     </View>
 
                     <View style={{display: view.top === 2 ? "" : "none"}}>
-                        <Text>### HVP Power</Text>
-                        <Text>### Pyro Current Offset</Text>
-                        <Text>### Pryo Detox</Text>
-                        <Text>### Thermocouple Deox</Text>
+                        <TextInput
+                            placeholder="HVP Power - HVP"
+                            keyboardType="numeric"
+                            onChangeText={val => null}
+                            />
+                        <TextInput
+                            placeholder="Pyro Current Offset - PyroOffset"
+                            keyboardType="numeric"
+                            onChangeText={val => null}
+                            />
+                        <TextInput
+                            placeholder="Pyro Deox - PyroDeox"
+                            keyboardType="numeric"
+                            onChangeText={val => null}
+                            />
+                        <TextInput
+                            placeholder="Thermocouple Deox - TCDeox"
+                            keyboardType="numeric"
+                            onChangeText={val => null}
+                            />
                     </View>
                 </View>
 

@@ -25,7 +25,7 @@ export default function SystemViewer(props) {
     return (
         <View style={styles.container}>
             <Text style={{paddingLeft: 20, paddingTop: 20, fontSize: 16}}>Select a growth's ID to view associated growths and recipes:</Text>
-            {growths.loaded ? (
+            {growths.loaded && growths.contents.length > 0 ? (
                 <View style={styles.listContainer}>
                     <FlatList
                         style={styles.list}
@@ -47,6 +47,10 @@ export default function SystemViewer(props) {
                                 </View>
                             </View>
                         )}/>
+                </View>
+            ) : growths.loaded ? (
+                <View style={{margin: 50}}>
+                    <Text style={{fontSize: 16}}>No matching growths</Text>
                 </View>
             ) : (
                 <View style={{marginTop: 50}}>
