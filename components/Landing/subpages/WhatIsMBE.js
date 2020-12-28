@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, Platform, Dimensions, ScrollView, Image, ActivityIndicator } from 'react-native';
-import FadeIn from 'react-lazyload-fadein';
 
 const styles = StyleSheet.create({
     container: {
@@ -299,17 +298,10 @@ export default function WhatIsMBE(props) {
                     </View>
                     <Text style={styles.paragraph}>The explanation for the behavior of the absorption is the effect of strain and strain relaxation in the layers. From Fig. 7.5 it is seen that the critical layer thickness (hc.) for the formation of dislocations is on the order of 20 nm for In₀.₁Ga₀.₉As and even less for the larger In composition materials. Below hc, the layers grow pseudomorphically and are thus under a significant amount of strain. As the layers are grown beyond hc, it is energetically favorable for dislocations to form, and the epitaxial layer will partially relax to its bulk lattice constant [49]. Although the estimates of the critical thickness by both force balance models [50] and energy balance models [51] are partially successful at estimating hc[52], they do not consider the effect of growth conditions [53,54] and do not give the degree of relaxation. For In₀.₁Ga₀.₉As layers grown at 530ºC, cross-hatching is observed in the 38 nm and thicker layers. The cross-hatching increases with thickness and In composition and is indicative of the formation of misfit dislocations.</Text>
                     <View style={styles.captionedImage}>
-                        <FadeIn
-                            placeholder={<ActivityIndicator/>}
-                            offset={200}
-                            render={onload => {
-                                console.log("RENDER CALLED", onload);
-                                return (
-                                <Image
-                                    style={[styles.figure, {width: GetDimension(384, 259, true), height: GetDimension(384, 259, false)}]}
-                                    source={{uri: "https://lase.mer.utexas.edu/images/Image66.gif"}}
-                                    onLoad={() => { console.log("onload called"); onload();}} />
-                            )}}/>
+                        <Image
+                            style={[styles.figure, {width: GetDimension(384, 259, true), height: GetDimension(384, 259, false)}]}
+                            source={{uri: "https://lase.mer.utexas.edu/images/Image66.gif"}}
+                            />
                         <Text style={styles.caption}>Figure 7.5 Critical layer thickness of InₓGa₁₋ₓAs on GaAs for favorable formation of 60º threading dislocations as a function of the InAs fraction, x. Data from Ref. [48].</Text>
                     </View>
                 </View>
