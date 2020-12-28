@@ -1,8 +1,10 @@
 // A very basic component which, more or less, just displays a bunch of text.
 
 // Imports
-import React from 'react';
+import React, { useContext, useReducer, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
+import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 import Footer from '../Footer';
 
 // The paragraphs to render
@@ -43,9 +45,12 @@ const Paragraphs = [
 ];
 
 export default function Research(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
 
     return (
-        <View style={styles.container}>
+        <View style={styles.componentBackground}>
             <ScrollView>
                 <View style={styles.researchFigure}>
                     <Image  style={{width: "100%", height: "100%"}}
@@ -59,8 +64,8 @@ export default function Research(props) {
                     Paragraphs.map(item => (
                         <View   key={item.id}
                                 style={styles.researchTopic}>
-                            <Text style={styles.topicTitle}>{item.title}</Text>
-                            <Text style={styles.topicBody}>{item.body}</Text>
+                            <Text style={[styles.bold, styles.lblTertiaryHeading, {margin: 10, marginTop: 25}]}>{item.title}</Text>
+                            <Text style={[styles.lblColorized, {marginHorizontal: 20}]}>{item.body}</Text>
                         </View>
                     ))
                 }
@@ -82,26 +87,9 @@ const GetDimension = (width, height, getWidth) => {
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: "column",
-        backgroundColor: "#fff",
-        alignItems: "center",
-    },
-    topicTitle: {
-        fontWeight: "bold",
-        margin: 10,
-        marginTop: 25,
-    },
-    topicBody: {
-        marginLeft: 20,
-        marginRight: 20,
-    },
-    link: {
-        color: "#c60"
-    },
+const LocalStyles = {
     researchFigure: {
+        alignSelf: "center",
         width: GetDimension(700, 340, true),
         height: GetDimension(700, 340, false),
         marginTop: 15,
@@ -109,4 +97,4 @@ const styles = StyleSheet.create({
         borderColor: "#aaa",
         borderBottomWidth: 1,
     }
-});
+}

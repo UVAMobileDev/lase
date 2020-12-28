@@ -2,18 +2,25 @@
 //  application. It's just a scaled image.
 
 // Imports
-import React from 'react';
+import React, { useContext, useReducer, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
 import Footer from '../Footer';
+import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 
 export default function Sponsors(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={{padding: 15}}/>
+        <View style={styles.componentBackground}>
+        <ScrollView>
             <Image  style={styles.img}
                     source={require('../../../assets/Sponsors.jpeg')}/>
             <Footer />
         </ScrollView>
+        </View>
     );
 }
 
@@ -28,14 +35,11 @@ const GetDimension = (width, height, getWidth) => {
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-    },
+const LocalStyles = {
     img: {
+        marginVertical: 15,
+        alignSelf: "center",
         width: GetDimension(700, 525, true),
         height: GetDimension(700, 525, false),
     }
-});
+};

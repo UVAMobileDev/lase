@@ -14,12 +14,13 @@
 
 // Import the necessary components
 import React, { useEffect, useState, useContext } from 'react';
-import { StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
+import { Text, View, Platform, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AntDesign } from '@expo/vector-icons';
 import { KeyProvider } from './KeyContext';
+import { Colors } from './constants/globalStyle';
 
 
 // Create left side drawer navigator. For this application, this drawer is the
@@ -77,7 +78,7 @@ export default function App() {
             <NavigationContainer style={{flex: 1}}>
                 <Drawer.Navigator initialRouteName="Home"
                             drawerType={Platform.OS === "web" ? "permanent" : "slide"}
-                            drawerStyle={{backgroundColor: "#0AA"}}
+                            drawerStyle={{backgroundColor: state.dark ? Colors.highlightDark : Colors.highlight}}
                             drawerContentOptions={{
                                 activeTintColor: "#fff",
                                 inactiveTintColor: "#000",
@@ -98,13 +99,3 @@ export default function App() {
         </KeyProvider>
     );
 }
-
-// Create the stylesheet for the root component
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});

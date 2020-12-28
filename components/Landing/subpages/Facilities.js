@@ -1,80 +1,9 @@
-import React from 'react';
+import React, { useContext, useReducer, useEffect } from 'react';
 import { View, Text, StyleSheet, Image,Linking,Platform,Dimensions,FlatList, ScrollView} from 'react-native';
 import Footer from '../Footer';
+import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 
-/*
-    Parameter (text): a variable contains a whole text
-    Purpose: if a word should be linking to URL in a text, then this subroutine will be used to achieve that
-    Credit to G.Michael
-*/
-const linkify = text => {
-	// If no url in the text, return just the text
-	let link_start = text.indexOf("$URL|");
-	if(link_start === -1) return (<Text>{text}</Text>);
-	// Trim pre-text
-	let pre = text.substring(0, link_start);
-	text = text.substring(link_start + 5);
-	// Trim link title
-	let url_start = text.indexOf("|");
-	let link_text = text.substring(0, url_start);
-	text = text.substring(url_start + 1);
-	// Trim url
-	let post_start = text.indexOf("|");
-	let url = text.substring(0, post_start);
-	text = text.substring(post_start + 1);
-	// Linkify the rest of the text
-	return (
-		<Text>
-			<Text>{pre}</Text>
-			<Text style = {styles.link} onPress={() => Linking.openURL(url)}>{link_text}</Text>
-			{linkify(text)}
-		</Text>
-	);
-}
-
-/*
-    Parameter (text): a variable contains a whole text
-    Parameter (name): a name of the section that has superscript
-    Purpose: return a whole text with superscript.
-
-*/
-function superScript(text,name) {
-
-    if (name == 'FTIR: Bruker Vertex v80') {
-        if (text.includes('cm-1')) {
-            let indexof = text.indexOf('cm-1');
-            let newText = text.replace('cm-1', '');
-            let subs1 = newText.substring(0,indexof);
-            let subs2 = newText.substring(indexof, newText.length);
-            return (
-                <Text style = {styles.subBullet}>
-                    <Text>{'\u25E6'}{subs1}</Text>
-                    <Text style = {{fontSize: 14}}>{"cm"}</Text>
-                    <Text style = {{fontSize: 8}}>{"-1"}</Text>
-                    <Text>{subs2}</Text>
-                </Text>
-            );
-        } else {
-            return (
-                <Text style = {styles.subBullet}>{'\u25E6'}{text}</Text>
-            );
-        }
-    } else {
-        return (
-            <Text style = {styles.subBullet}>
-                {'\u25E6'} {text}
-            </Text>
-        );
-    }
-}
-
-
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-/*
-    This array contains information regarding all machines such as Bravo,Echo,and Foxtrot
-*/
 const machines = [
     {
         id: '0',
@@ -244,10 +173,6 @@ const machines = [
         ],
     },
 ]
-
-/*
-    This array contains information regarding Bakeout structure
-*/
 const structure = [
     {
         id: '0',
@@ -273,10 +198,6 @@ const structure = [
         ],
     },
 ]
-
-/*
-    This array contains information regarding optical characterization setups
-*/
 const opticalSetup = [
     {
         id: '0',
@@ -304,10 +225,6 @@ const opticalSetup = [
         ],
     }
 ]
-
-/*
-    This array contains information regarding FTIR and IR microscope
-*/
 const fourier = [
     {
         id: '0',
@@ -364,13 +281,6 @@ const fourier = [
         ],
     },
 ]
-
-/*
-    This array contains the following sections:
-        1. Edge-emitting laser (EEL) test setup
-        2. Photodetector / Photocurrent spectroscopy setup (visible-to-mid-IR)
-        3. Probe station
-*/
 const tools = [
     {
         id: '0',
@@ -434,13 +344,6 @@ const tools = [
         ],
     },
 ]
-
-/*
-    This array contains the following sections:
-        1. Simulations
-        2. Other equipment available through Microelectronics Research Center (NSF-NNCI)
-        3. Advanced energetics
-*/
 const sim_otherEquip_energeties = [
     {
         id: '0',
@@ -508,155 +411,199 @@ const sim_otherEquip_energeties = [
     }
 ]
 
-//----------------------------------------------------------------------------------
-
-
 export default function Facilities(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
+	/*
+	    Parameter (text): a variable contains a whole text
+	    Purpose: if a word should be linking to URL in a text, then this subroutine will be used to achieve that
+	    Credit to G. Michael
+	*/
+	function linkify(text) {
+		// If no url in the text, return just the text
+		let link_start = text.indexOf("$URL|");
+		if(link_start === -1) return (<Text>{text}</Text>);
+		// Trim pre-text
+		let pre = text.substring(0, link_start);
+		text = text.substring(link_start + 5);
+		// Trim link title
+		let url_start = text.indexOf("|");
+		let link_text = text.substring(0, url_start);
+		text = text.substring(url_start + 1);
+		// Trim url
+		let post_start = text.indexOf("|");
+		let url = text.substring(0, post_start);
+		text = text.substring(post_start + 1);
+		// Linkify the rest of the text
+		return (
+			<Text>
+				<Text>{pre}</Text>
+				<Text style = {styles.link} onPress={() => Linking.openURL(url)}>{link_text}</Text>
+				{linkify(text)}
+			</Text>
+		);
+	}
+
+	/*
+	    Parameter (text): a variable contains a whole text
+	    Parameter (name): a name of the section that has superscript
+	    Purpose: return a whole text with superscript.
+
+	*/
+	function superScript(text,name) {
+
+	    if (name == 'FTIR: Bruker Vertex v80') {
+	        if (text.includes('cm-1')) {
+	            let indexof = text.indexOf('cm-1');
+	            let newText = text.replace('cm-1', '');
+	            let subs1 = newText.substring(0,indexof);
+	            let subs2 = newText.substring(indexof, newText.length);
+	            return (
+	                <Text style={styles.lblColorized}>
+	                    <Text>{'\t\t\u25E6'} {subs1}</Text>
+	                    <Text style={{fontSize: 14}}>{"cm"}</Text>
+	                    <Text style={{fontSize: 8, fontWeight: "bold"}}>{"-1"}</Text>
+	                    <Text>{subs2}</Text>
+	                </Text>
+	            );
+	        } else {
+	            return (
+	                <Text style={styles.lblColorized}>{'\t\t\u25E6'} {text}</Text>
+	            );
+	        }
+	    } else {
+	        return (
+	            <Text style={styles.lblColorized}>
+	                {'\t\t\u25E6'} {text}
+	            </Text>
+	        );
+	    }
+	}
+
     return (
-        <View style={styles.container}>
+        <View style={styles.componentBackground}>
             <ScrollView>
-                <View style={styles.toCenter}>
+				<View style={{marginLeft: 15}}>
+                <View style={{marginVertical: 15}}>
                     <Image
                       style={styles.facilitiesPic}
                       source={{uri: 'https://lase.mer.utexas.edu/images/facilities_large.jpg' }}
                     />
                 </View>
 
-                {
-                    //Use map to render all information about machines to the page
-                    machines.map(machine => (
-                        <View key = {machine.id}>
-                            <Text style={styles.titleIndent}> {machine.title} </Text>
-                            <Text style={styles.listIndent}> {'\u2022'} {machine.history} </Text>
-                            <Text style={styles.listIndent}> {'\u2022'} Materials: </Text>
-                            {
-                                machine.materials.map(material => (
-                                    <View key={material.Material_id}>
-                                        <Text style={styles.subBullet}>
-                                            {'\u25E6'} {material.text}
-                                        </Text>
-                                    </View>
+				<Text style={[styles.lblPrimaryHeading, {alignSelf: "center"}]}>Machines</Text>
+                {machines.map(machine => (
+                    <View key = {machine.id}>
+                        <Text style={styles.lblSecondaryHeading}>{machine.title}</Text>
+                        <Text style={styles.lblColorized}>{'\t\u2022'} {machine.history}</Text>
+                        <Text style={styles.lblColorized}>{'\t\u2022'} Materials:</Text>
+                        {machine.materials.map(material => (
+                            <View key={material.Material_id}>
+                                <Text style={styles.lblColorized}>
+                                    {'\t\t\u25E6'} {material.text}
+                                </Text>
+                            </View>
 
-                                ))
-                            }
-                            <Text style={styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
-                            {
-                                machine.equipment.map(equip => (
-                                    <View key={equip.Equip_id}>
-                                        <Text style={styles.subBullet}>
-                                            {'\u25E6'} {equip.text}
-                                        </Text>
-                                    </View>
-                                ))
-                            }
-                        </View>
-                    ))
-                }
+                        ))}
+                        <Text style={styles.lblColorized}>{'\t\u2022'} Ancillary Equipment: </Text>
+                        {machine.equipment.map(equip => (
+                            <View key={equip.Equip_id}>
+                                <Text style={styles.lblColorized}>
+                                    {'\t\t\u25E6'} {equip.text}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+				))}
+				<View style={styles.sectionBreak} />
 
-                {
-                    //Use map to render all information about Bakeout Structure to the page
-                    structure.map(struct => (
-                        <View key={struct.id}>
-                            <Text style={styles.titleIndent}> {linkify(struct.title)} </Text>
-                            <Text style={styles.listIndent}> {'\u2022'} {struct.description} </Text>
-                            <Text style={styles.listIndent}> {'\u2022'} Equipment: </Text>
-                            {
-                                struct.equipment.map(equip => (
-                                    <View key = {equip.Equip_id}>
-                                        <Text style = {styles.subBullet}>
-                                            {'\u25E6'} {equip.text}
-                                        </Text>
-                                    </View>
-                                ))
-                            }
-                        </View>
-                    ))
-                }
+				<Text style={[styles.lblPrimaryHeading, {alignSelf: "center"}]}>Structure</Text>
+                {structure.map(struct => (
+                    <View key={struct.id}>
+                        <Text style={styles.lblSecondaryHeading}>{linkify(struct.title)} </Text>
+                        <Text style={styles.lblColorized}>{'\t\u2022'} {struct.description} </Text>
+                        <Text style={styles.lblColorized}>{'\t\u2022'} Equipment: </Text>
+                        {struct.equipment.map(equip => (
+                            <View key={equip.Equip_id}>
+                                <Text style={styles.lblColorized}>
+                                    {'\t\t\u25E6'} {equip.text}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+				<View style={styles.sectionBreak} />
 
-                {
-                    //Use map to render all information about Optical Characterization Setups to the page
-                    opticalSetup.map(opt => (
-                        <View key={opt.id}>
-                            <Text style={styles.titleIndent}> {opt.title} </Text>
-							{
-                                opt.setup.map(setUp => (
-                                    <View key={setUp.Setup_id}>
-                                        <Text style={styles.listIndent}>
-                                            {'\u2022'} {setUp.text}
-                                        </Text>
-                                    </View>
-                                ))
-                            }
-                            <Text style={styles.listIndent}> {'\u2022'} Ancillary Equipment: </Text>
-                            {
-                                opt.Equipment.map(equip => (
-                                    <View key={equip.Equip_id}>
-                                        <Text style={styles.subBullet}>
-                                            {'\u25E6'} {equip.text}
-                                        </Text>
-                                    </View>
-                                ))
-                            }
-                        </View>
-                    ))
-                }
+				<Text style={[styles.lblPrimaryHeading, {alignSelf: "center"}]}>Optical Setup</Text>
+                {opticalSetup.map(opt => (
+                    <View key={opt.id}>
+                        <Text style={styles.lblSecondaryHeading}>{opt.title} </Text>
+						{opt.setup.map(setUp => (
+                            <View key={setUp.Setup_id}>
+                                <Text style={styles.lblColorized}>
+                                    {'\t\u2022'} {setUp.text}
+                                </Text>
+                            </View>
+                        ))}
+                        <Text style={styles.lblColorized}> {'\t\u2022'} Ancillary Equipment: </Text>
+                        {opt.Equipment.map(equip => (
+                            <View key={equip.Equip_id}>
+                                <Text style={styles.lblColorized}>
+                                    {'\t\t\u25E6'} {equip.text}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+				<View style={styles.sectionBreak} />
 
-                <Text style={styles.titleIndent}> {linkify(fourier[0].title)} </Text>
-               {
-                   //Use map to render all information about Fourier transform infrared spectrometer (FTIR) and IR microscope to the page
-                   fourier.map(section => (
-                       <View key={section.id}>
-                           <Text style={styles.listIndent}> {'\u2022'} {section.name} </Text>
-                           {
-                               section.options.map(subsection => (
-                                   <View key={subsection.Opt_id}>
-                                       {superScript(subsection.text,section.name)}
-                                   </View>
-                               ))
-                           }
-                       </View>
-                   ))
-               }
+				<Text style={[styles.lblPrimaryHeading, {alignSelf: "center"}]}>Futur-er</Text>
+                <Text style={styles.lblSecondaryHeading}>{linkify(fourier[0].title)} </Text>
+				{fourier.map(section => (
+					<View key={section.id}>
+						<Text style={styles.lblColorized}>{'\t\u2022'} {section.name} </Text>
+						{section.options.map(subsection => (
+						<View key={subsection.Opt_id}>
+							{superScript(subsection.text,section.name)}
+						</View>
+						))}
+					</View>
+				))}
+				<View style={styles.sectionBreak} />
 
-               {
-                   //Use map to render all information about different kind of tools to the page
-                    tools.map(tool => (
-                        <View key={tool.id}>
-                            <Text style={styles.titleIndent}> {tool.title} </Text>
-                            <Text style={styles.listIndent}> {'\u2022'} {tool.description} </Text>
-                            <Text style={styles.listIndent}> {'\u2022'} Equipment: </Text>
-                            {
-                                tool.Equipment.map(equip => (
-                                    <View key={equip.Equip_id}>
-                                        <Text style={styles.subBullet}>
-                                            {'\u25E6'} {equip.text}
-                                        </Text>
-                                    </View>
-                                ))
-                            }
-                        </View>
-                    ))
-                }
+				<Text style={[styles.lblPrimaryHeading, {alignSelf: "center"}]}>Tools</Text>
+				{tools.map(tool => (
+					<View key={tool.id}>
+						<Text style={styles.lblSecondaryHeading}>{tool.title} </Text>
+						<Text style={styles.lblColorized}>{'\t\u2022'} {tool.description} </Text>
+						<Text style={styles.lblColorized}>{'\t\u2022'} Equipment: </Text>
+						{tool.Equipment.map(equip => (
+							<View key={equip.Equip_id}>
+								<Text style={styles.lblColorized}>
+									{'\t\t\u25E6'} {equip.text}
+								</Text>
+							</View>
+						))}
+			        </View>
+			    ))}
+				<View style={styles.sectionBreak} />
 
-                {
-                    //Use map to render all information about Simulations ,Other equipments, and Advanced energetics to the page
-                   sim_otherEquip_energeties.map(section => (
-                       <View key={section.id}>
-                           <Text style={styles.titleIndent}>{section.title}</Text>
-                           {
-                               section.list.map(subsection => (
-                                   <View key = {subsection.List_id}>
-                                       <Text style = {styles.listIndent}>
-                                           {'\u2022'} {linkify(subsection.text)}
-                                       </Text>
-                                   </View>
-                               ))
-                           }
-                       </View>
-                   ))
-            	}
-                <Text style = {styles.updateDate}> Last Updated 4/22/2020</Text>
-
+				<Text style={[styles.lblPrimaryHeading, {alignSelf: "center"}]}>Additional Information</Text>
+                {sim_otherEquip_energeties.map(section => (
+					<View key={section.id}>
+						<Text style={styles.lblSecondaryHeading}>{section.title}</Text>
+						{section.list.map(subsection => (
+							<View key={subsection.List_id}>
+								<Text style={styles.lblColorized}>
+									{'\t\u2022'} {linkify(subsection.text)}
+								</Text>
+							</View>
+						))}
+					</View>
+				))}
+				</View>
 				<Footer />
             </ScrollView>
         </View>
@@ -675,44 +622,10 @@ const GetDimension = (width, height, getWidth) => {
     }
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#FFFFFF',
-		height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
-	},
-	toCenter: {
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	titleIndent: {
-		margin: 5,
-		marginTop: 10,
-		fontSize: 17,
-		fontWeight: "bold",
-		marginLeft: 20,
-		marginRight: 20,
-	},
-	listIndent: {
-		fontSize: 14,
-		marginLeft: 60,
-		marginRight: 20,
-	},
-	subBullet: {
-		fontSize: 14,
-		marginLeft: 110,
-		marginRight: 20,
-	},
+const LocalStyles = {
 	facilitiesPic: {
+		alignSelf: "center",
 		width: GetDimension(550, 400, true),
 		height: GetDimension(550, 400, false)
 	},
-	updateDate: {
-		fontSize: 18,
-		fontWeight: "bold",
-		marginLeft: 520,
-	},
-	link: {
-		color: "#c60"
-	},
-});
+};

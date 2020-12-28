@@ -3,11 +3,13 @@
 //  hooks, so read carefully.
 
 // Imports
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useReducer } from 'react';
 import { View, Text, StyleSheet, Image, Linking, ActivityIndicator, Platform, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import Publication from '../../Publications/Publication.js';
 import Footer from '../Footer';
 import { BASE_URL } from '../../../constants/API.js';
+import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 
 // The number of recent publications to show on the page.
 const N_PUBS = 7;
@@ -31,6 +33,10 @@ const GetPublications = async () => {
 }
 
 export default function Overview(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     // Creates a hook with the initial state as an object with two properties.
     let [publications, setPublications] = useState({loaded: false, items: []});
 
@@ -45,18 +51,18 @@ export default function Overview(props) {
     }, [0]);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.componentBackground, {flexDirection: "column"}]}>
             <ScrollView>
                 <Image  style={styles.headerEquipment}
                         source={require('../../../assets/header_equipment.jpg')}/>
                 <View style={styles.section}>
                     <Image  style={styles.imageMER}
                             source={require('../../../assets/MER.jpg')}/>
-                    <Text style={styles.textContainer}>
+                    <Text style={[styles.lblColorized, styles.textContainer]}>
                         <Text style={styles.bold}>The Laboratory for Advanced Semiconductor Epitaxy</Text>
                         <Text> is located in the </Text>
                         <Text   style={styles.link}
-                                onPress={() => Linking.openURL("http://www.mrc.utexas.edu/")}>Microelectronics Research Center</Text>
+                                onPress={() => Platform.OS === "web" ? window.open("http://www.mrc.utexas.edu/", "_blank") : Linking.openURL("http://www.mrc.utexas.edu/")}>Microelectronics Research Center</Text>
                         <Text> at the University of Texas at Austin. We are developing advanced materials and devices for electronics and optoelectronics. We are particularly interested in GaSb-based mid-infrared quantum well lasers, THz sources based on epitaxial metal/semiconductor nanocomposites, new plasmonic materials, low-noise III-V avalanche photodiodes, silicon-based lasers for optical interconnects, and silicon-based III-V TFETs. Our secret weapon in this effort is the molecular beam epitaxy </Text>
                         <Text   style={styles.link}
                                 onPress={() => props.navigation.navigate("What is MBE?")}>(MBE)</Text>
@@ -67,14 +73,14 @@ export default function Overview(props) {
                     <Image  style={styles.imageEquipment}
                             source={require('../../../assets/equipment.jpg')}/>
                     <View style={styles.recentPublications}>
-                        <Text style={[styles.bold, {fontSize: 16}]}>Recent Publications</Text>
+                        <Text style={[styles.bold, styles.lblSecondaryHeading]}>Recent Publications</Text>
                         {
                             // If the publications are loaded, we show them. This is
                             //  done by using a Publication component and a map function.
                             //  Map operates on an array and accepts a function which
                             //  tells it how to transform each element. In this case,
                             //  we transform it into an array of JSX elements.
-                            publications.loaded ? publications.items.map(pub => (<Publication key={pub.id} data={pub}/>))
+                            publications.loaded ? publications.items.map(pub => (<Publication key={pub.id} data={pub} dark={dark}/>))
                             : (<ActivityIndicator size="large" color="#00f"/>)
                             // If the loading has not completed yet, however, we just
                             //  show an activity indicator (a spinning circle).
@@ -83,7 +89,7 @@ export default function Overview(props) {
                 </View>
                 <View style={[styles.section, {borderBottomWidth: 0}]}>
                     <TouchableOpacity style={styles.map}
-                            onPress={() => Linking.openURL("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911")}>
+                            onPress={() => Platform.OS === "web" ? window.open("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911", "_blank") : Linking.openURL("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911")}>
                         <Image style={{
                                 padding: 5,
                                 borderColor: "#aaa",
@@ -110,7 +116,7 @@ export default function Overview(props) {
                             </Text>
                             <Text>
                                 <Text>Email: </Text>
-                                <Text style={styles.link} onPress={() => Linking.openURL("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text>
+                                <Text style={styles.link} onPress={() => Platform.OS === "web" ? window.open("mailto:sbank@ece.utexas.edu", "_blank") : Linking.openURL("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text>
                             </Text>
                             <Text style={[styles.bold, {marginBottom: 1, marginTop: 5}]}>
                                 Offices:
@@ -157,17 +163,11 @@ const GetDimension = (width, height, getWidth) => {
 //  framework is to make it easier to operate on multiple platforms. However, there
 //  are some situations where it's easier to do a bunch of ternary platform checks
 //  than to come up with a more robust solution.
-const styles = StyleSheet.create({
+const LocalStyles = {
     container: {
         flex: 1,
         flexDirection: "column",
         backgroundColor: "#fff",
-    },
-    bold: {
-        fontWeight: "bold"
-    },
-    link: {
-        color: "#c60"
     },
     section: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
@@ -225,8 +225,6 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
     },
-    bold: { fontWeight: "bold" },
-    italics: { fontStyle: "italic" },
     professorArea: {
         flexDirection: "row",
         alignItems: "center",
@@ -234,4 +232,4 @@ const styles = StyleSheet.create({
     professorText: {
         margin: 5,
     },
-});
+};

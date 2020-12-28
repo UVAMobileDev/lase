@@ -1,44 +1,17 @@
-import React from 'react';
+import React, { useContext, useReducer, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions, Linking, ScrollView } from 'react-native';
 import Footer from '../Footer';
+import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import KeyContext from '../../../KeyContext';
 
-//header image
+// Header image
 const membersImage = {
   uri: 'https://lase.mer.utexas.edu/images/group2019.jpg',
   width: 600,
   height: 400,
 };
 
-//principal investigator's infomation
-const PrincipalInvestigator = [
-  {
-    id: '0',
-    image: {
-      uri: 'https://lase.mer.utexas.edu/images/Seth_Bank_High.jpg',
-      width: 100,
-      height: 150,
-    },
-    name: 'Seth R. Bank',
-    title: 'Cullen Trust for Higher Education Endowed Professorship in Engineering #6',
-    email: 'sbank_at_ece.utexas.edu',
-    emaillink: 'mailto:sbank_at_ece.utexas.edu',
-    phone: '(512) 471-9669',
-    cv: 'SRB_CV.pdf',
-    cvlink: 'https://lase.mer.utexas.edu/documents/SRB_CV.pdf',
-    scholar: 'Profile',
-    scholarlink: 'http://scholar.google.com/citations?user=Ey4P2ywAAAAJ',
-    bio: `
-Seth Bank received the B.S. degree from the University of Illinois at Urbana-Champaign in 1999 and the M.S. and Ph.D. degrees in 2003 and 2006 from Stanford University, all in electrical engineering. In 2006, he was a post-doctoral scholar at the University of California at Santa Barbara. He joined the faculty of the University of Texas at Austin in 2007, where he is currently a full professor and holder of Cullen Trust for Higher Education Endowed Professorship in Engineering #6.
-
-His current research interests are centered on the growth of analog/digital alloy semiconductors (e.g. AlInAsSb) and metal/semiconductor hetero- and nano-structures (e.g. ErAs nanoparticles in GaAs) and their application to plasmonics, silicon-based lasers, avalanche photodiodes, mid-IR lasers, sensors, THz generation and sensing, and high-speed transistors. He has coauthored >350 papers and presentations that have been cited >4500 times, with a Hirsch-Index of 36.
-
-His group has received 5 Best Paper Awards and he has received the 2008 Young Investigator Award at the North American MBE Conference (NAMBE), a 2008 Young Faculty Award from DARPA, the 2009 Young Scientist Award from the International Symposium on Compound Semiconductors (ISCS), a Presidential Early Career Award for Scientists and Engineers (PECASE) in 2009 (nominated by ARO), an AFOSR Young Investigator Program (YIP) Award in 2009, an ONR Young Investigator Program (YIP) Award in 2010, a Faculty Early Career Development (CAREER) Program Award from the NSF in 2010, as well as the 2019 Gordon T. Lepley IV Memorial Teaching Award from UT.
-
-He has been the Program Chair of the AVS North American MBE meeting (NAMBE), as well as a Program and General Chair for the IEEE/OSA Conference on Lasers and Electro-Optical (CLEO) and the IEEE Device Research Conference (DRC). He is currently a Board Member of IEEE DRC and was a Steering Committee member of OSA/IEEE CLEO; he is an active member of the Electronic Materials Conference (EMC) committee and has helped organize other conferences, including the IEEE Electron Device Meeting (IEDM), InP and Related Materials (IPRM), and the IEEE Photonics Society Annual Meeting (IPC).`
-  }
-]
-
-//array of graduate students' infomation
+// Array of graduate students' infomation
 const GradStudents = [
     {
         id: '0',
@@ -237,7 +210,7 @@ const GradStudents = [
 
 ]
 
-//array of undergraduate students' information
+// Array of undergraduate students' information
 const UndergradStudents = [
   {
     id: '0',
@@ -307,7 +280,7 @@ const UndergradStudents = [
 
 ]
 
-//array of staff information
+// Array of staff information
 const Staff = [
   {
     id: '0',
@@ -365,7 +338,7 @@ const Staff = [
 
 ]
 
-//array of alumni postdocs information
+// Array of alumni postdocs information
 const Postdocs = [
   {
     id: '0',
@@ -539,7 +512,7 @@ const Postdocs = [
   },
 ]
 
-//array of alumni master's Information
+// Array of alumni master's Information
 const Masters = [
     {
         id: '0',
@@ -562,7 +535,7 @@ const Masters = [
     },
 ]
 
-//array of alumni teacher researchers' information
+// Array of alumni teacher researchers' information
 const TeacherResearchers = [
     {
         id: '0',
@@ -592,7 +565,7 @@ const TeacherResearchers = [
     }
 ]
 
-//array of alumni undergrad researchers' information
+// Array of alumni undergrad researchers' information
 const UndergradResearchers = [
     {
         id: '0',
@@ -784,7 +757,7 @@ const UndergradResearchers = [
     },
 ]
 
-//array of young scholars information
+// Array of young scholars information
 const YoungScholars = [
     {
         id: '0',
@@ -850,41 +823,48 @@ const YoungScholars = [
     },
 ]
 
+function LinkOpener(url) {
+    if(Platform.OS === "web") return () => window.open(url, "_blank");
+    return () => Linking.openURL(url);
+}
+
 export default function Members(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={[styles.componentBackground, {paddingHorizontal: 5}]}>
             <View
                 style={{ justifyContent: 'center', alignItems: 'center',}}>
                 <Image style={{width: GetDimension(600, 400, true), height: GetDimension(600, 400, false)}} source={membersImage}/>
             </View>
-
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Principal Investigator</Text>
+                <Text style={styles.lblPrimaryHeading}>Principal Investigator</Text>
             </View>
             <View style={{marginBottom: 10}}>
                 <View style={[styles.imageTextContainer, {paddingBottom: 5}]}>
-                    <Image style={{height: 150, width: 100, marginRight: 10}} source="https://lase.mer.utexas.edu/images/Seth_Bank_High.jpg"/>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.infoHeader}>Seth R. Bank</Text>
-                        <Text style={styles.italic}>Cullen Trust for Higher Education Endowed Professorship in Engineering #6</Text>
-                        <Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text></Text>
-                        <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>(512) 471-9669</Text></Text>
-                        <Text style={styles.infoHeader}>CV: <Text style={styles.link} onPress={() => Linking.openURL("https://lase.mer.utexas.edu/documents/SRB_CV.pdf")}>SRB_CV.pdf</Text></Text>
-                        <Text style={styles.infoHeader}>Scholar: <Text style={styles.link} onPress={() => Linking.openURL("http://scholar.google.com/citations?user=Ey4P2ywAAAAJ")}>Profile</Text></Text>
+                    <Image style={{height: 150, width: 100, marginRight: 10}} source={{uri: "https://lase.mer.utexas.edu/images/Seth_Bank_High.jpg"}}/>
+                    <View style={{flex: 1}}>
+                        <Text style={[styles.lblColorized, styles.infoHeader]}>Seth R. Bank</Text>
+                        <Text style={[styles.lblColorized, styles.italics]}>Cullen Trust for Higher Education Endowed Professorship in Engineering #6</Text>
+                        <Text style={[styles.lblColorized, styles.infoHeader]}>Email: <Text style={styles.link} onPress={LinkOpener("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text></Text>
+                        <Text style={[styles.lblColorized, styles.infoHeader]}>Phone: <Text style={styles.info}>(512) 471-9669</Text></Text>
+                        <Text style={[styles.lblColorized, styles.infoHeader]}>CV: <Text style={styles.link} onPress={LinkOpener("https://lase.mer.utexas.edu/documents/SRB_CV.pdf")}>SRB_CV.pdf</Text></Text>
+                        <Text style={[styles.lblColorized, styles.infoHeader]}>Scholar: <Text style={styles.link} onPress={LinkOpener("http://scholar.google.com/citations?user=Ey4P2ywAAAAJ")}>Profile</Text></Text>
                     </View>
                 </View>
-                <Text style={[styles.bio, {marginHorizontal: 10}]}>
+                <Text style={[styles.lblColorized, styles.bio, {marginHorizontal: 10}]}>
                     <Text>{"\tSeth Bank received the B.S. degree from the University of Illinois at Urbana-Champaign in 1999 and the M.S. and Ph.D. degrees in 2003 and 2006 from Stanford University, all in electrical engineering. In 2006, he was a post-doctoral scholar at the University of California at Santa Barbara. He joined the faculty of the University of Texas at Austin in 2007, where he is currently a full professor and holder of Cullen Trust for Higher Education Endowed Professorship in Engineering #6.\n"}</Text>
                     <Text>{"His current research interests are centered on the growth of analog/digital alloy semiconductors (e.g. AlInAsSb) and metal/semiconductor hetero- and nano-structures (e.g. ErAs nanoparticles in GaAs) and their application to plasmonics, silicon-based lasers, avalanche photodiodes, mid-IR lasers, sensors, THz generation and sensing, and high-speed transistors. He has coauthored >350 papers and presentations that have been cited >4500 times, with a Hirsch-Index of 36.\n"}</Text>
                     <Text>{"\tHis group has received 5 Best Paper Awards and he has received the 2008 Young Investigator Award at the North American MBE Conference (NAMBE), a 2008 Young Faculty Award from DARPA, the 2009 Young Scientist Award from the International Symposium on Compound Semiconductors (ISCS), a Presidential Early Career Award for Scientists and Engineers (PECASE) in 2009 (nominated by ARO), an AFOSR Young Investigator Program (YIP) Award in 2009, an ONR Young Investigator Program (YIP) Award in 2010, a Faculty Early Career Development (CAREER) Program Award from the NSF in 2010, as well as the 2019 Gordon T. Lepley IV Memorial Teaching Award from UT.\n"}</Text>
                     <Text>{"\tHe has been the Program Chair of the AVS North American MBE meeting (NAMBE), as well as a Program and General Chair for the IEEE/OSA Conference on Lasers and Electro-Optical (CLEO) and the IEEE Device Research Conference (DRC). He is currently a Board Member of IEEE DRC and was a Steering Committee member of OSA/IEEE CLEO; he is an active member of the Electronic Materials Conference (EMC) committee and has helped organize other conferences, including the IEEE Electron Device Meeting (IEDM), InP and Related Materials (IPRM), and the IEEE Photonics Society Annual Meeting (IPC).\n"}</Text>
                 </Text>
             </View>
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Graduate Students</Text>
+                <Text style={styles.lblSecondaryHeading}>Graduate Students</Text>
             </View>
             {
             //renders the array of grad students in a readable layout
@@ -892,21 +872,26 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>
-                            <Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>
-                            <Text style={styles.bio}>{item.education}</Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
+                            <Text style={styles.lblColorized}>
+                                <Text style={styles.infoHeader}>Email: </Text>
+                                <Text style={styles.link} onPress={LinkOpener(item.emaillink)}>{item.email}</Text>
+                            </Text>
+                            <Text style={styles.lblColorized}>
+                                <Text style={styles.infoHeader}>Phone: </Text>
+                                <Text style={styles.info}>{item.phone}</Text>
+                            </Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.education}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
             ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Undergraduate Students</Text>
+                <Text style={styles.lblSecondaryHeading}>Undergraduate Students</Text>
             </View>
             {
             //renders the array of undergrad students in a readable layout
@@ -914,18 +899,17 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
             ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Staff</Text>
+                <Text style={styles.lblSecondaryHeading}>Staff</Text>
             </View>
             {
             //renders the array of staff in a readable layout
@@ -933,24 +917,27 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            {
-                            item.email ? (<Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>) : (<View/>)
-                            }
-                            {
-                            item.phone ? (<Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>) : (<View/>)
-                            }
-                            <Text style={styles.bio}>{item.bio}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
+                            {item.email ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>Email: </Text>
+                                    <Text style={styles.link} onPress={LinkOpener(item.emaillink)}>{item.email}</Text>
+                                </Text>) : (<View/>)}
+                            {item.phone ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>Phone: </Text>
+                                    <Text style={styles.info}>{item.phone}</Text>
+                                </Text>) : (<View/>)}
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
             ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Alumni (Ph.D.'s and Postdocs)</Text>
+                <Text style={styles.lblSecondaryHeading}>Alumni (Ph.D.'s and Postdocs)</Text>
             </View>
             {
             //renders the array of alumni postdocs staff in a readable layout
@@ -958,34 +945,43 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
+                        <View style={{flex: 1}}>
                             <Text style={styles.infoHeader}>{item.name}</Text>
-                            {
-                            item.email ? (<Text style={styles.infoHeader}>Email: <Text style={styles.link} onPress={() => Linking.openURL(item.emaillink)}>{item.email}</Text></Text>) : (<View/>)
-                            }
-                            {
-                            item.phone ? (<Text style={styles.infoHeader}>Phone: <Text style={styles.info}>{item.phone}</Text></Text>) : (<View/>)
-                            }
-                            {
-                            item.cv ? (<Text style={styles.infoHeader}>CV: <Text style={styles.link} onPress={() => Linking.openURL(item.cvlink)}>{item.cv}</Text></Text>) : (<View/>)
-                            }
-                            {
-                            item.website ? (<Text style={styles.infoHeader}>Website: <Text style={styles.link} onPress={() => Linking.openURL(item.website)}>{item.website}</Text></Text>) : (<View/>)
-                            }
-                            {
-                            item.publications ? (<Text style={styles.infoHeader}>Publications: <Text style={styles.link} onPress={() => Linking.openURL(item.publicationslink)}>{item.publications}</Text></Text>) : (<View/>)
-                            }
-                            <Text style={styles.bio}>{item.education}</Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
+                            {item.email ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>Email: </Text>
+                                    <Text style={styles.link} onPress={LinkOpener(item.emaillink)}>{item.email}</Text>
+                                </Text>) : (<View/>)}
+                            {item.phone ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>Phone: </Text>
+                                    <Text style={styles.info}>{item.phone}</Text>
+                                </Text>) : (<View/>)}
+                            {item.cv ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>CV: </Text>
+                                    <Text style={styles.link} onPress={LinkOpener(item.cvlink)}>{item.cv}</Text>
+                                </Text>) : (<View/>)}
+                            {item.website ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>Website: </Text>
+                                    <Text style={styles.link} onPress={LinkOpener(item.website)}>{item.website}</Text>
+                                </Text>) : (<View/>)}
+                            {item.publications ? (
+                                <Text style={styles.lblColorized}>
+                                    <Text style={styles.infoHeader}>Publications: </Text>
+                                    <Text style={styles.link} onPress={LinkOpener(item.publicationslink)}>{item.publications}</Text>
+                                </Text>) : (<View/>)}
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.education}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
                 ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Alumni (Master's)</Text>
+                <Text style={styles.lblSecondaryHeading}>Alumni (Master's)</Text>
             </View>
             {
             //renders the array of alumni masters staff in a readable layout
@@ -993,21 +989,20 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
                             {
                             item.education ? (<Text style={styles.bio}>{item.education}</Text>) : (<View/>)
                             }
-                            <Text style={styles.bio}>{item.bio}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
                 ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Alumni (Teacher Researchers)</Text>
+                <Text style={styles.lblSecondaryHeading}>Alumni (Teacher Researchers)</Text>
             </View>
             {
             //renders the array of alumni teacher researchers staff in a readable layout
@@ -1015,18 +1010,17 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
                 ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Alumni (Undergraduate Researchers)</Text>
+                <Text style={styles.lblSecondaryHeading}>Alumni (Undergraduate Researchers)</Text>
             </View>
             {
             //renders the array of alumni undergraduate researchers staff in a readable layout
@@ -1034,18 +1028,17 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
                 ))
             }
-
-            <View style={styles.separator}/>
+            <View style={styles.sectionBreak}/>
             <View>
-                <Text style={styles.sectionHeader}>Alumni (Young Scholars)</Text>
+                <Text style={styles.lblSecondaryHeading}>Alumni (Young Scholars)</Text>
             </View>
             {
             //renders the array of alumni young scholars staff in a readable layout
@@ -1053,9 +1046,9 @@ export default function Members(props) {
                 <View key={item.id}>
                     <View style={styles.imageTextContainer}>
                         <Image style={styles.image} source={item.image}/>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.infoHeader}>{item.name}</Text>
-                            <Text style={styles.bio}>{item.bio}</Text>
+                        <View style={{flex: 1}}>
+                            <Text style={[styles.lblColorized, styles.infoHeader]}>{item.name}</Text>
+                            <Text style={[styles.lblColorized, styles.bio]}>{item.bio}</Text>
                         </View>
                     </View>
                 </View>
@@ -1076,18 +1069,13 @@ const GetDimension = (width, height, getWidth) => {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: 'white',
-        height: Dimensions.get('window').height - (Platform.OS === "web" ? 155 : 135),
-    },
+const LocalStyles = {
     imageTextContainer: {
         flexDirection: 'row',
         padding: 20,
     },
     textContainer: {
         flex: 1,
-        flexDirection: 'column',
     },
     sectionHeader:{
         fontWeight: "bold",
@@ -1112,24 +1100,10 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         textAlign: 'left',
     },
-    link: {
-        color: "#c60",
-        fontWeight: "normal",
-    },
     image: {
         marginLeft: 8,
         marginRight: 12,
         width: 100,
         height: 150,
     },
-    separator: {
-        borderBottomColor: 'gray',
-        borderBottomWidth: 1,
-        marginLeft: 20,
-        marginRight: 20,
-    },
-    italic: {
-        fontStyle: 'italic',
-        paddingBottom: 10
-    },
-});
+};

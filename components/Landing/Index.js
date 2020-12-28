@@ -2,10 +2,12 @@
 //  to bear a ressemblance to this page: https://lase.mer.utexas.edu/
 
 // Imports
-import React from 'react';
+import React, { useContext, useReducer, useEffect } from 'react';
 import Constants from 'expo-constants';
 import { View, Text, StyleSheet, Image, ScrollView, Dimensions, Platform, StatusBar } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
+import KeyContext from '../../KeyContext';
 
 import Overview from './subpages/Overview.js';
 import Research from './subpages/Research.js';
@@ -24,9 +26,13 @@ const Tab = createMaterialTopTabNavigator();
 const onWeb = Platform.OS === "web";
 
 export default function Landing(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     return (
-        <View style={{flex: 1, backgroundColor: "#0AA"}}>
-            <View style={styles.container}>
+        <View style={styles.screenContainer}>
+            <View style={styles.localContainer}>
                 {
                     // If we're on web, then we have to show a background image since
                     //  the homepage doesn't consume the full screen. On native, though,
@@ -39,11 +45,11 @@ export default function Landing(props) {
                                     source={require('../../assets/background.gif')}/>
                     ) : (<View style={styles.statusBarBanner}/>)
                 }
-                <View style={styles.document}>
+                <View style={[styles.document, {backgroundColor: dark ? Colors.baseDark : Colors.base}]}>
                     <Image  style={styles.headerImage}
                             source={require('../../assets/UT_banner.png')}/>
                     <Tab.Navigator  tabBarOptions={{
-                                        activeTintColor: '#f90',
+                                        activeTintColor: dark ? Colors.highlight : Colors.highlightDark,
                                         inactiveTintColor: '#fff',
                                         style: {
                                             backgroundColor: "#000",
@@ -81,16 +87,14 @@ const GetDimension = (width, height, getWidth) => {
 // A lot of the styles here are platform dependent. Whenever there is a ternary
 //  check with Platform.OS, it means something different needs to happen if we're
 //  running on web vs native.
-const styles = StyleSheet.create({
-    container: {
+const LocalStyles = {
+    localContainer: {
         flex: 1,
         justifyContent: "center",
         flexDirection: "row",
-        marginTop: onWeb ? 0 : Constants.statusBarHeight,
     },
     document: {
         marginTop: onWeb ? 10 : 0,
-        backgroundColor: "#fff",
         flexDirection: "column",
         height: Platform.OS === "web" ? "calc(100% - 20px)" : "100%",
         width: GetDimension(754, 0, true),
@@ -117,4 +121,4 @@ const styles = StyleSheet.create({
         height: Constants.statusBarHeight,
         backgroundColor: Platform.OS === "android" ? StatusBar.backgroundColor : "#000",
     },
-});
+};
