@@ -7,24 +7,6 @@ import { Entypo, Foundation } from '@expo/vector-icons';
 
 import { LightStyles, DarkStyles, Colors } from '../constants/globalStyle';
 
-const AttemptActivation = async (key, update, setVerifying, setKey) => {
-    setVerifying(true);
-    let verification = await fetch(`${BASE_URL}/verify`, {
-        method: "GET",
-        headers: { "x-api-key": key }
-    }).catch(() => false);
-
-    let verified = verification && verification.status === 200;
-    let store = {verified, key};
-
-    try {
-        await AsyncStorage.setItem('lase-api-key', JSON.stringify(store));
-    } catch(e) { console.log(e); }
-
-    if(update) update(store);
-    setKey(store);
-    setVerifying(false);
-}
 
 const DestroyToken = async () => {
     try {
@@ -35,7 +17,7 @@ const DestroyToken = async () => {
 export default function Settings(props) {
     const [verifying, setVerifying] = useState(false);
     const [key, setKey] = useState({});
-    const [darkMode, setDarkMode] = useState({loaded: false, value: false});
+    const [darkMode, setDarkMode] = useState({loaded: false, value: true});
 
     const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(darkMode.value ? DarkStyles : LightStyles), ...LocalStyles}), {});
     useEffect(updateStyles, [darkMode.value]);
@@ -69,50 +51,95 @@ export default function Settings(props) {
         toggle();
     }, [darkMode.value]);
 
+    async function AttemptActivation() {
+        setVerifying(true);
+        const update = props.route.params.update;
+        let verification = await fetch(`${BASE_URL}/verify`, {
+            method: "GET",
+            headers: { "x-api-key": key.key }
+        }).catch(() => false);
+
+        let verified = verification && verification.status === 200;
+        let store = {verified, key: key.key, dark: darkMode.value};
+
+        try {
+            await AsyncStorage.setItem('lase-api-key', JSON.stringify(store));
+        } catch(e) { console.log(e); }
+
+        if(update) update(store);
+        setKey(store);
+        setVerifying(false);
+    }
+
+    if(!darkMode.loaded) {
+        return (
+            <View />
+        );
+    }
+
     return (
         <View style={styles.screenContainer}>
-            <View style={styles.mainBackground}>
-                <View style={[styles.section, {borderTopWidth: 0}]}>
-                    <Text style={styles.sectionTitle}>Access Key</Text>
-                    <Text style={styles.sectionDescription}>Entering a valid access key will reveal additional features.</Text>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <Text style={styles.inputLabel}>Key: </Text>
-                        <TextInput style={styles.input}
-                                value={key.key || ""}
-                                onChangeText={val => setKey({verified: key.verified, key: val})}/>
-                    </View>
-
-                    <View style={styles.buttonRow}>
-                        {
-                            verifying ? (
-                                <View style={styles.button}>
-                                    <ActivityIndicator />
-                                </View>
-                            ) : (
-                                <TouchableOpacity style={styles.button}
-                                        onPress={() => AttemptActivation(key.key, props.route.params.update, setVerifying, setKey)}>
-                                    <Text style={{textAlign: "center"}}>Update Key</Text>
-                                </TouchableOpacity>
-                            )
-                        }
-                        <View style={[styles.button, key.verified ? {} : {backgroundColor: "red"}]}>
-                            <Text style={{textAlign: "center"}}>{key.verified ? "Key has been verified!" : "Unverified key."}</Text>
-                        </View>
-                    </View>
+        <View style={styles.componentBackground}>
+            <View style={[styles.section, {borderTopWidth: 0}]}>
+                <Text style={[styles.bold, styles.lblPrimaryHeading]}>Access Key</Text>
+                <Text style={styles.lblSecondaryHeading}>Entering a valid access key will reveal additional features.</Text>
+                <View style={styles.horiztonalItemWrapper}>
+                    <Text style={[styles.bold, styles.lblFormLabel]}>Key: </Text>
+                    <TextInput style={[styles.txt, styles.input]}
+                            value={key.key || ""}
+                            onChangeText={val => setKey({verified: key.verified, key: val})}/>
                 </View>
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Light and Dark Mode</Text>
-                    <Text style={styles.sectionDescription}>Are your eyes on fire from a bright white user experience? Or maybe you're having trouble reading anything with a dark color palette in a bright working environment. Here you can switch between light and dark palettes.</Text>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <Foundation name="lightbulb" size={24} color="black" />
-                        <Switch style={{margin: 10}}
-                            value={darkMode.value}
-                            onValueChange={() => setDarkMode({...darkMode, value: !darkMode.value})}
-                            />
-                        <Entypo name="moon" size={24} color="black" />
+
+                <View style={styles.buttonRow}>
+                    {
+                        verifying ? (
+                            <View style={styles.button}>
+                                <ActivityIndicator />
+                            </View>
+                        ) : (
+                            <TouchableOpacity style={styles.button}
+                                    onPress={AttemptActivation}>
+                                <Text style={{textAlign: "center"}}>Update Key</Text>
+                            </TouchableOpacity>
+                        )
+                    }
+                    <View style={[styles.button, key.verified ? {} : {backgroundColor: "red"}]}>
+                        <Text style={{textAlign: "center"}}>{key.verified ? "Key has been verified!" : "Unverified key."}</Text>
                     </View>
                 </View>
             </View>
+            <View style={styles.section}>
+                <Text style={[styles.bold, styles.lblSecondaryHeading]}>Light and Dark Mode</Text>
+                <View style={styles.horiztonalItemWrapper}>
+                    <Foundation name="lightbulb" size={24} color="#fcbb4b" />
+                    <Switch style={{margin: 10}}
+                        value={darkMode.value}
+                        onValueChange={() => setDarkMode({...darkMode, value: !darkMode.value})}
+                        />
+                    <Entypo name="moon" size={24} color="#111" />
+                </View>
+            </View>
+            <View style={{margin: 50, borderColor: "red", borderWidth: 3, width: 156}}>
+                <View style={{width: 150, height: 150, backgroundColor: Colors.base}}>
+                    <Text style={{color: "black"}}>Base</Text>
+                </View>
+                <View style={{width: 150, height: 150, backgroundColor: Colors.baseDark}}>
+                    <Text style={{color: "white"}}>Base Dark</Text>
+                </View>
+                <View style={{width: 150, height: 150, backgroundColor: Colors.contrast}}>
+                    <Text style={{color: "white"}}>Contrast</Text>
+                </View>
+                <View style={{width: 150, height: 150, backgroundColor: Colors.contrastDark}}>
+                    <Text style={{color: "black"}}>Contrast Dark</Text>
+                </View>
+                <View style={{width: 150, height: 150, backgroundColor: Colors.highlight}}>
+                    <Text style={{color: "white"}}>Highlight</Text>
+                </View>
+                <View style={{width: 150, height: 150, backgroundColor: Colors.highlightDark}}>
+                    <Text style={{color: "white"}}>Highlight Dark</Text>
+                </View>
+            </View>
+        </View>
         </View>
     );
 }
@@ -128,8 +155,8 @@ const LocalStyles = {
     input: {
         width: "90%",
         marginVertical: 5,
+        borderWidth: 0,
         borderBottomWidth: .5,
-        borderColor: "#999",
     },
     inputLabel: {
         fontWeight: "bold",
@@ -138,10 +165,6 @@ const LocalStyles = {
         fontSize: 15,
         marginLeft: 5,
         marginBottom: 10,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
     },
     section: {
         padding: 15,

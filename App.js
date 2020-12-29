@@ -43,50 +43,50 @@ export default function App() {
         key: "",
         dark: false,
     })
-    const [privileged, setPriviledged] = useState(false);
-    const [key, setKey] = useState("");
 
-    const update = ({verified, key, dark}) => {
+    function update({verified, key, dark}) {
         setState({
             privileged: verified,
             key,
-            dark
+            dark,
         });
     }
 
     const ScreenParams = {
-        Settings: {update}
+        Settings: {update, dark: state.dark}
     }
 
     useEffect(() => {
         const read = async () => {
             try {
-                let key = await AsyncStorage.getItem('lase-api-key');
-                key = key ? JSON.parse(key) : null;
-                if(key && key.verified) {
-                    setPriviledged(true);
-                    setKey(key.key);
-                }
+                var dark = await AsyncStorage.getItem('dark');
+                dark = dark === "true";
+            } catch(e) { console.log("Failed to load stored dark mode setting from AsyncStorage") }
+            try {
+                var key = await AsyncStorage.getItem('lase-api-key');
+                key = key ? JSON.parse(key) : {};
             } catch(e) { console.log("Failed to load stored key from AsyncStorage") }
+            setState({...state, dark, ...key, privileged: key && key.verified});
         }
         read();
     }, []);
 
     // {/* A NavigationContainer is required to wrap the top level navigator. */}
     return (
-        <KeyProvider value={{key, dark: state.dark}}>
-            <NavigationContainer style={{flex: 1}}>
-                <Drawer.Navigator initialRouteName="Home"
-                            drawerType={Platform.OS === "web" ? "permanent" : "slide"}
-                            drawerStyle={{backgroundColor: state.dark ? Colors.highlightDark : Colors.highlight}}
-                            drawerContentOptions={{
-                                activeTintColor: "#fff",
-                                inactiveTintColor: "#000",
-                            }}
-                            lazy={true}>
+        <KeyProvider value={{key: state.key, dark: state.dark}}>
+            <NavigationContainer style={{flex: 1, backgroundColor: state.dark ? Colors.baseDark : Colors.base}}>
+                <Drawer.Navigator
+                    initialRouteName="Home"
+                    drawerType={Platform.OS === "web" ? "permanent" : "slide"}
+                    drawerStyle={{backgroundColor: state.dark ? Colors.highlightDark : Colors.highlight}}
+                    drawerContentOptions={{
+                        activeTintColor: "#fff",
+                        inactiveTintColor: "#000",
+                    }}
+                    lazy={true}>
                     {/* Each screen has a name to appear in the UI and a component which it displays when selected. */}
                     {
-                        Screens.filter(screen => privileged ? true : !screen.privileged)
+                        Screens.filter(screen => state.privileged ? true : !screen.privileged)
                         .map((screen, i) => (
                             <Drawer.Screen key={i}
                                     name={screen.name}
