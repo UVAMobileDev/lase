@@ -4,7 +4,7 @@
 // Imports
 import React, { useContext, useReducer, useEffect } from 'react';
 import Constants from 'expo-constants';
-import { View, Text, StyleSheet, Image, ScrollView, Dimensions, Platform, StatusBar } from 'react-native';
+import { View, StyleSheet, Image, Dimensions, Platform, StatusBar } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
 import KeyContext from '../../KeyContext';
@@ -84,9 +84,6 @@ const GetDimension = (width, height, getWidth) => {
     }
 }
 
-// A lot of the styles here are platform dependent. Whenever there is a ternary
-//  check with Platform.OS, it means something different needs to happen if we're
-//  running on web vs native.
 const LocalStyles = {
     localContainer: {
         flex: 1,

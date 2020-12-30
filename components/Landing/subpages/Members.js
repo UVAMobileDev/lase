@@ -1,8 +1,9 @@
 import React, { useContext, useReducer, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, Platform, Dimensions, Linking, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import Footer from '../Footer';
-import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import { LightStyles, DarkStyles } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
+import { LinkOpener, GetDimension } from '../../../constants/SimpleFunctions';
 
 // Header image
 const membersImage = {
@@ -11,7 +12,6 @@ const membersImage = {
   height: 400,
 };
 
-// Array of graduate students' infomation
 const GradStudents = [
     {
         id: '0',
@@ -209,8 +209,6 @@ const GradStudents = [
     },
 
 ]
-
-// Array of undergraduate students' information
 const UndergradStudents = [
   {
     id: '0',
@@ -279,8 +277,6 @@ const UndergradStudents = [
   },
 
 ]
-
-// Array of staff information
 const Staff = [
   {
     id: '0',
@@ -337,8 +333,6 @@ const Staff = [
   },
 
 ]
-
-// Array of alumni postdocs information
 const Postdocs = [
   {
     id: '0',
@@ -511,8 +505,6 @@ const Postdocs = [
     },
   },
 ]
-
-// Array of alumni master's Information
 const Masters = [
     {
         id: '0',
@@ -534,8 +526,6 @@ const Masters = [
         },
     },
 ]
-
-// Array of alumni teacher researchers' information
 const TeacherResearchers = [
     {
         id: '0',
@@ -564,8 +554,6 @@ const TeacherResearchers = [
         },
     }
 ]
-
-// Array of alumni undergrad researchers' information
 const UndergradResearchers = [
     {
         id: '0',
@@ -756,8 +744,6 @@ const UndergradResearchers = [
         },
     },
 ]
-
-// Array of young scholars information
 const YoungScholars = [
     {
         id: '0',
@@ -822,11 +808,6 @@ const YoungScholars = [
         },
     },
 ]
-
-function LinkOpener(url) {
-    if(Platform.OS === "web") return () => window.open(url, "_blank");
-    return () => Linking.openURL(url);
-}
 
 export default function Members(props) {
     const { dark } = useContext(KeyContext);
@@ -1057,16 +1038,6 @@ export default function Members(props) {
             <Footer />
         </ScrollView>
     );
-}
-
-// Helper method which scales images based on the screen's width.
-const GetDimension = (width, height, getWidth) => {
-    let w = Dimensions.get('window').width;
-    if(getWidth) {
-        return width > w ? w : width;
-    } else {
-        return width > w ? (w / width) * height : height;
-    }
 }
 
 const LocalStyles = {

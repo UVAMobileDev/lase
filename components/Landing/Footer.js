@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Image, Linking, Platform } from 'react-native';
 import { LightStyles } from '../../constants/globalStyle';
 
@@ -8,8 +8,6 @@ function LinkOpener(url) {
 }
 
 export default function Footer() {
-    const [styles, updateStyles] = useState(StyleSheet.create({...LightStyles, ...LocalStyles}));
-
     return (
         <View style={styles.botContainer}>
             <View style={styles.contact}>
@@ -45,7 +43,8 @@ export default function Footer() {
     )
 }
 
-const LocalStyles = {
+const styles = StyleSheet.create({
+    ...LightStyles,
 	contact: {
 		height: 50,
 		paddingVertical: 5,
@@ -66,4 +65,4 @@ const LocalStyles = {
 		height: 50,
 		alignItems: 'flex-end',
 	},
-}
+});

@@ -1,8 +1,9 @@
 import React, { useContext, useReducer, useEffect } from 'react';
-import { View, Text, StyleSheet, Image,Linking,Platform,Dimensions,FlatList, ScrollView} from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView} from 'react-native';
 import Footer from '../Footer';
-import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import { LightStyles, DarkStyles } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
+import { LinkOpener, GetDimension } from '../../../constants/SimpleFunctions';
 
 const machines = [
     {
@@ -440,7 +441,7 @@ export default function Facilities(props) {
 		return (
 			<Text>
 				<Text>{pre}</Text>
-				<Text style = {styles.link} onPress={() => Linking.openURL(url)}>{link_text}</Text>
+				<Text style = {styles.link} onPress={LinkOpener(url)}>{link_text}</Text>
 				{linkify(text)}
 			</Text>
 		);
@@ -608,18 +609,6 @@ export default function Facilities(props) {
             </ScrollView>
         </View>
     );
-
-
-}
-
-// Helper method which scales images based on the screen's width.
-const GetDimension = (width, height, getWidth) => {
-    let w = Dimensions.get('window').width;
-    if(getWidth) {
-        return width > w ? w : width;
-    } else {
-        return width > w ? (w / width) * height : height;
-    }
 }
 
 const LocalStyles = {

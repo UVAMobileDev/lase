@@ -2,13 +2,9 @@ import React, { useContext, useReducer, useEffect } from 'react';
 import { Video } from 'expo-av';
 import { View, Text, Linking, StyleSheet, Image, ScrollView, Platform } from 'react-native';
 import Footer from '../Footer';
-import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import { LightStyles, DarkStyles } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
-
-function LinkOpener(url) {
-    if(Platform.OS === "web") return () => window.open(url, "_blank");
-    return () => Linking.openURL(url);
-}
+import { LinkOpener } from '../../../constants/SimpleFunctions';
 
 export default function Classes(props) {
     const { dark } = useContext(KeyContext);

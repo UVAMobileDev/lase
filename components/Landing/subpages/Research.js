@@ -2,12 +2,12 @@
 
 // Imports
 import React, { useContext, useReducer, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
-import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
 import Footer from '../Footer';
+import { GetDimension } from '../../../constants/SimpleFunctions';
 
-// The paragraphs to render
 const Paragraphs = [
     {
         id: `0`,
@@ -53,8 +53,9 @@ export default function Research(props) {
         <View style={styles.componentBackground}>
             <ScrollView>
                 <View style={styles.researchFigure}>
-                    <Image  style={{width: "100%", height: "100%"}}
-                            source={require('../../../assets/LASE_Research_Figure.jpg')}/>
+                    <Image
+                        style={{width: "100%", height: "100%"}}
+                        source={require('../../../assets/LASE_Research_Figure.jpg')}/>
                 </View>
                 {
                     // We transform the array of paragraphs into an array of JSX
@@ -62,9 +63,10 @@ export default function Research(props) {
                     //  necessarily need to be done with a map, but it's a clean and
                     //  simple way of demonstrating the power of the map function.
                     Paragraphs.map(item => (
-                        <View   key={item.id}
-                                style={styles.researchTopic}>
-                            <Text style={[styles.bold, styles.lblTertiaryHeading, {margin: 10, marginTop: 25}]}>{item.title}</Text>
+                        <View
+                            key={item.id}
+                            style={styles.researchTopic}>
+                            <Text style={[styles.bold, styles.lblSecondaryHeading, {margin: 10, marginTop: 25}]}>{item.title}</Text>
                             <Text style={[styles.lblColorized, {marginHorizontal: 20}]}>{item.body}</Text>
                         </View>
                     ))
@@ -76,16 +78,6 @@ export default function Research(props) {
     );
 }
 
-// Helper to scale images based on screen size.
-const GetDimension = (width, height, getWidth) => {
-    let w = Dimensions.get('window').width;
-    if(getWidth) {
-        return width > w ? w : width;
-    } else {
-        return width > w ? (w / width) * height : height;
-    }
-}
-
 // StyleSheet
 const LocalStyles = {
     researchFigure: {
@@ -94,7 +86,7 @@ const LocalStyles = {
         height: GetDimension(700, 340, false),
         marginTop: 15,
         paddingBottom: 15,
-        borderColor: "#aaa",
+        borderColor: Colors.neutral1,
         borderBottomWidth: 1,
     }
 }

@@ -1,8 +1,9 @@
 import React, { useContext, useReducer, useEffect } from 'react';
-import { View, Text, StyleSheet, Platform, Dimensions, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import Footer from '../Footer';
-import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
+import { GetDimension } from '../../../constants/SimpleFunctions';
 
 const LocalStyles = {
     superscript: {
@@ -380,14 +381,4 @@ export default function WhatIsMBE(props) {
             </ScrollView>
         </View>
     );
-}
-
-// Helper method which scales images based on the screen's width.
-const GetDimension = (width, height, getWidth) => {
-    let w = Dimensions.get('window').width;
-    if(getWidth) {
-        return width > w ? w : width;
-    } else {
-        return width > w ? (w / width) * height : height;
-    }
 }

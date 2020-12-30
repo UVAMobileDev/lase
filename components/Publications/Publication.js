@@ -171,7 +171,6 @@ export default class Publication extends React.Component {
     constructor(props) {
         super(props);
         Publication.LoadTypes(this); // Load types, if they haven't been yet.
-        console.log("publication dark mode", props.dark);
         this.state = {
             publication: props.data,
             dark: props.dark ? true : false,

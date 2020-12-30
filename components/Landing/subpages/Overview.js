@@ -4,12 +4,13 @@
 
 // Imports
 import React, { useState, useEffect, useContext, useReducer } from 'react';
-import { View, Text, StyleSheet, Image, Linking, ActivityIndicator, Platform, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import Publication from '../../Publications/Publication.js';
 import Footer from '../Footer';
 import { BASE_URL } from '../../../constants/API.js';
 import { LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
 import KeyContext from '../../../KeyContext';
+import { LinkOpener, GetDimension, onWeb } from '../../../constants/SimpleFunctions';
 
 // The number of recent publications to show on the page.
 const N_PUBS = 7;
@@ -53,25 +54,29 @@ export default function Overview(props) {
     return (
         <View style={[styles.componentBackground, {flexDirection: "column"}]}>
             <ScrollView>
-                <Image  style={styles.headerEquipment}
-                        source={require('../../../assets/header_equipment.jpg')}/>
+                <Image
+                    style={styles.headerEquipment}
+                    source={require('../../../assets/header_equipment.jpg')}/>
                 <View style={styles.section}>
                     <Image  style={styles.imageMER}
                             source={require('../../../assets/MER.jpg')}/>
                     <Text style={[styles.lblColorized, styles.textContainer]}>
                         <Text style={styles.bold}>The Laboratory for Advanced Semiconductor Epitaxy</Text>
                         <Text> is located in the </Text>
-                        <Text   style={styles.link}
-                                onPress={() => Platform.OS === "web" ? window.open("http://www.mrc.utexas.edu/", "_blank") : Linking.openURL("http://www.mrc.utexas.edu/")}>Microelectronics Research Center</Text>
+                        <Text
+                            style={styles.link}
+                            onPress={LinkOpener("http://www.mrc.utexas.edu/")}>Microelectronics Research Center</Text>
                         <Text> at the University of Texas at Austin. We are developing advanced materials and devices for electronics and optoelectronics. We are particularly interested in GaSb-based mid-infrared quantum well lasers, THz sources based on epitaxial metal/semiconductor nanocomposites, new plasmonic materials, low-noise III-V avalanche photodiodes, silicon-based lasers for optical interconnects, and silicon-based III-V TFETs. Our secret weapon in this effort is the molecular beam epitaxy </Text>
-                        <Text   style={styles.link}
-                                onPress={() => props.navigation.navigate("What is MBE?")}>(MBE)</Text>
+                        <Text
+                            style={styles.link}
+                            onPress={() => props.navigation.navigate("What is MBE?")}>(MBE)</Text>
                         <Text> crystal growth technique.</Text>
                     </Text>
                 </View>
                 <View style={styles.section}>
-                    <Image  style={styles.imageEquipment}
-                            source={require('../../../assets/equipment.jpg')}/>
+                    <Image
+                        style={styles.imageEquipment}
+                        source={require('../../../assets/equipment.jpg')}/>
                     <View style={styles.recentPublications}>
                         <Text style={[styles.bold, styles.lblSecondaryHeading]}>Recent Publications</Text>
                         {
@@ -89,8 +94,9 @@ export default function Overview(props) {
                 </View>
                 <View style={[styles.section, {borderBottomWidth: 0}]}>
                     <TouchableOpacity style={styles.map}
-                            onPress={() => Platform.OS === "web" ? window.open("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911", "_blank") : Linking.openURL("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911")}>
-                        <Image style={{
+                            onPress={LinkOpener("https://www.google.com/maps/place/Microelectronics+Research+Center+Department+of+Electrical+and+Computer+Engineering/@30.3854736,-97.7239656,1317m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe0cecd958d703f34!8m2!3d30.3859033!4d-97.7280911")}>
+                        <Image
+                            style={{
                                 padding: 5,
                                 borderColor: "#aaa",
                                 borderWidth: 1,
@@ -102,8 +108,9 @@ export default function Overview(props) {
                             }}/>
                     </TouchableOpacity>
                     <View style={styles.professorArea}>
-                        <Image  style={styles.sethBank}
-                                source={require('../../../assets/Seth_Bank.jpg')}/>
+                        <Image
+                            style={styles.sethBank}
+                            source={require('../../../assets/Seth_Bank.jpg')}/>
                         <View style={styles.professorText}>
                             <Text style={styles.bold}>
                                 Seth R. Banks
@@ -116,7 +123,7 @@ export default function Overview(props) {
                             </Text>
                             <Text>
                                 <Text>Email: </Text>
-                                <Text style={styles.link} onPress={() => Platform.OS === "web" ? window.open("mailto:sbank@ece.utexas.edu", "_blank") : Linking.openURL("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text>
+                                <Text style={styles.link} onPress={LinkOpener("mailto:sbank@ece.utexas.edu")}>sbank_at_ece.utexas.edu</Text>
                             </Text>
                             <Text style={[styles.bold, {marginBottom: 1, marginTop: 5}]}>
                                 Offices:
@@ -148,16 +155,6 @@ export default function Overview(props) {
     );
 }
 
-// Helper method which scales images based on the screen's width.
-const GetDimension = (width, height, getWidth) => {
-    let w = Dimensions.get('window').width;
-    if(getWidth) {
-        return width > w ? w : width;
-    } else {
-        return width > w ? (w / width) * height : height;
-    }
-}
-
 // There's a huge amount of platform dependent styling going on here. Platform
 //  dependent code in general should be avoided in React since the purpose of the
 //  framework is to make it easier to operate on multiple platforms. However, there
@@ -170,31 +167,31 @@ const LocalStyles = {
         backgroundColor: "#fff",
     },
     section: {
-        flexDirection: Platform.OS === "web" ? "row" : "column",
+        flexDirection: onWeb ? "row" : "column",
         justifyContent: "space-around",
         alignItems: "center",
         paddingTop: 20,
         paddingBottom: 20,
         borderColor: "#aaa",
         borderBottomWidth: 1,
-        marginRight: Platform.OS === "web" ? 0 : 10,
-        marginLeft: Platform.OS === "web" ? 0 : 10,
-        paddingRight: Platform.OS === "web" ? 10 : 0,
+        marginRight: onWeb ? 0 : 10,
+        marginLeft: onWeb ? 0 : 10,
+        paddingRight: onWeb ? 10 : 0,
     },
     imageMER: {
         marginLeft: 20,
         marginRight: 20,
-        marginBottom: Platform.OS === "web" ? 0 : 15,
+        marginBottom: onWeb ? 0 : 15,
         width: 350,
         height: 233,
         borderColor: "#aaa",
         borderWidth: 1,
     },
     imageEquipment: {
-        marginLeft: Platform.OS === "web" ? 20 : 0,
-        marginRight: Platform.OS === "web" ? 20 : 4,
-        width: Platform.OS === "web" ? 250 : 300,
-        height: Platform.OS === "web" ? 525 : 275,
+        marginLeft: onWeb ? 20 : 0,
+        marginRight: onWeb ? 20 : 4,
+        width: onWeb ? 250 : 300,
+        height: onWeb ? 525 : 275,
         borderColor: "#aaa",
         borderWidth: 1,
     },
@@ -218,7 +215,7 @@ const LocalStyles = {
     textContainer: {
         flexWrap: "wrap",
         flexShrink: 1,
-        margin: Platform.OS === "web" ? 0 : 5,
+        margin: onWeb ? 0 : 5,
         textAlign: "center",
     },
     sethBank: {
