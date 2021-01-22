@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useReducer, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Platform, ActivityIndicator } from 'react-native';
 import { BASE_URL } from '../../constants/API.js';
 import { Entypo } from '@expo/vector-icons';
 const fetch = require("node-fetch");
 
+import KeyContext from '../../KeyContext';
+import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
+
 export default function SampleDetails(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     // The data for the sample itself is provided via navigation parameters.
     let sampleID = props.route.params.sampleID;
     let machine = props.route.params.system;
@@ -28,27 +35,26 @@ export default function SampleDetails(props) {
     }, [sampleID]);
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.componentBackground}>
             <View>
                 <View style={{paddingLeft: 10, paddingTop: 10}}>
-                    <Text  style={styles.headerText}>Growths from Sample {sampleID}. Select a growth's ID to view individual growth details.</Text>
+                    <Text style={styles.lblPrimaryHeading}>Growths from Sample {sampleID}. Select a growth's ID to view individual growth details.</Text>
                 </View>
 
                 <View style={styles.growthList}>
-                    {
-                        state.loading ? (<ActivityIndicator size={24}/>) :
-                        state.growths.map(growth => (
-                            <View key={growth.id} style={styles.growthRow}>
-                                <TouchableOpacity   style={{paddingLeft: 10}}
-                                        onPress={() => props.navigation.navigate("Growth Details", {growth: growth, sampleID: growth.sampleID})}>
-                                    <Text style={styles.firstRowItem}>{growth.id}</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.rowText}>{growth.sampleID}</Text>
-                                <Text style={styles.rowText}>{growth.machine}</Text>
-                                <Text style={styles.rowText}>{growth.grower}</Text>
-                            </View>
-                        ))
-                    }
+                    {state.loading ? (<ActivityIndicator size={24}/>) :
+                    state.growths.map(growth => (
+                        <View key={growth.id} style={styles.growthRow}>
+                            <TouchableOpacity
+                                style={{paddingLeft: 10}}
+                                onPress={() => props.navigation.navigate("Growth Details", {growth: growth, sampleID: growth.sampleID})}>
+                                <Text style={styles.firstRowItem}>{growth.id}</Text>
+                            </TouchableOpacity>
+                            <Text style={[styles.lblSecondaryHeading, {paddingLeft: 10}]}>{growth.sampleID}</Text>
+                            <Text style={[styles.lblSecondaryHeading, {paddingLeft: 10}]}>{growth.machine}</Text>
+                            <Text style={[styles.lblSecondaryHeading, {paddingLeft: 10}]}>{growth.grower}</Text>
+                        </View>
+                    ))}
                     <TouchableOpacity style={[styles.growthRow, styles.addButton]}
                             onPress={() => props.navigation.navigate("Add Growth", {sampleID, machine})}>
                         <View style={{paddingLeft: 10}}>
@@ -57,17 +63,17 @@ export default function SampleDetails(props) {
                                     style={styles.firstRowItem}
                                     color="blue" />
                         </View>
-                        <Text style={styles.rowText}>Add new growth</Text>
+                        <Text style={styles.lblSecondaryHeading}>Add new growth</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={{paddingLeft: 10}}>
-                    <Text  style={styles.headerText}>Recipes from Sample {sampleID}:</Text>
+                    <Text  style={styles.lblPrimaryHeading}>Recipes from Sample {sampleID}:</Text>
 
                     {
                         state.loading ? (<ActivityIndicator size={24} />) :
                         state.recipes.map(({id, recipe}) => (
-                            <Text key={id} style={[styles.rowText, styles.mono]}>{recipe}</Text>
+                            <Text key={id} style={[styles.lblColorized, styles.mono]}>{recipe}</Text>
                         ))
                     }
                 </View>
@@ -79,16 +85,7 @@ export default function SampleDetails(props) {
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
-    headerText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        paddingBottom: 15,
-    },
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-    },
+const LocalStyles = {
     growthList: {
         margin: 10,
         marginBottom: 30,
@@ -99,23 +96,15 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 4,
     },
-    rowText: {
-        fontSize: 16,
-        color: "black",
-        paddingLeft: 10,
-    },
     firstRowItem: {
-        width: 40,
+        marginRight: 10,
+        padding: 5,
         fontSize: 16,
-        color: 'blue',
+        backgroundColor: "white",
+        borderRadius: 5,
+        color: "blue",
     },
     mono: {
         fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
     },
-    addButton: {
-        // borderColor: "#CCC",
-        // borderWidth: 1,
-        // borderRadius: 5,
-        // width: "50%",
-    },
-});
+}

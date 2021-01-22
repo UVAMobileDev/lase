@@ -22,7 +22,6 @@ const materialLabels = ["id", "mat_name", "mat_description", "GrowthNum", "Name"
     "NOptical"];
 
 function Layer({layerData}) {
-
     const { dark, key } = useContext(KeyContext);
     const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
     useEffect(updateStyles, [dark]);
@@ -80,11 +79,6 @@ export default function GrowthDetails(props) {
         let grw = props.route.params.growth;
         grw.SampleID = props.route.params.sampleID;
         let mapping = tableLabels.map(label => grw[label]);
-
-        console.log(tableLabels
-        .filter(label => grw[label] ? true : false)
-        .map(label => [label, grw[label]]));
-
         setTableData(
             tableLabels
             .filter(label => grw[label] ? true : false)
@@ -112,13 +106,13 @@ export default function GrowthDetails(props) {
 
     if(!tableData) return (<View/>);
     return (
-        <View style={[styles.mainContainer, {padding: 3, height: "100%"}]}>
+        <View style={[styles.componentBackground, {padding: 3, height: "100%"}]}>
             <ScrollView>
                 <View style={{width: Platform.OS === "web" ? "50%" : "95%", alignSelf: "center"}}>
                     <Table
                         style={styles.titleTable}>
                         <Rows
-                            textStyle={{fontSize: 16, marginBottom: 4}}
+                            textStyle={[styles.lblColorized, {fontSize: 16, marginBottom: 4}]}
                             data={[
                                 ["Description", props.route.params.growth.Description],
                                 ["Grower", props.route.params.growth.grower],
@@ -128,19 +122,23 @@ export default function GrowthDetails(props) {
                 </View>
 
                 <View style={{paddingBottom: 20}}>
-                    <Text style={{fontSize: 16, fontWeight: '500'}}>All data for growth {props.route.params.sampleID}-{growth[0][0]}:</Text>
+                    <Text style={[styles.lblSecondaryHeading, styles.bold]}>All data for growth {props.route.params.sampleID}-{growth[0][0]}:</Text>
                 </View>
 
-                <TableWrapper style={{}}>
-                    <Table borderStyle={{borderWidth: 1}}>
-                        <Rows data={tableData} />
+                <TableWrapper style={{padding: 5}}>
+                    <Table
+                        borderStyle={{borderWidth: 1, borderColor: dark ? "#fff" : "#000"}}>
+                        <Rows
+                            textStyle={styles.lblColorized}
+                            style={{paddingHorizontal: 2}}
+                            data={tableData} />
                     </Table>
                 </TableWrapper>
 
-                <View style={styles.divider} />
+                <View style={styles.sectionBreak} />
                 {layers.loaded && layers.data.length > 0 ? (
                     <View>
-                        <Text style={styles.layerLabel}>Found {layers.data.length} layer{layers.data.length === 1 ? "" : "s"} associated with this growth.</Text>
+                        <Text style={[styles.lblColorized, styles.layerLabel]}>Found {layers.data.length} layer{layers.data.length === 1 ? "" : "s"} associated with this growth.</Text>
                         {layers.data.map((layerData, i) => (
                             <Layer
                                 key={i}
@@ -148,7 +146,7 @@ export default function GrowthDetails(props) {
                     </View>
                 ) : layers.loaded && layers.data.length === 0 ? (
                     <View>
-                        <Text style={styles.layerLabel}>This growth has no layers associated with it.</Text>
+                        <Text style={[styles.lblColorized, styles.bold, styles.layerLabel]}>This growth has no layers associated with it.</Text>
                     </View>
                 ) : (
                     <View>

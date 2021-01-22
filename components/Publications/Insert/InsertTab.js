@@ -177,12 +177,16 @@ export default function InsertTab(props) {
                 </View>
                 <View style = {styles.ScrollMenu}>
                     {/* This is for the scroll-menu for choosing type to public */}
-                    <RNPickerSelect InputAccessoryView={() => null}
-                            placeholder={{label: "Choose type", value: 0}}
-                            onValueChange={value => dispatchPublication({type: "set", payload: {key: "typeID", value: parseInt(value)}})}
-                            items={types.map(({label, id}) => (
-                                {label, value: id}
-                            ))}/>
+                    <RNPickerSelect
+                        InputAccessoryView={() => null}
+                        placeholder={{label: "Choose type", value: 0}}
+                        onValueChange={value => dispatchPublication({
+                            type: "set",
+                            payload: {key: "typeID", value: parseInt(value)}
+                        })}
+                        items={types.map(({label, id}) => (
+                            {label, value: id}
+                        ))}/>
                 </View>
                 <Text style = {styles.section}> Publication Details: </Text>
                 <View style = {styles.recordArea}>

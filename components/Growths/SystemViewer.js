@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useReducer, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import { BASE_URL } from '../../constants/API.js';
 import GrowthContext from './GrowthContext';
+
+import KeyContext from '../../KeyContext';
+import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
 
 const QueryString = filter => `${Object.keys(filter).reduce((acc, cur) => `${acc}&${cur}=${filter[cur]}`, "")}`;
 const fetch = require('node-fetch');
@@ -9,10 +12,12 @@ const fetch = require('node-fetch');
 export default function SystemViewer(props) {
     // Gets the name of the machine we're watching through props.route.params.system
     // Current filter state is in props.route.params.filter
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
 
     const context = useContext(GrowthContext);
     const [growths, setGrowths] = useState({loaded: false, contents: []});
-
 
     useEffect(() => {
         let load = async () => {
@@ -23,8 +28,8 @@ export default function SystemViewer(props) {
     }, [context.filter]);
 
     return (
-        <View style={styles.container}>
-            <Text style={{paddingLeft: 20, paddingTop: 20, fontSize: 16}}>Select a growth's ID to view associated growths and recipes:</Text>
+        <View style={styles.componentBackground}>
+            <Text style={styles.lblSecondaryHeading}>Select a growth's ID to view associated growths and recipes:</Text>
             {growths.loaded && growths.contents.length > 0 ? (
                 <View style={styles.listContainer}>
                     <FlatList
@@ -40,10 +45,10 @@ export default function SystemViewer(props) {
                                         <Text style={{width: 80, fontSize: 16, color: 'blue'}}>{item.sampleID}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={[styles.rowText, {width: 150}]}>{item.grower}</Text>
-                                <Text style={[styles.rowText, {width: 100}]}>{item.substrate}</Text>
+                                <Text style={[styles.lblSecondaryHeading, {width: 150}]}>{item.grower}</Text>
+                                <Text style={[styles.lblSecondaryHeading, {width: 100}]}>{item.substrate}</Text>
                                 <View style={{flex: 1}}>
-                                    <Text style={styles.rowText}>{item.Description}</Text>
+                                    <Text style={[styles.lblColorized, styles.rowText]}>{item.Description}</Text>
                                 </View>
                             </View>
                         )}/>
@@ -63,11 +68,7 @@ export default function SystemViewer(props) {
 
 
 // StyleSheet
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-    },
+const LocalStyles = {
     listContainer: {
         flex: 1,
     },
@@ -80,16 +81,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 9,
         margin: 4,
-
     },
     openGrowthButton: {
-        width: 18,
+        padding: 4,
         margin: 4,
         borderRadius: 5,
         backgroundColor: "white",
     },
     rowText: {
         fontSize: 16,
-        color: "black",
     },
-});
+}
