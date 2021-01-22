@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Button, TextInput } from 'react-native';
 import { BASE_URL } from '../../constants/API.js';
 import SelectSystem from '../lib/forms/SelectSystem';
@@ -9,6 +9,10 @@ import Checkbox from '../lib/forms/Checkbox';
 const fetch = require("node-fetch");
 const moment = require("moment");
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
+
+import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
+import KeyContext from '../../KeyContext';
+
 
 const Default = {
     date: "",               // Reserved
@@ -140,6 +144,10 @@ const STO_DEFAULTS = {
 const TRACK_BY_DEFAULT = true;
 
 export default function AddGrowth(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     const key = null;
 
     const [form, updateForm] = useReducer(
@@ -366,7 +374,6 @@ export default function AddGrowth(props) {
                                 <Text>{src.source}</Text>
                                 {src.tip ? (<Text>### Tip: {src.tip_idle || 0}</Text>): (<View/>)}
                                 {src.base ? (<Text>### Base: {src.base_idle || 0}</Text>): (<View/>)}
-                                {src.idle_temp ? (<Text>### Temp: {src.idle_temp}</Text>): (<View/>)}
                                 {src.flux ? (<Text>### BEP: {src.flux_idle || 0}</Text>): (<View/>)}
                             </View>
                         )) : (<View/>)}
@@ -445,15 +452,16 @@ export default function AddGrowth(props) {
                     {view.bottom > -1 && materials[view.bottom] ? (
                         <View>
                             <Text style={styles.subtitle}>Edit layer details</Text>
-                            {Object.keys(materials[view.bottom]).map(key => key === "key" ? (<View/>) : (
-                                <View style={{flexDirection: "row", alignItems: "center", marginVertical: 2}}>
+                            {Object.keys(materials[view.bottom]).map(key => key === "key" ? (<View key="key"/>) : (
+                                <View key={key}
+                                    style={{flexDirection: "row", alignItems: "center", marginVertical: 2}}>
                                     <Text style={{width: 100, marginRight: 10}}>{key}</Text>
                                     <TextInput
                                         placeholder={key}
                                         onChangeText={val => dispatchMaterials({
                                             type: "update", key, value: val, src: view.bottom
                                         })}
-                                        value={materials[view.bottom][key]}
+                                        value={materials[view.bottom][key].toString()}
                                         />
                                 </View>
                             ))}
@@ -481,7 +489,7 @@ export default function AddGrowth(props) {
     )
 }
 
-const styles = StyleSheet.create({
+const LocalStyles = {
     mainDataEntry: {
         marginHorizontal: 10,
         marginBottom: 30,
@@ -527,4 +535,4 @@ const styles = StyleSheet.create({
         borderWidth: .03
     },
 
-})
+}

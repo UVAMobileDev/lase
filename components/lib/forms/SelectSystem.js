@@ -5,11 +5,12 @@
 
 // Imports
 import React from 'react';
-import { View, StyleSheet, Picker } from 'react-native';
+import { View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import { BASE_URL } from '../../../constants/API';
 const fetch = require('node-fetch');
+import { BASE_URL } from '../../../constants/API';
 var Semaphore = require('async-mutex').Semaphore;
+import { DropdownLight, DropdownDark } from './DropdownStyle';
 
 // All of the comments from SelectMember.js are applicable here as well. From a
 //  technical perspective, this component does the exact same thing.
@@ -20,7 +21,8 @@ export default class SelectSystem extends React.Component {
         this.state = {
             style: props.style || {},
             update: props.update,
-            placeholder: props.placeholder
+            placeholder: props.placeholder,
+            dark: props.dark ? true : false,
         };
     }
 
@@ -41,41 +43,24 @@ export default class SelectSystem extends React.Component {
         }
     }
 
+    componentDidUpdate({dark}) {
+        if(dark === this.props.dark) return;
+        this.setState({...this.state, dark: this.props.dark});
+    }
+
     render() {
         return (
             <View style={this.state.style}>
-                <RNPickerSelect style={pickerStyle}
-                                placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
-                                InputAccessoryView={() => null}
-                                onValueChange={val => this.state.update(val)}
-                                items={SelectSystem.systems.map(sys => (
-                                    {label: `${sys}`, value: sys}
-                                ))}/>
+                <RNPickerSelect
+                    style={this.state.dark ? DropdownDark : DropdownLight}
+                    placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
+                    InputAccessoryView={() => null}
+                    onValueChange={val => this.state.update(val)}
+                    items={SelectSystem.systems.map(sys => (
+                        {label: `${sys}`, value: sys}
+                    ))}
+                    />
             </View>
         );
     }
 }
-
-// Styles copied from the react-native-picker-select sample snack, with some modifications
-// https://snack.expo.io/@lfkwtz/react-native-picker-select
-const pickerStyle = StyleSheet.create({
-    inputIOS: {
-        fontSize: 16,
-        paddingVertical: 7,
-        paddingHorizontal: 5,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30,
-    },
-    inputAndroid: { // Covers Android & Web platforms
-        paddingHorizontal: 5,
-        paddingVertical: 7,
-        borderWidth: 0.5,
-        borderColor: 'gray',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30,
-    },
-});

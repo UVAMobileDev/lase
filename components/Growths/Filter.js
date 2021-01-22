@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { StyleSheet, Text, View, Platform, TextInput } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SelectMember from '../lib/forms/SelectMember';
@@ -7,6 +7,8 @@ import { BASE_URL } from '../../constants/API';
 import SystemViewer from './SystemViewer';
 import { GrowthProvider } from './GrowthContext';
 const fetch = require('node-fetch');
+import KeyContext from '../../KeyContext';
+import { LightStyles, DarkStyles, Colors } from '../../constants/globalStyle';
 
 const Tab = createMaterialTopTabNavigator();
 const onWeb = Platform.OS === "web";
@@ -30,8 +32,18 @@ class Cooldown {
 }
 
 export default function GrowthBrowser(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
 
-    const [form, updateForm] = useReducer((state, {key, value}) => ({...state, [key]: value}), {});
+    const [form, updateForm] = useReducer((state, {key, value}) => {
+        if(key === 'SampleID' && value === '') {
+            let ret = Object.assign({}, state);
+            delete ret.SampleID;
+            return ret;
+        }
+        return {...state, [key]: value};
+    }, {});
     const [systems, setSystems] = useState([]);
     const cooldown = useState(new Cooldown(updateForm, 750))[0];
 
@@ -47,37 +59,59 @@ export default function GrowthBrowser(props) {
 
     return (
         <GrowthProvider value={{systems, filter: form}}>
+        <View style={styles.componentBackground}>
             <View style={styles.filterControls}>
-                <Text style={styles.filterText}>Filter Growths:</Text>
+                <Text style={styles.lblPrimaryHeading}>Filter Growths:</Text>
                 <SelectMember
+                    style={{marginHorizontal: 10, marginVertical: 5}}
+                    dark={dark}
                     placeholder={{label: "Select grower", value: ""}}
                     update={rec => updateForm({key: "grower", value: rec})}/>
                 <SelectSubstrate
+                    style={{marginHorizontal: 10, marginVertical: 5}}
+                    dark={dark}
                     placeholder={{label: "Select substrate", value: ""}}
                     update={sub => updateForm({key: "substrate", value: sub})}
                     />
-                <Text>SampleID</Text>
                 <TextInput
+                    style={[styles.txt, {marginHorizontal: 10, marginVertical: 5}]}
+                    placeholderTextColor={Colors.neutral1}
+                    placeholder="SampleID"
+                    onChangeText={val => cooldown.input({key: "SampleID", value: val})}
+                    />
+                <TextInput
+                    style={[styles.txt, {marginHorizontal: 10, marginVertical: 5}]}
+                    placeholderTextColor={Colors.neutral1}
                     placeholder="Keywords"
                     onChangeText={val => cooldown.input({key: "keywords", value: val})}
                     />
             </View>
             {systems.length > 0 ? (
                 <Tab.Navigator
-                        initialRouteName={systems[0]}
-                        screenOptions={form}
-                        swipeEnabled={!onWeb}>
+                    initialRouteName={systems[0]}
+                    screenOptions={form}
+                    swipeEnabled={!onWeb}
+                    tabBarOptions={{
+                        labelStyle: {fontWeight: "bold"},
+                        inactiveTintColor: "#000000",
+                        activeTintColor: "#efefef",
+                        style: {
+                            backgroundColor: dark ? Colors.highlightDark : Colors.highlight,
+                        },
+                    }}
+                    >
                    {systems.map((sys, i) => (
                        <Tab.Screen key={i} name={sys} component={SystemViewer} initialParams={{sysIndex: i}}/>
                    ))}
                 </Tab.Navigator>) : (<View />)
             }
+        </View>
         </GrowthProvider>
     );
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
+const LocalStyles = StyleSheet.create({
     filterText: {
         fontSize: 20,
         marginBottom: 10,

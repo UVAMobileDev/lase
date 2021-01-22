@@ -1,11 +1,11 @@
 // Imports
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
-
 var Semaphore = require('async-mutex').Semaphore;
+import { DropdownLight, DropdownDark } from './DropdownStyle';
 
 export default class SelectType extends React.Component {
     constructor(props) {
@@ -18,7 +18,8 @@ export default class SelectType extends React.Component {
         this.state = {
             style: props.style,
             update: props.update,
-            placeholder: props.placeholder
+            placeholder: props.placeholder,
+            dark: props.dark ? true : false,
         };
     }
 
@@ -46,27 +47,25 @@ export default class SelectType extends React.Component {
         }
     }
 
+    componentDidUpdate({dark}) {
+        if(dark === this.props.dark) return;
+        this.setState({...this.state, dark: this.props.dark});
+    }
+
     render() {
         return (
             <View style={this.state.style}>
-                <RNPickerSelect style={StyleSheet.flatten(styles.picker)}
-                        placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
-                        InputAccessoryView={() => null}
-                        onValueChange={id => this.state.update({type: SelectType.types[id - 1], id})}
-                        items={SelectType.types.map(({label, id}) => ({
-                            label,
-                            value: id,
-                        }))}/>
+                <RNPickerSelect
+                    style={this.state.dark ? DropdownDark : DropdownLight}
+                    placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
+                    InputAccessoryView={() => null}
+                    onValueChange={id => this.state.update({type: SelectType.types[id - 1], id})}
+                    items={SelectType.types.map(({label, id}) => ({
+                        label,
+                        value: id,
+                    }))}
+                    />
             </View>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    picker: {
-        margin: 5,
-        padding: 5,
-        borderLeftWidth: 2,
-        borderRadius: 5,
-    }
-});

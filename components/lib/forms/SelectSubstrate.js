@@ -5,11 +5,12 @@
 
 // Imports
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
 var Semaphore = require('async-mutex').Semaphore;
+import { DropdownLight, DropdownDark } from './DropdownStyle';
 
 export default class SelectSubstrate extends React.Component {
     constructor(props) {
@@ -18,7 +19,8 @@ export default class SelectSubstrate extends React.Component {
         this.state = {
             style: props.style || {},
             update: props.update,
-            placeholder: props.placeholder
+            placeholder: props.placeholder,
+            dark: props.dark ? true : false,
         };
     }
 
@@ -42,42 +44,24 @@ export default class SelectSubstrate extends React.Component {
         }
     }
 
+    componentDidUpdate({dark}) {
+        if(dark === this.props.dark) return;
+        this.setState({...this.state, dark: this.props.dark});
+    }
+
     render() {
         return (
             <View style={this.state.style}>
                 <RNPickerSelect
-                    style={pickerStyle}
+                    style={this.state.dark ? DropdownDark : DropdownLight}
                     placeholder={this.state.placeholder || {label: "Select an item...", value: ""}}
                     InputAccessoryView={() => null}
                     onValueChange={substrate => this.state.update(substrate)}
                     items={SelectSubstrate.substrates.map(substrate => (
                         {label: `${substrate}`, value: substrate}
-                    ))}/>
+                    ))}
+                    />
             </View>
         );
     }
 }
-
-// Styles copied from the react-native-picker-select sample snack, with some modifications
-// https://snack.expo.io/@lfkwtz/react-native-picker-select
-const pickerStyle = StyleSheet.create({
-    inputIOS: {
-        fontSize: 16,
-        paddingVertical: 7,
-        paddingHorizontal: 5,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30,
-    },
-    inputAndroid: { // Covers Android & Web platforms
-        paddingHorizontal: 5,
-        paddingVertical: 7,
-        borderWidth: 0.5,
-        borderColor: 'gray',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30,
-    },
-});

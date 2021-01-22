@@ -50,6 +50,7 @@ const ShapeStyles = {
         borderWidth: 2,
         borderRadius: 2,
         borderColor: Colors.neutral1,
+        height: 40,
     },
     lblFormLabel: {
         marginRight: 10,
