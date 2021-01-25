@@ -1,12 +1,13 @@
 // Add new maintenance records to the database
 
-import React, { useState } from 'react';
+import React, { useContext, useReducer, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, Button, Platform } from 'react-native';
 import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
-import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
+import KeyContext from '../../../KeyContext';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
 
 // When a new source input field is added, this is its default value.
 const SourceDefault = {
@@ -35,18 +36,35 @@ const RecordDefault = {
 //  element to remove.
 // @state -- the current array of sources for the new record.
 // @update -- the function used to update @state.
-const SourceInput = (index, state, update) => (
-    <View key={state[index].id} style={styles.sourceBox}>
-        <TextInput  style={styles.smallTextInput}
-                    onChangeText={val => UpdateSource(index, state, update, "source", val)}
-                    placeholder="Source"/>
-        <TextInput  style={styles.smallTextInput}
-                    onChangeText={val => UpdateSource(index, state, update, "amount", parseInt(val) || 0)}
-                    placeholder="Amount"/>
+const SourceInput = (index, state, update, dark, styles) => (
+    <View
+        key={state[index].id}
+        style={{
+            margin: 10,
+            padding: 3,
+            borderWidth: 1,
+            borderRadius: 8,
+            borderColor: dark ? Colors.contrastDark : Colors.contrast,
+            width: Platform.OS === "web" ? 233 : "90%",
+            justifyContent: Platform.OS === "web" ? "flex-start" : "center",
+        }}
+        >
+        <TextInput
+            style={[styles.txt, {margin: 5, color: dark ? "#ffffff" : "#000000"}]}
+            onChangeText={val => UpdateSource(index, state, update, "source", val)}
+            placeholder="Source"
+            />
+        <TextInput
+            style={[styles.txt, {margin: 5, color: dark ? "#ffffff" : "#000000"}]}
+            onChangeText={val => UpdateSource(index, state, update, "amount", parseInt(val) || 0)}
+            placeholder="Amount"
+            />
         <View style={{margin: 5}}>
-            <Button title="Remove source"
-                    color={InternationalOrange}
-                    onPress={() => RemoveSource(index, state, update)}/>
+            <Button
+                title="Remove source"
+                color={Colors.caution}
+                onPress={() => RemoveSource(index, state, update)}
+                />
         </View>
     </View>
 );
@@ -96,7 +114,7 @@ const UpdateRecord = (state, update, updateDict, sources, setSources) => {
 
 // Creates a properly formatted body and sends a PUT request to the API. When the
 //  API responds, we navigate to the "Browse" tab, then open the newly created record!
-const SubmitForm = async (nav, record, sources) => {
+const SubmitForm = async (nav, record, sources, key) => {
     // Source entries carry an id (required by React). We don't want them here.
     let clean_sources = sources.map(src => {
         return {date: src.date,
@@ -109,7 +127,7 @@ const SubmitForm = async (nav, record, sources) => {
     let response = await fetch(`${BASE_URL}/maintenance`, {
         method: "PUT",
         headers: {
-            "x-api-key": process.env.X_API_KEY,
+            "x-api-key": key,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -127,6 +145,10 @@ const SubmitForm = async (nav, record, sources) => {
 }
 
 export default function Insert(props) {
+    const { dark, key } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     // Hooks for storing the state of the record's fields, sources and their fields,
     //  and an integer for ensuring unique ids for elements in the sources array.
     const [record, setRecord] = useState(Object.assign({}, RecordDefault));
@@ -134,59 +156,110 @@ export default function Insert(props) {
     const [count, setCount] = useState(1);
 
     return (
-        <View style={styles.container}>
-            <ScrollView>
-                <Text style={styles.title}>Create a new maintenance record</Text>
-                <Text style={styles.subtitle}>Record details</Text>
-                <View style={styles.recordContainer}>
-                    <SelectSystem   update={system => UpdateRecord(record, setRecord, {system}, sources, setSources)}
-                                    placeholder={{label: "Select a System...", value: "Echo"}}/>
-                    <SelectMember   update={recorder => UpdateRecord(record, setRecord, {recorder}, sources, setSources)}
-                                    placeholder={{label: "Select a Recorder...", value: ""}}/>
-                    <TextInput  style={styles.smallTextInput}
-                                onChangeText={val => UpdateRecord(record, setRecord, {date: val}, sources, setSources)}
-                                placeholder="Date (YYMMDD)"/>
-                    <SelectMember   update={p1 => UpdateRecord(record, setRecord, {p1}, sources, setSources)}
-                                    placeholder={{label: "Select P1...", value: ""}}/>
-                    <SelectMember   update={p2 => UpdateRecord(record, setRecord, {p2}, sources, setSources)}
-                                    placeholder={{label: "Select P2...", value: ""}}/>
-                    <TextInput  style={styles.largeTextInput}
-                                onChangeText={val => UpdateRecord(record, setRecord, {summary: val}, sources, setSources)}
-                                multiline={true}
-                                numberOfLines={8}
-                                placeholder="Summary"/>
-                    <TextInput  style={styles.largeTextInput}
-                                onChangeText={val => UpdateRecord(record, setRecord, {issues: val}, sources, setSources)}
-                                multiline={true}
-                                numberOfLines={5}
-                                placeholder="Issues"/>
-                    <TextInput  style={styles.largeTextInput}
-                                onChangeText={val => UpdateRecord(record, setRecord, {future: val}, sources, setSources)}
-                                multiline={true}
-                                numberOfLines={5}
-                                placeholder="Future"/>
-                    <TextInput  style={styles.largeTextInput}
-                                onChangeText={val => UpdateRecord(record, setRecord, {notes: val}, sources, setSources)}
-                                multiline={true}
-                                numberOfLines={5}
-                                placeholder="Notes"/>
+        <View style={styles.componentBackground}>
+            <ScrollView
+                contentContainerStyle={{
+                    alignItems: "center"
+                }}>
+                <Text style={styles.lblPrimaryHeading}>Create a new maintenance record</Text>
+                <Text style={styles.lblSecondaryHeading}>Record details</Text>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        justifyContent: "space-around",
+                        maxWidth: 900
+                    }}
+                    >
+                    <SelectSystem
+                        dark={dark}
+                        update={system => UpdateRecord(record, setRecord, {system}, sources, setSources)}
+                        placeholder={{label: "Select a System...", value: "Echo"}}
+                        style={{margin: 5, width: 350}}
+                        />
+                    <SelectMember
+                        dark={dark}
+                        update={recorder => UpdateRecord(record, setRecord, {recorder}, sources, setSources)}
+                        placeholder={{label: "Select a Recorder...", value: ""}}
+                        style={{margin: 5, width: 350}}
+                        />
+                    <SelectMember
+                        dark={dark}
+                        update={p1 => UpdateRecord(record, setRecord, {p1}, sources, setSources)}
+                        placeholder={{label: "Select P1...", value: ""}}
+                        style={{margin: 5, width: 350}}
+                        />
+                    <SelectMember
+                        dark={dark}
+                        update={p2 => UpdateRecord(record, setRecord, {p2}, sources, setSources)}
+                        placeholder={{label: "Select P2...", value: ""}}
+                        style={{margin: 5, width: 350}}
+                        />
+                    <TextInput
+                        onChangeText={val => UpdateRecord(record, setRecord, {date: val}, sources, setSources)}
+                        placeholder="Date (YYMMDD)"
+                        style={[styles.txt, {margin: 5, width: 350}]}
+                        />
                 </View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        justifyContent: "space-around",
+                        maxWidth: 900
+                    }}
+                    >
+                    <TextInput
+                        onChangeText={val => UpdateRecord(record, setRecord, {summary: val}, sources, setSources)}
+                        multiline={true}
+                        numberOfLines={8}
+                        placeholder="Summary"
+                        style={[styles.txt, {margin: 5, width: 400, height: 100}]}
+                        />
+                    <TextInput
+                        onChangeText={val => UpdateRecord(record, setRecord, {issues: val}, sources, setSources)}
+                        multiline={true}
+                        numberOfLines={5}
+                        placeholder="Issues"
+                        style={[styles.txt, {margin: 5, width: 400, height: 100}]}
+                        />
+                    <TextInput
+                        onChangeText={val => UpdateRecord(record, setRecord, {future: val}, sources, setSources)}
+                        multiline={true}
+                        numberOfLines={5}
+                        placeholder="Future"
+                        style={[styles.txt, {margin: 5, width: 400, height: 100}]}
+                        />
+                    <TextInput
+                        onChangeText={val => UpdateRecord(record, setRecord, {notes: val}, sources, setSources)}
+                        multiline={true}
+                        numberOfLines={5}
+                        placeholder="Notes"
+                        style={[styles.txt, {margin: 5, width: 400, height: 100}]}
+                        />
+                </View>
+                <View style={styles.sectionBreak} />
                 <View style={{alignItems: "center"}}>
-                    <Text style={styles.subtitle}>Add any sources that should go with this record</Text>
-                    <View style={{width: 200}}>
-                        <Button     title="Add Source"
-                                    color={PurpleNavy}
-                                    onPress={() => AddSource(sources, setSources, count, setCount, record)}/>
+                    <Text style={styles.lblSecondaryHeading}>Add any sources that should go with this record</Text>
+                    <View style={{width: 200, marginVertical: 15}}>
+                        <Button
+                            title="Add Source"
+                            color={Colors.neutral2}
+                            onPress={() => AddSource(sources, setSources, count, setCount, record)}/>
                     </View>
                 </View>
+                <View style={styles.sectionBreak} />
                 <View style={sources.length > 0 ? styles.sourcesContainer : {}}>
-                    {sources.map((source, index) => SourceInput(index, sources, setSources, record))}
+                    {sources.map((source, index) => SourceInput(index, sources, setSources, record, dark, styles))}
                 </View>
-                <View style={styles.submitArea}>
-                    <Text style={styles.submitWarning}>Once submitted, a record and its sources cannot be edited.</Text>
-                    <Button title="Submit"
-                            color={EgyptianBlue}
+                <View style={{alignItems: "center"}}>
+                    <Text style={styles.lblPrimaryHeading}>Once submitted, a record and its sources cannot be edited.</Text>
+                    <View style={{width: 200, marginVertical: 15}}>
+                        <Button
+                            title="Submit"
+                            color={Colors.good}
                             onPress={() => SubmitForm(props.navigation, record, sources)}/>
+                    </View>
                 </View>
                 <View style={{height: 250}}/>
             </ScrollView>
@@ -195,47 +268,7 @@ export default function Insert(props) {
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Jet,
-    },
-    title: {
-        margin: 20,
-        fontWeight: "bold",
-        fontSize: 18,
-        textAlign: "center",
-        color: Gainsboro,
-    },
-    subtitle: {
-        margin: 10,
-        fontWeight: "bold",
-        fontSize: 14,
-        textAlign: "left",
-        color: Gainsboro,
-    },
-    recordContainer: {
-        margin: 10,
-        padding: 10,
-        borderColor: Platinum,
-        borderBottomWidth: 1,
-    },
-    smallTextInput: {
-        margin: 5,
-        padding: 5,
-        borderColor: Platinum,
-        borderLeftWidth: 2,
-        borderRadius: 5,
-        color: Gainsboro,
-    },
-    largeTextInput: {
-        margin: 5,
-        padding: 5,
-        borderColor: Platinum,
-        borderLeftWidth: 2,
-        borderRadius: 5,
-        color: Gainsboro,
-    },
+const LocalStyles = {
     sourcesContainer: {
         flex: 1,
         flexDirection: "row",
@@ -243,27 +276,4 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
     },
-    sourceBox: {
-        margin: 10,
-        padding: 3,
-        borderColor: Platinum,
-        borderWidth: 1,
-        borderRadius: 8,
-        width: Platform.OS === "web" ? 233 : "90%",
-        justifyContent: Platform.OS === "web" ? "flex-start" : "center",
-    },
-    submitArea: {
-        marginTop: 25,
-        margin: 10,
-        padding: 20,
-        borderColor: Platinum,
-        borderTopWidth: 1,
-        alignItems: "center",
-    },
-    submitWarning: {
-        color: Gainsboro,
-        textAlign: "center",
-        fontStyle: "italic",
-        padding: 5,
-    }
-});
+}

@@ -5,17 +5,19 @@ const onWeb = Platform.OS === "web";
 const Colors = {
     base: "#fcfcfc",
     baseDark: "#232323",
+    baseTile: "#dcdcdc",
+    baseDarkTile: "#434343",
     text: "#000000",
     textDark: "#eaeaea",
     contrast: "#2F3061",
     contrastDark: "#ff2629",
     highlight: "#589e83",
     highlightDark: "#ff8f26",
-    good: "",
-    caution: "",
+    good: "#00ff00",
+    caution: "#ffa100",
     bad: "",
     neutral1: "#999999",
-    neutral2: "",
+    neutral2: "#4444ff",
 
 }
 

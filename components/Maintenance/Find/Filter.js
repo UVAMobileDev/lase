@@ -2,7 +2,7 @@
 //  abbreviated list form; allow the user to select and view a second record.
 
 // Imports
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useContext, useState, useEffect, useReducer } from 'react';
 import Constants from 'expo-constants';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, Platform, Dimensions } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
@@ -11,6 +11,8 @@ import SelectSystem from '../../lib/forms/SelectSystem';
 import SelectMember from '../../lib/forms/SelectMember';
 import SelectDate from '../../lib/forms/SelectDate';
 import SortingButton from '../../lib/sort/SortingButton';
+import KeyContext from '../../../KeyContext';
+import { LightStyles, DarkStyles, Colors } from '../../../constants/globalStyle';
 
 // Helper method which retrieves all the maintenance records from the API. It's not
 //  just as straightforward as a single API call, though, since the results are paginated
@@ -66,6 +68,10 @@ const FilterFx = filter => {
 //  technfilterically identical to the portion of the Overview subpage in the Landing
 //  folder which deals with retrieving the list of recent publications.
 export default function Filter(props) {
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
     const [records, setRecords] = useState({loaded: false, items: []});
     const [filter, dispatchFilter] = useReducer(FilterReducer, {});
 
@@ -94,71 +100,99 @@ export default function Filter(props) {
     }
 
     return (
-        <View style={styles.container}>
-
+        <View style={styles.componentBackground}>
             <View style={styles.filterControls}>
-
                 <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>System</Text>
+                    <Text style={styles.lblFormLabel}>System</Text>
                     <View style={styles.input}>
-                        <SelectSystem placeholder={{label: "Select System", value: ""}} update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}/>
+                        <SelectSystem
+                            dark={dark}
+                            placeholder={{label: "Select System", value: ""}}
+                            update={sys => dispatchFilter({type: "set", payload: {key: "system", value: sys}})}
+                            />
                     </View>
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Recorder</Text>
+                    <Text style={styles.lblFormLabel}>Recorder</Text>
                     <View style={styles.input}>
-                        <SelectMember placeholder={{label: "Select Recorder", value: ""}} update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}/>
+                        <SelectMember
+                            dark={dark}
+                            placeholder={{label: "Select Recorder", value: ""}}
+                            update={rec => dispatchFilter({type: "set", payload: {key: "recorder", value: rec}})}
+                            />
                     </View>
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>P1</Text>
+                    <Text style={styles.lblFormLabel}>P1</Text>
                     <View style={styles.input}>
-                        <SelectMember placeholder={{label: "Select P1", value: ""}} update={p1 => dispatchFilter({type: "set", payload: {key: "p1", value: p1}})}/>
+                        <SelectMember
+                            dark={dark}
+                            placeholder={{label: "Select P1", value: ""}}
+                            update={p1 => dispatchFilter({type: "set", payload: {key: "p1", value: p1}})}
+                            />
                     </View>
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>P2</Text>
+                    <Text style={styles.lblFormLabel}>P2</Text>
                     <View style={styles.input}>
-                        <SelectMember placeholder={{label: "Select P2", value: ""}} update={p2 => dispatchFilter({type: "set", payload: {key: "p2", value: p2}})}/>
+                        <SelectMember
+                            dark={dark}
+                            placeholder={{label: "Select P2", value: ""}}
+                            update={p2 => dispatchFilter({type: "set", payload: {key: "p2", value: p2}})}
+                            />
                     </View>
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Newer than</Text>
-                    <SelectDate minYear={2017}
-                        update={date => dispatchFilter({type: "set", payload: {key: "minDate", value: date}})}/>
+                    <Text style={styles.lblFormLabel}>Newer than</Text>
+                    <SelectDate
+                        dark={dark}
+                        minYear={2017}
+                        update={date => dispatchFilter({type: "set", payload: {key: "minDate", value: date}})}
+                        />
                 </View>
-
                 <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Older than</Text>
-                    <SelectDate minYear={2017}
+                    <Text style={styles.lblFormLabel}>Older than</Text>
+                    <SelectDate
+                        dark={dark}
+                        minYear={2017}
                         initYear={new Date().getFullYear()}
                         initMonth={new Date().getMonth() + 1}
                         initDay={new Date().getDate()}
-                        update={date => dispatchFilter({type: "set", payload: {key: "maxDate", value: date}})}/>
+                        update={date => dispatchFilter({type: "set", payload: {key: "maxDate", value: date}})}
+                        />
                 </View>
             </View>
 
             <View style={styles.sortControls}>
                 <View style={{width: 95}}>
-                    <Text style={{fontSize: 15}}>Sort Records</Text>
+                    <Text style={styles.lblSecondaryHeading}>Sort Records</Text>
                 </View>
                 <View style={{width: 75}}>
-                    <SortingButton label="Date" trigger={stage => SortBy("date", stage)}/>
+                    <SortingButton
+                        dark={dark}
+                        label="Date"
+                        trigger={stage => SortBy("date", stage)}
+                        />
                 </View>
             </View>
 
-            <View style={styles.listContainer}>
+            <View style={{flex: 1}}>
                 {records.loaded ? (
                     <FlatList
                         data={records.items.filter(FilterFx(filter))}
                         keyExtractor={item => item.id.toString()}
                         renderItem={({item}) => (
-                            <TouchableOpacity style={styles.recordRow}
-                                    onPress={() => props.navigation.navigate("Record", {record: item})}>
-                                <Text style={[styles.rowText, {width: 60}]}>{item.system}</Text>
-                                <Text style={[styles.rowText, {width: 75}]}>{item.date}</Text>
+                            <TouchableOpacity
+                                style={[styles.recordRow, dark ? {
+                                    backgroundColor: Colors.baseDarkTile
+                                } : {
+                                    backgroundColor: Colors.baseTile
+                                }]}
+                                onPress={() => props.navigation.navigate("Record", {record: item})}>
+                                <Text style={[styles.lblTertiaryHeading, {width: 60}]}>{item.system}</Text>
+                                <Text style={[styles.lblTertiaryHeading, {width: 75}]}>{item.date}</Text>
                                 <View style={{flex: 1}}>
-                                    <Text>{item.summary}</Text>
+                                    <Text style={styles.lblTertiaryHeading}>{item.summary}</Text>
                                 </View>
                             </TouchableOpacity>
                         )}/>
@@ -173,21 +207,12 @@ export default function Filter(props) {
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-    },
-    listContainer: {
-        flex: 1,
-    },
+const LocalStyles = {
     recordRow: {
         flexDirection: "row",
         padding: 10,
         marginHorizontal: 5,
         marginVertical: 7,
-        borderWidth: 1,
-        borderColor: "#44F",
         borderRadius: 5,
     },
     openRecordButton: {
@@ -196,16 +221,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: "white",
     },
-    rowText: {
-        fontSize: 16,
-        color: "black",
-    },
     filterControls: {
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-around",
         borderBottomWidth: 2,
-        borderColor: "black",
+        borderColor: Colors.neutral1,
     },
     inputLabel: {
         fontSize: 18,
@@ -227,6 +248,6 @@ const styles = StyleSheet.create({
         padding: 10,
         height: 60,
         borderBottomWidth: 2,
-        borderColor: "black",
+        borderColor: Colors.neutral1,
     },
-});
+}
