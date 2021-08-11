@@ -1,0 +1,42 @@
+{
+  "files": {
+    "app.js": "/static/js/app.24407ae8.chunk.js",
+    "app.js.map": "/static/js/app.24407ae8.chunk.js.map",
+    "runtime~app.js": "/static/js/runtime~app.2e9f1821.js",
+    "runtime~app.js.map": "/static/js/runtime~app.2e9f1821.js.map",
+    "static/js/2.79d8089a.chunk.js": "/static/js/2.79d8089a.chunk.js",
+    "static/js/2.79d8089a.chunk.js.map": "/static/js/2.79d8089a.chunk.js.map",
+    "fonts/AntDesign.ttf": "/./fonts/AntDesign.ttf",
+    "fonts/Entypo.ttf": "/./fonts/Entypo.ttf",
+    "fonts/Feather.ttf": "/./fonts/Feather.ttf",
+    "fonts/FontAwesome.ttf": "/./fonts/FontAwesome.ttf",
+    "fonts/FontAwesome5_Brands.ttf": "/./fonts/FontAwesome5_Brands.ttf",
+    "fonts/FontAwesome5_Solid.ttf": "/./fonts/FontAwesome5_Solid.ttf",
+    "fonts/Fontisto.ttf": "/./fonts/Fontisto.ttf",
+    "fonts/Foundation.ttf": "/./fonts/Foundation.ttf",
+    "fonts/Ionicons.ttf": "/./fonts/Ionicons.ttf",
+    "fonts/MaterialCommunityIcons.ttf": "/./fonts/MaterialCommunityIcons.ttf",
+    "fonts/MaterialIcons.ttf": "/./fonts/MaterialIcons.ttf",
+    "fonts/SimpleLineIcons.ttf": "/./fonts/SimpleLineIcons.ttf",
+    "favicon-16.png": "/favicon-16.png",
+    "favicon-32.png": "/favicon-32.png",
+    "favicon.ico": "/favicon.ico",
+    "index.html": "/index.html",
+    "manifest.json": "/manifest.json",
+    "serve.json": "/serve.json",
+    "static/js/2.79d8089a.chunk.js.LICENSE.txt": "/static/js/2.79d8089a.chunk.js.LICENSE.txt",
+    "static/media/LASE_Research_Figure.jpg": "/static/media/LASE_Research_Figure.952dcbc2.jpg",
+    "static/media/MER.jpg": "/static/media/MER.793a8bfc.jpg",
+    "static/media/Seth_Bank.jpg": "/static/media/Seth_Bank.b140c7cb.jpg",
+    "static/media/Sponsors.jpeg": "/static/media/Sponsors.7bd48df7.jpeg",
+    "static/media/UT_banner.png": "/static/media/UT_banner.35665a21.png",
+    "static/media/background.gif": "/static/media/background.2a76f972.gif",
+    "static/media/equipment.jpg": "/static/media/equipment.7f13d707.jpg",
+    "static/media/header_equipment.jpg": "/static/media/header_equipment.5394b8c8.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime~app.2e9f1821.js",
+    "static/js/2.79d8089a.chunk.js",
+    "static/js/app.24407ae8.chunk.js"
+  ]
+}
