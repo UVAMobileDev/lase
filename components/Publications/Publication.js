@@ -38,18 +38,18 @@ const Formatters = [
     // (Invited) S.R. Bank, J.C. Campbell, S.J. Maddox, M. Ren, A.K. Rockwell, M.E. Woodson, and S.D. March, "Avalanche Photodiodes Based on the AlInAsSb Materials System," IEEE J. Sel. Top. Quantum Electron., vol. 24, no. 2, Mar. 2018.
     (pub, dark) => (
         <Text style={[dark ? DarkStyleSet.lblColorized : LightStyleSet.lblColorized, LightStyleSet.publication]}>
-            <Text style={[LightStyleSet.bold, LightStyleSet.italics]}>
+            <Text style={dark ? [DarkStyleSet.bold, DarkStyleSet.italics] :[LightStyleSet.bold, LightStyleSet.italics]}>
                 {
                     pub.note ? `(${pub.note}) ` : ``
                 }
             </Text>
-            <Text style={LightStyleSet.bold}>
+            <Text style={dark ? DarkStyleSet.bold : LightStyleSet.bold}>
                 {abbreviateAuthors(pub.author)}
             </Text>
             <Text>
                 {`, "${pub.title}," `}
             </Text>
-            <Text style={LightStyleSet.italics}>
+            <Text style={dark ? DarkStyleSet.italics : LightStyleSet.italics}>
                 {`${pub.journal}`}
             </Text>
             <Text>
@@ -68,18 +68,18 @@ const Formatters = [
     // (Invited) S.R. Bank, "New approaches to the seamless integration of plasmonics, metasurfaces, and dielectric scatters into photonic devices," Materials Research Symposium (MRS) Fall Meeting, Boston, MA, Nov. 2017.
     (pub, dark) => (
         <Text style={[dark ? DarkStyleSet.lblColorized : LightStyleSet.lblColorized, LightStyleSet.publication]}>
-            <Text style={[LightStyleSet.bold, LightStyleSet.italics]}>
+            <Text style={dark ? [DarkStyleSet.bold, DarkStyleSet.italics] :[LightStyleSet.bold, LightStyleSet.italics]}>
                 {
                     pub.note ? `(${pub.note}) ` : ``
                 }
             </Text>
-            <Text style={LightStyleSet.bold}>
+            <Text style={dark ? DarkStyleSet.bold : LightStyleSet.bold}>
                 {abbreviateAuthors(pub.author)}
             </Text>
             <Text>
                 {`, "${pub.title}" `}
             </Text>
-            <Text style={LightStyleSet.italics}>
+            <Text style={dark ? DarkStyleSet.italics : LightStyleSet.italics}>
                 {`${pub.bookTitle}`}
             </Text>
             <Text>

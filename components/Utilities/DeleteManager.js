@@ -160,15 +160,15 @@ export default function DeleteManager(props) {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, styles.componentBackground]}>
             <ScrollView>
-                <View style={styles.section}>
-                    <Text>Delete an item from the database</Text>
-                    <Text>Select the type of item you are attempting to remove, then enter its unique ID.</Text>
+                <View style={[styles.componentBackground,styles.section]}>
+                    <Text style = {styles.lblColorized}>Delete an item from the database</Text>
+                    <Text style = {styles.lblColorized}>Select the type of item you are attempting to remove, then enter its unique ID.</Text>
                 </View>
-                <View style={styles.section}>
+                <View style={[styles.componentBackground,styles.section]}>
                     <View style={styles.formRow}>
-                        <Text style={styles.formLabel}>Item Type</Text>
+                        <Text style={styles.lblFormLabel}>Item Type</Text>
                         <View style={styles.widthLimiter}>
                             <RNPickerSelect
                                 onValueChange={type => setTarget({...deletionTarget, type})}
@@ -180,9 +180,9 @@ export default function DeleteManager(props) {
                     </View>
                 </View>
                 {deletionTarget.type === "WaferLogEntry" ? (
-                    <View style={styles.section}>
+                    <View style={[styles.componentBackground, styles.section]}>
                         <View style={styles.formRow}>
-                            <Text style={styles.formLabel}>Table Selection</Text>
+                            <Text style={styles.lblFormLabel}>Table Selection</Text>
                             <View style={styles.widthLimiter}>
                                 <RNPickerSelect
                                     onValueChange={table => setTarget({...deletionTarget, table})}
@@ -193,9 +193,9 @@ export default function DeleteManager(props) {
                         </View>
                     </View>
                 ) : deletionTarget.type === "Growth" ? (
-                    <View style={styles.section}>
+                    <View style={[styles.componentBackground, styles.section]}>
                         <View style={styles.formRow}>
-                            <Text style={styles.formLabel}>Target Machine</Text>
+                            <Text style={styles.lblFormLabel}>Target Machine</Text>
                             <View style={styles.widthLimiter}>
                                 <RNPickerSelect
                                     onValueChange={machine => setTarget({...deletionTarget, machine})}
@@ -206,12 +206,12 @@ export default function DeleteManager(props) {
                         </View>
                     </View>
                 ) : (<View />)}
-                <View style={styles.section}>
+                <View style={[styles.componentBackground, styles.section]}>
                     <View style={styles.formRow}>
-                        <Text style={styles.formLabel}>Target ID</Text>
+                        <Text style={styles.lblFormLabel}>Target ID</Text>
                         <View style={styles.widthLimiter}>
                             <TextInput
-                                style={styles.idInput}
+                                style={[styles.txt, styles.idInput]}
                                 onChangeText={id => setTarget({...deletionTarget, id})}
                                 value={deletionTarget.id ? `${deletionTarget.id}` : ""}
                                 keyboardType="numeric"/>
@@ -228,11 +228,11 @@ export default function DeleteManager(props) {
                 </View>
                 <View style={styles.preview}>
                     <View style={{alignItems: "center"}}>
-                        <Text style={styles.titleText}>Target Preview</Text>
+                        <Text style={[styles.lblColorized, styles.titleText]}>Target Preview</Text>
                     </View>
                     {previewData && deletionTarget.id ? preview() : (
                         <View style={{alignItems: "center"}}>
-                            <Text>Enter a valid deletion target to see a preview here.</Text>
+                            <Text style = {styles.lblColorized}>Enter a valid deletion target to see a preview here.</Text>
                         </View>
                     )}
                 </View>

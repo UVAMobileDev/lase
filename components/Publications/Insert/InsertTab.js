@@ -5,7 +5,7 @@
 // Insert: add new publication and scroll list is provided to let user choose which catergories of new publication will be
 
 // All imports
-import React, { useState, useEffect, useReducer } from 'react';
+import React, {useState, useEffect, useReducer, useContext} from 'react';
 import { Text, View, StyleSheet, Button, TouchableOpacity, FlatList, TextInput, ScrollView, ActivityIndicator,FlatLsit } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -13,7 +13,9 @@ const fetch = require('node-fetch');
 import { BASE_URL } from '../../../constants/API';
 import { Ionicons } from '@expo/vector-icons';
 import { Jet, InternationalOrange, Platinum, Gainsboro, EgyptianBlue, SpaceCadet, PurpleNavy } from '../../../constants/Colors';
-const API_KEYS = require('../../../keys').API_KEY;
+import {LightStyles, DarkStyles, Colors} from '../../../constants/globalStyle';
+import KeyContext from "../../../KeyContext";
+const API_KEYS = "2yRALZXus73AaKg5c1wWv7qf4DTSx84naQGIGCCf";//require('../../../keys').API_KEY;
 
 const LoadAllTypes = async () => {
     //Get all types from API
@@ -167,12 +169,17 @@ export default function InsertTab(props) {
 
     }, [publication.typeID]);
 
+    const { dark, key } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create({...(dark ? DarkStyles : LightStyles), ...LocalStyles}), {});
+    useEffect(updateStyles, [dark]);
+
+
     return (
-        <View style = {styles.container}>
+        <View style = {[styles.componentBackground, styles.container]}>
             <ScrollView>
-                <Text style = {styles.title}>Create a new publication:</Text>
+                <Text style = {[styles.lblColorized, styles.title]}>Create a new publication:</Text>
                 <View style = {{flexDirection: 'row'}}>
-                    <Text style = {styles.section}>Type of publication: </Text>
+                    <Text style = {[styles.lblColorized, styles.section]}>Type of publication: </Text>
                     <Text style = {styles.asterisk}>Required * </Text>
                 </View>
                 <View style = {styles.ScrollMenu}>
@@ -188,18 +195,18 @@ export default function InsertTab(props) {
                             {label, value: id}
                         ))}/>
                 </View>
-                <Text style = {styles.section}> Publication Details: </Text>
+                <Text style = {[styles.lblColorized,styles.section]}> Publication Details: </Text>
                 <View style = {styles.recordArea}>
                     {types.length > 0 ? (
                         <View style = {styles.ScrollMenu}>
                             {filterFields.map(field => (
                                 <View key = {field.key} style = {styles.infoRow}>
                                     <View style = {{width: '40%'}}>
-                                        <Text style = {styles.fieldName}> {field.key}: </Text>
+                                        <Text style = {[styles.fieldName, styles.lblColorized]}> {field.key}: </Text>
                                     </View>
                                     <View style = {{width: '60%'}}>
                                         <TextInput
-                                                    style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' && !publication[field.key] ? styles.inputBox_require : styles.inputBox}
+                                                    style = {highlightRequired && checkIfrequire(publication.typeID,field.key,types) === '(required)' && !publication[field.key] ? [styles.inputBox_require, styles.lblColorized] : [styles.inputBox, styles.lblColorized]}
                                                     key={field.key}
                                                     value={publication[field.key] || ""}
                                                     onChangeText={text => dispatchPublication({type: "set", payload: {key: field.key, value: text}})}
@@ -221,10 +228,10 @@ export default function InsertTab(props) {
     );
 }
 
-const styles = StyleSheet.create({
+const LocalStyles = {
     container: {
         flex: 1,
-        backgroundColor: '#d3d3d3',
+        //backgroundColor: '#d3d3d3',
     },
     title: {
         fontSize: 20,
@@ -321,4 +328,4 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'red',
     }
-});
+};

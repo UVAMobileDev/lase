@@ -4,12 +4,13 @@ import { StyleSheet, View, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import KeyContext from '../../KeyContext';
-import { LightStyles, DarkStyles } from '../../constants/globalStyle';
+import {LightStyles, DarkStyles, Colors} from '../../constants/globalStyle';
 
 import GrowthCal from './GrowthCalendar/Index';
 import STO from './STOGeneration/STOGenerator';
 import WaferLog from './WaferUtils/WaferLog';
 import DeleteManager from './DeleteManager';
+import Insert from "../Maintenance/Insert/Insert";
 const Tab = createMaterialTopTabNavigator();
 
 const onWeb = Platform.OS === "web";
@@ -20,11 +21,34 @@ export default function Utilities(props) {
     useEffect(updateStyles, [dark]);
 
     return (
+        // <View style={styles.screenContainer}>
+        //     <Tab.Navigator
+        //         style={{marginTop: onWeb ? 0 : Constants.statusBarHeight,}}
+        //         initialRouteName="Browse"
+        //         swipeEnabled={!onWeb}
+        //         tabBarOptions={{
+        //             labelStyle: {fontWeight: "bold"},
+        //             inactiveTintColor: "#000000",
+        //             activeTintColor: "#efefef",
+        //             style: {
+        //                 backgroundColor: dark ? Colors.highlightDark : Colors.highlight,
+        //             },
+        //         }}
+        //     >
+        //         <Tab.Screen name="Browse" component={Browse}/>
+        //         <Tab.Screen name="Create" component={Insert}/>
+        //     </Tab.Navigator>
+        // </View>
         <View style={styles.screenContainer}>
             <Tab.Navigator
                 initialRouteName="Growth Calendar"
                 tabBarOptions={{
-                    scrollEnabled: !onWeb,
+                    labelStyle: {fontWeight: "bold"},
+                    inactiveTintColor: "#000000",
+                    activeTintColor: "#efefef",
+                    style: {
+                        backgroundColor: dark ? Colors.highlightDark : Colors.highlight,
+                    },
                 }}
                 swipeEnabled={!onWeb}
                 >

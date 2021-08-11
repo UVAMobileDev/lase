@@ -17,7 +17,11 @@ export default function SystemViewer(props) {
     useEffect(updateStyles, [dark]);
 
     const context = useContext(GrowthContext);
-    const [growths, setGrowths] = useState({loaded: false, contents: []});
+    const [growths, setGrowths] = useState({loaded: false, contents: [], page: 0, more: true});
+
+    // const nextPage = () => growths.more ? setGrowths(growths
+    //     {key: "page", value: "increment"}
+    // ]) : null;
 
     useEffect(() => {
         let load = async () => {
@@ -37,6 +41,8 @@ export default function SystemViewer(props) {
                         data={growths.contents}
                         keyExtractor={item => item.id.toString()}
                         initialNumToRender={10}
+                        // onEndReached={nextPage}
+                        // onEndReachedThreshold={0.3}
                         renderItem={({item}) => (
                             <View style={styles.growthRow}>
                                 <View style={{width: 80, marginRight:10}}>

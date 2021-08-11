@@ -42,6 +42,21 @@ export default function GrowthBrowser(props) {
             delete ret.SampleID;
             return ret;
         }
+        if(key === 'grower' && value == ''){
+            let ret = Object.assign({}, state);
+            delete ret.grower;
+            return ret;
+        }
+        if(key === 'substrate' && value == ''){
+            let ret = Object.assign({}, state);
+            delete ret.substrate;
+            return ret;
+        }
+        if(key === 'keywords' && value == ''){
+            let ret = Object.assign({}, state);
+            delete ret.keywords;
+            return ret;
+        }
         return {...state, [key]: value};
     }, {});
     const [systems, setSystems] = useState([]);

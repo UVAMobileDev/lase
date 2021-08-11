@@ -23,7 +23,7 @@ export default function Classes(props) {
                 <Text style={[styles.lblColorized, styles.textContainer]}> A graduate-level introduction to semiconductor optoelectronic devices for communications, spectroscopy, and other applications. Reviews the requisite physics, device operating principles,a nd pratical strengths/weaknesses of devices. Topics include: </Text>
                 <Text style={[styles.lblColorized, styles.listIndent]}>
                     <Text>
-                        <Text> {'\u2022'} Applicable semiconductor physics and quantum mechanis (E-</Text>
+                        <Text> {'\u2022'} Applicable semiconductor physics and quantum mechanics (E-</Text>
                     </Text>
                     <Text style={{fontWeight: "bold"}}>k</Text>
                     <Text>space,</Text>

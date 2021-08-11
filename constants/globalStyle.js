@@ -34,7 +34,7 @@ const ShapeStyles = {
         paddingTop: onWeb ? 0 : Constants.statusBarHeight,
     },
     componentBackground: { // For direct children of full screen components, apply this style to the top level view to fill the viewport
-        flex: 1,
+        flex: 1, //must turn off for pub page
     },
     horiztonalItemWrapper: {
         flexDirection: "row",

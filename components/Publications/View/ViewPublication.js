@@ -2,13 +2,15 @@
 //  the corresponding sources asynchronously.
 
 // Imports
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext, useReducer} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { BASE_URL } from '../../../constants/API.js';
 import { Jet, Platinum, Gainsboro, InternationalOrange, PurpleNavy } from '../../../constants/Colors.js';
 const fetch = require("node-fetch");
 import Publication from '../../Publications/Publication.js';
 import {Table,Row,Rows} from 'react-native-table-component';
+import KeyContext from "../../../KeyContext";
+import {DarkStyles, LightStyles} from "../../../constants/globalStyle";
 
 //import {SelectableText} from 'react-native-selectable-text';
 // This function is to get the fetch the URL for getting information based on the sample ID
@@ -100,6 +102,10 @@ export default function ViewPublication(props) {
         setDetails(detail);
     }, [publication]);
 
+    const { dark } = useContext(KeyContext);
+    const [styles, updateStyles] = useReducer(() => StyleSheet.create(dark ? DarkStyles : LightStyles), {});
+    useEffect(updateStyles, [dark]);
+
     return (
         <View style = {styles.container}>
             <ScrollView>
@@ -123,7 +129,7 @@ export default function ViewPublication(props) {
 }
 
 // StyleSheet
-const styles = StyleSheet.create({
+const LocalStyles = {
     tableContainer: {
         flex: 1,
         padding: 16,
@@ -218,4 +224,4 @@ const styles = StyleSheet.create({
     citation: {
         flexDirection: "row",
     }
-});
+};

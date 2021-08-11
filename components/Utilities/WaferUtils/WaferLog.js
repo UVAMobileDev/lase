@@ -33,9 +33,9 @@ const Stack = createStackNavigator();
 
 export default function WaferLog(props) {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Overview" component={WaferLogOverview} options={{headerShown: false}}/>
-            <Stack.Screen name="Full Log History" component={LogHistory}/>
+        <Stack.Navigator >
+            < Stack.Screen name="Overview" component={WaferLogOverview} options={{headerShown: false}}/>
+                <Stack.Screen name="Full Log History" component={LogHistory}/>
         </Stack.Navigator>
     );
 }
@@ -99,9 +99,9 @@ function WaferLogOverview(props) {
 
     const SubstrateRow = (id, name, size, count, extraStyles, blockStyles) => (
         <View style={[styles.substrateRow, blockStyles]} key={id}>
-        <Text style={[styles.rowItem, {width: 125}, extraStyles]}>{name}</Text>
-        <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{size}</Text>
-        <Text style={[styles.rowItem, {width: 75}, extraStyles]}>{count}</Text>
+        <Text style={[styles.lblColorized, styles.rowItem, {width: 125}, extraStyles]}>{name}</Text>
+        <Text style={[styles.lblColorized, styles.rowItem, {width: 75}, extraStyles]}>{size}</Text>
+        <Text style={[styles.lblColorized, styles.rowItem, {width: 75}, extraStyles]}>{count}</Text>
         </View>
     );
 
@@ -256,23 +256,23 @@ function WaferLogOverview(props) {
     let stock_alert = substrate && substrate.count < (LOW_STOCK[selected] || LOW_STOCK.default);
 
     return (
-        <View style={styles.mainBackground}>
+        <View style={styles.componentBackground}>
             <ScrollView>
-                <View style={styles.headerWrapper}>
+                <View style={[styles.componentBackground, styles.headerWrapper]}>
                     <View style={{flex: 1}}>
-                        <Text style={styles.header}>Click a substrate to view details</Text>
-                        <Text style={{margin: 4}}>Selecting a substrate will dynamically load and calculate its log information (count, weekly deltas, and usage predictions). Once loaded, a substrate's wafer count will appear in the table.</Text>
+                        <Text style={[styles.lblSecondaryHeading, styles.header]}>Click a substrate to view details</Text>
+                        <Text style={[styles.lblColorized, {margin: 4}]}>Selecting a substrate will dynamically load and calculate its log information (count, weekly deltas, and usage predictions). Once loaded, a substrate's wafer count will appear in the table.</Text>
                     </View>
                     {fullyLoaded ? (<View/>) : (
                         <View style={{flex: 1}}>
-                            <TouchableOpacity style={styles.loadAllButton} onPress={loadAllWafers}>
+                            <TouchableOpacity style={[styles.screenContainer, styles.loadAllButton]} onPress={loadAllWafers}>
                                 <Text style={styles.buttonLabel}>Load all wafers</Text>
                             </TouchableOpacity>
-                            <Text style={{margin: 4}}>If you need to view all wafer counts at once, click this button to load all wafer data immediately and avoid clicking each substrate individually.</Text>
+                            <Text style={[styles.lblColorized, {margin: 4}]}>If you need to view all wafer counts at once, click this button to load all wafer data immediately and avoid clicking each substrate individually.</Text>
                         </View>
                     )}
                 </View>
-                <View style={styles.platformOrienter}>
+                <View style={[styles.componentBackground, styles.platformOrienter]}>
                     <View style={styles.substrateTable}>
                         {SubstrateRow(-1, "Substrate", "Size", "Count", {fontWeight: "bold"}, {borderWidth: 0, borderBottomWidth: 1, borderRadius: 0, borderStyle: "solid"})}
                         {substrates.length === 0 ? (<ActivityIndicator/>) : substrates.map(({id, name, size}) => (
@@ -285,42 +285,43 @@ function WaferLogOverview(props) {
                     <View style={styles.substrateDetails}>
                         {selected !== null ? substrate !== undefined ? (
                             <View>
-                                <View style={styles.detailSection}>
-                                    <Text style={styles.detailHeadline}>
+                                <View style={[styles.componentBackground, styles.detailSection]}>
+                                    <Text style={[styles.lblSecondaryHeading, styles.detailHeader]}>
                                         <Text> Details for </Text>
                                         <Text style={{fontWeight: "bold"}}>{selected} </Text>
                                     </Text>
                                 </View>
-                                <View style={styles.detailSection}>
-                                    <Text style={[styles.detailHeader, {flexDirection: "row"}]}>
+
+                                <View style={[styles.componentBackground, styles.detailSection]}>
+                                    <Text style={[styles.lblSecondaryHeading, styles.detailHeader, {flexDirection: "row"}]}>
                                         <Text>Current Stock  </Text>
                                         {stock_alert ? (
-                                            <Text style={{fontSize: 15, color: "#ffa100"}}>
+                                            <Text style={[styles.lblColorized,{fontSize: 15, color: "#ffa100"}]}>
                                                 <Entypo name="warning" size={17} color="#ffa100" />
                                                 <Text> Low supply</Text>
                                             </Text>
                                             ) : (<View/>)}
                                     </Text>
-                                    <Text style={{fontWeight: "bold", fontSize: 15}}>{substrate.count} wafers</Text>
+                                    <Text style={[styles.lblColorized, {fontWeight: "bold", fontSize: 15}]}>{substrate.count} wafers</Text>
                                     {substrate.count <= 0 ? (
-                                        <Text style={styles.alert}>Wafer is out of stock or in need of supply reconciliation</Text>
+                                        <Text style={[styles.lblColorized,styles.alert]}>Wafer is out of stock or in need of supply reconciliation</Text>
                                     ) : (<View/>)}
                                 </View>
-                                <View style={styles.detailSection}>
-                                    <Text style={styles.detailHeader}>Weekly Usage Stats</Text>
-                                    {substrate.weeks.map((delta, i) => (<Text key={i}>Week {i + 1}: {delta}</Text>))}
+                                <View style={[styles.componentBackground, styles.detailSection]}>
+                                    <Text style={[styles.lblSecondaryHeading, styles.detailHeader]}>Weekly Usage Stats</Text>
+                                    {substrate.weeks.map((delta, i) => (<Text style={[styles.lblColorized]} key={i}>Week {i + 1}: {delta}</Text>))}
                                 </View>
-                                <View style={styles.detailSection}>
-                                    <Text style={styles.detailHeader}>Supply Predictor</Text>
+                                <View style={[styles.componentBackground, styles.detailSection]}>
+                                    <Text style={[styles.lblSecondaryHeading, styles.detailHeader]}>Supply Predictor</Text>
                                     {
-                                        substrate.usagePrediction.map(([num, duration], i) => <Text key={i}>{num}-week rate: {duration}</Text>)
+                                        substrate.usagePrediction.map(([num, duration], i) => <Text style={[styles.lblColorized]} key={i}>{num}-week rate: {duration}</Text>)
                                     }
                                 </View>
-                                <View style={styles.detailSection}>
-                                    <Text style={styles.detailHeader}>Add Log Entry</Text>
-                                    <Text>New log entries have two components: reason and amount. Reasons for new entries are 'add', 'growth', 'non-growth', and 'reconcile', corresponding to the addition of new wafers into the system, the usage of wafers for growths, usage of wafers not for growths, and a reconciliation of physical inventory, respectively. Amount refers to the number of new wafers, used wafers, or the actual physical inventory value, depending on reason.</Text>
+                                <View style={[styles.componentBackground, styles.detailSection]}>
+                                    <Text style={[styles.lblSecondaryHeading, styles.detailHeader]}>Add Log Entry</Text>
+                                    <Text style={[styles.lblColorized]}>New log entries have two components: reason and amount. Reasons for new entries are 'add', 'growth', 'non-growth', and 'reconcile', corresponding to the addition of new wafers into the system, the usage of wafers for growths, usage of wafers not for growths, and a reconciliation of physical inventory, respectively. Amount refers to the number of new wafers, used wafers, or the actual physical inventory value, depending on reason.</Text>
                                     <View style={styles.labelRow}>
-                                        <Text style={styles.labelText}>Reason</Text>
+                                        <Text style={[styles.lblFormLabel ,styles.labelText]}>Reason</Text>
                                         <RNPickerSelect
                                             InputAccessoryView={() => null}
                                             placeholder={{label: "...", value: ""}}
@@ -330,8 +331,8 @@ function WaferLogOverview(props) {
                                             />
                                     </View>
                                     <View style={styles.labelRow}>
-                                        <Text style={styles.labelText}>Amount</Text>
-                                        <TextInput style={styles.textinput}
+                                        <Text style={[styles.lblFormLabel, styles.labelText]}>Amount</Text>
+                                        <TextInput style={[styles.lblColorized,styles.textinput]}
                                             placeholder="Enter delta value"
                                             keyboardType="numeric"
                                             onChangeText={val => dispatchForm({action: "set", payload: {key: "amount", value: parseFloat(val)}})}
@@ -339,9 +340,9 @@ function WaferLogOverview(props) {
                                             />
                                     </View>
                                     {insertingLogEntry ? (<ActivityIndicator style={{margin: 25}}/>) : (
-                                        <TouchableOpacity style={styles.submitLogEntry}
+                                        <TouchableOpacity style={[styles.componentBackground,styles.submitLogEntry]}
                                             onPress={() => dispatchForm({action: "submit"})}>
-                                            <Text style={styles.buttonLabel}>Submit New Log Entry</Text>
+                                            <Text style={[styles.lblColorized,styles.buttonLabel]}>Submit New Log Entry</Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -354,9 +355,9 @@ function WaferLogOverview(props) {
                             </View>
                         ) : (<ActivityIndicator style={{marginBottom: 140}}/>) : (<View style={{marginBottom: 140}}/>)}
                         <View style={{position: "absolute", left: 0, bottom: 0}}>
-                            <Text style={styles.detailSubheader}>Supply calculation based on delta since most recent wafer reconciliation, or initial count of zero.</Text>
-                            <Text style={styles.detailSubheader}>Weekly usage figures based on negative wafer transactions during the given week.</Text>
-                            <Text style={styles.detailSubheader}>Stock prediction based on the combined deltas from the past n weeks, divided evenly across each week, which are extrapolated across future weeks.</Text>
+                            <Text style={[styles.lblColorized,styles.detailSubheader]}>Supply calculation based on delta since most recent wafer reconciliation, or initial count of zero.</Text>
+                            <Text style={[styles.lblColorized,styles.detailSubheader]}>Weekly usage figures based on negative wafer transactions during the given week.</Text>
+                            <Text style={[styles.lblColorized,styles.detailSubheader]}>Stock prediction based on the combined deltas from the past n weeks, divided evenly across each week, which are extrapolated across future weeks.</Text>
                         </View>
                     </View>
                 </View>

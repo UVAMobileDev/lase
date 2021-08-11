@@ -21,12 +21,13 @@ export default function LogHistory({ route }) {
     }
 
     return (
-        <View style={styles.mainBackground}>
+        <View style={[styles.componentBackground, styles.mainBackground]}>
             <FlatList
                 data={entryData.entries}
+                style={styles.lblColorized}
                 keyExtractor={entry => entry.id.toString()}
                 renderItem={({item}) => (
-                    <LogEntry data={item} />
+                    <LogEntry  data={item} />
                 )}
                 onEndReachedThreshold={.3}
                 onEndReached={fetchMore}/>

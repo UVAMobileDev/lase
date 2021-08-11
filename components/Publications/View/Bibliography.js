@@ -33,8 +33,8 @@ export default function Bibliography(props) {
     }, [props.route.params]);
 
     return (
-        <View style={[styles.mainBackground, {flex: 1}]}>
-            <ScrollView style={{flex: 1}}>
+        <View style={[styles.componentBackground, {flex: 1}]}>
+            <ScrollView style={[styles.lblColorized,{flex: 1}]}>
                 {citations.loaded ? citations.items : (
                     <ActivityIndicator />
                 )}
@@ -43,6 +43,6 @@ export default function Bibliography(props) {
     )
 }
 
-const LocalStyles = StyleSheet.create({
+const LocalStyles = {
 
-});
+};

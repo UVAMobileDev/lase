@@ -57,7 +57,7 @@ export default function GrowthCalendar(props) {
     }, [systems, month]);
 
     return (
-        <View style={[styles.mainBackground, {height: "100%", alignItems: "center"}]}>
+        <View style={[styles.componentBackground, styles.mainBackground, {height: "100%", alignItems: "center"}]}>
             <View style={styles.controls}>
                 <MonthBrowser
                         onDaySelect={m => setDay(m.date())}
@@ -66,7 +66,7 @@ export default function GrowthCalendar(props) {
             </View>
             <View style={styles.instruction}>
                 <Text style={styles.rowItem}>
-                    <MaterialCommunityIcons style={styles.icon} name="file-document-box-outline" size={18} color="black" />
+                    <MaterialCommunityIcons style={styles.icon} name="file-box-document-outline" size={18} color="black" />
                     <Text>View only growth details</Text>
                 </Text>
 
@@ -83,13 +83,13 @@ export default function GrowthCalendar(props) {
                                 <View style={styles.growthRow}>
                                     <TouchableOpacity style={[styles.rowItem, {width: 55}]}
                                             onPress={() => props.navigation.navigate("Growth Details", {growth})}>
-                                        <MaterialCommunityIcons style={styles.icon} name="file-document-box-outline" size={18} color="black" />
+                                        <MaterialCommunityIcons style={styles.icon} name="file-document-box-outline" size={18} color="black" /> //try removing "box" from icon
                                         <Text style={styles.link}>{growth.id}</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity style={[styles.rowItem, {width: 100}]}
                                             onPress={() => props.navigation.navigate("Sample Details", {sampleID: growth.sampleID, system: growth.machine})}>
-                                        <MaterialCommunityIcons style={styles.icon} name="file-document-box-multiple-outline" size={18} color="black" />
+                                        <MaterialCommunityIcons style={styles.icon} name="file-document-box-multiple-outline" size={18} color="black" /> //try removing "box" from icon
                                         <Text style={styles.link}>{growth.sampleID}</Text>
                                     </TouchableOpacity>
 
