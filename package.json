@@ -1,5 +1,6 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "homepage": "/lase",
   "scripts": {
     "start": "expo start",
     "s": "expo start",
@@ -38,7 +39,8 @@
     "react-native-selectable-text": "^1.0.2",
     "react-native-tab-view": "^2.14.2",
     "react-native-table-component": "^1.2.1",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "serve": "^12.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
